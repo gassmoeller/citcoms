@@ -1291,6 +1291,32 @@ static void init_tracer_flavors(struct All_variables *E)
       break;
 
     case 1:			/* from grd in top n layers */
+
+    case 2: 			/* spherical area near CMB with different flavor */
+      for (j=1;j<=E->sphere.caps_per_proc;j++) {
+
+	number_of_tracers = E->trace.ntracers[j];
+	for (kk=1;kk<=number_of_tracers;kk++) {
+	  the = E->trace.basicq[j][0][kk];
+	  phi = E->trace.basicq[j][1][kk];
+	  rad = E->trace.basicq[j][2][kk];
+
+          flavor = E->trace.nflavors - 1;
+          for (i=0; i<E->trace.nflavors-1; i++) {
+              if (rad > E->trace.z_interface[i]) {
+	          if ((the > 1.4) && (the < 1.6)) {
+		      if ((phi > 0.4) && (phi < 0.6)) {
+                          flavor = i;
+                          break;
+                      }
+                  }
+              }
+          }
+          E->trace.extraq[j][0][kk] = flavor;
+	}
+      }
+      break;
+
     case 99:			/* (will override restart) */
 #ifndef USE_GGRD
       fprintf(stderr,"ic_method_for_flavors %i requires the ggrd routines from hc, -DUSE_GGRD\n",
