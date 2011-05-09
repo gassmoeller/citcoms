@@ -681,6 +681,13 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
             /* which top layers to use */
             getIntProperty(properties, "ictracer_grd_layers", E->trace.ggrd_layers, fp);
             break;
+        case 2:			/* cube below a layer */
+            E->trace.z_interface = (double*) malloc((E->trace.nflavors-1)
+                                                    *sizeof(double));
+
+            getDoubleVectorProperty(properties, "z_interface", E->trace.z_interface, E->trace.nflavors-1, fp);
+	    break;
+
         default:
             fprintf(stderr,"ic_method_for_flavors %i undefined\n",E->trace.ic_method_for_flavors);
             parallel_process_termination();
