@@ -1265,7 +1265,7 @@ static void init_tracer_flavors(struct All_variables *E)
     int j, kk, number_of_tracers;
     int i;
     double flavor;
-    double rad;
+    double the,phi,rad;
 
     switch(E->trace.ic_method_for_flavors){
     case 0:
@@ -1292,6 +1292,7 @@ static void init_tracer_flavors(struct All_variables *E)
 
     case 1:			/* from grd in top n layers */
 
+      break;
     case 2: 			/* spherical area near CMB with different flavor */
       for (j=1;j<=E->sphere.caps_per_proc;j++) {
 
