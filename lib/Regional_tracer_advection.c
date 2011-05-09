@@ -189,6 +189,13 @@ static void write_trace_instructions(struct All_variables *E)
 	  parallel_process_termination();
 	}
 #endif
+
+        else if (E->trace.ic_method_for_flavors == 2) {
+            fprintf(E->trace.fpt,"Box below layer\n");
+            for (i=0; i<E->trace.nflavors-1; i++)
+                fprintf(E->trace.fpt,"Interface Height: %d %f\n",i,E->trace.z_interface[i]);
+        }
+
         else {
             fprintf(E->trace.fpt,"Sorry-This IC methods for Flavors are Unavailable %d\n",E->trace.ic_method_for_flavors);
             fflush(E->trace.fpt);
