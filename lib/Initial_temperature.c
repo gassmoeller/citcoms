@@ -29,6 +29,7 @@
 #include <math.h>
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "global_defs.h"
 #include "lith_age.h"
@@ -339,6 +340,20 @@ static void constant_temperature_profile(struct All_variables *E, double mantle_
     for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=E->lmesh.nno; i++)
             E->T[m][i] = mantle_temp;
+
+    return;
+}
+
+
+static void constant_temperature_profile_random(struct All_variables *E, double mantle_temp)
+{
+    int m, i;
+    
+    randomize();
+
+    for(m=1; m<=E->sphere.caps_per_proc; m++)
+        for(i=1; i<=E->lmesh.nno; i++)
+            E->T[m][i] = mantle_temp + 0.2*(random()- 0.5);
 
     return;
 }
@@ -711,6 +726,11 @@ static void construct_tic_from_input(struct All_variables *E)
                 E->convection.tic_method);
         parallel_process_termination();
         break;
+
+    case 101:
+	/* constant 0.5 over whole mantle with small random fluctuations */
+	constant_temperature_profile_random(E, 0);
+	break;
 
     default:
         /* unknown option */
