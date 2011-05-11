@@ -30,6 +30,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "global_defs.h"
 #include "lith_age.h"
@@ -349,11 +350,11 @@ static void constant_temperature_profile_random(struct All_variables *E, double 
 {
     int m, i;
     
-    randomize();
+    srand(time(0));
 
     for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=E->lmesh.nno; i++)
-            E->T[m][i] = mantle_temp + 0.2*(random()- 0.5);
+            E->T[m][i] = mantle_temp + 0.2*0.001*((double)(rand()%1000)-500.0);
 
     return;
 }
