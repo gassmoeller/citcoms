@@ -730,7 +730,7 @@ static void construct_tic_from_input(struct All_variables *E)
 
     case 101:
 	/* constant 0.5 over whole mantle with small random fluctuations */
-	constant_temperature_profile_random(E, 0);
+	constant_temperature_profile_random(E, mantle_temperature);
 	break;
 
     default:
