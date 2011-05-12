@@ -1304,7 +1304,7 @@ static void init_tracer_flavors(struct All_variables *E)
 
           flavor = E->trace.nflavors - 1;
           for (i=0; i<E->trace.nflavors-1; i++) {
-             if (((rad - E->trace.z_interface[i])*(rad - E->trace.z_interface[i])/4.0)+((the-1.5)*(the-1.5))+((phi-0.5)*(phi-0.5))<0.02) { 
+             if (((rad - E->trace.z_interface[i])*(rad - E->trace.z_interface[i])*4.0)+((the-1.5)*(the-1.5))+((phi-0.5)*(phi-0.5))<0.02) { 
                           flavor = i;
                           break;
              }         
