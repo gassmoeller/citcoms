@@ -601,6 +601,68 @@ static void write_array(int nn, float* array, FILE * f)
 	free(base64plusheadarray);
 }
 
+void write_pvts (struct All_variables *E, int cycles)
+{
+	FILE *fp;
+	char pvts_file[255];
+	int i,j,k;
+	snprintf(pvts_file, 255, "%s.%d.pvts",
+	E->control.data_file, cycles);
+	fp = output_open(pvts_file, "w");
+
+	const char format[] =
+        	"<?xml version=\"1.0\"?>\n"
+        	"<VTKFile type=\"PStructuredGrid\" version=\"0.1\" compressor=\"vtkZLibDataCompressor\" byte_order=\"LittleEndian\">\n"
+        	"  <PStructuredGrid WholeExtent=\"%s\" GhostLevel=\"#\">\n"
+		"    <PPointData Scalars=\"temperature\" Vectors=\"velocity\">\n"
+		"      <DataArray type=\"Float32\" Name=\"temperature\" format=\"binary\"/>\n"
+		"      <DataArray type=\"Float32\" Name=\"velocity\" NumberOfComponents=\"3\" format=\"binary\"/>\n"
+		"      <DataArray type=\"Float32\" Name=\"viscosity\" format=\"binary\"/>\n";
+    	
+	char extent[64], header[1024];
+
+    	snprintf(extent, 64, "%d %d %d %d %d %d",
+             	E->lmesh.ezs, E->lmesh.ezs + E->lmesh.elz*E->parallel.nprocz,
+            	E->lmesh.exs, E->lmesh.exs + E->lmesh.elx*E->parallel.nprocx,
+             	E->lmesh.eys, E->lmesh.eys + E->lmesh.ely*E->parallel.nprocy);
+
+    	snprintf(header, 1024, format, extent);
+
+    	fputs(header, fp);
+	
+	if (E->output.stress){
+		fputs("      <DataArray type=\"Float32\" Name=\"stress\" NumberOfComponents=\"6\" format=\"binary\"/>\n", fp);}
+	if (E->output.comp_nd && E->composition.on){
+		fputs("      <DataArray type=\"Float32\" Name=\"composition1\" format=\"binary\"/>\n", fp);}
+
+	fputs(	"    </PPointData>\n \n"
+		"    <PCellData>\n"
+		"    </PCellData>\n \n"
+		"    <PPoints>\n"
+		"      <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"binary\" />\n"
+		"    </PPoints>\n", fp);
+
+	for(i=0; i < E->parallel.nprocz;i++){
+		for(j=0; j < E->parallel.nprocx;j++){
+			for(k=0; k < E->parallel.nprocy;k++){
+
+		fprintf(fp, "    <Piece Extent=\"%d %d %d %d %d %d\" Source=\"%s.proc%d.%d.vts\"/>\n",
+			(k%E->parallel.nprocz)*E->lmesh.elz, (k%E->parallel.nprocz + 1)*E->lmesh.elz, 
+			(j%E->parallel.nprocx)*E->lmesh.elx, (j%E->parallel.nprocx+1)*E->lmesh.elx, 
+			(i%E->parallel.nprocy)*E->lmesh.ely, (i%E->parallel.nprocy+1)*E->lmesh.ely,
+			E->control.data_file, 
+			i*E->parallel.nprocx*E->parallel.nprocy+j*E->parallel.nprocy+k, cycles);
+
+			}
+		}
+	}
+
+	fputs(	"  </PStructuredGrid>\n",fp);
+	fputs(	"</VTKFile>",fp);
+
+	fclose(fp);
+}
+
 /**********************************************************************/
 
 void vtk_output(struct All_variables *E, int cycles)
@@ -646,6 +708,8 @@ void vtk_output(struct All_variables *E, int cycles)
 
 
     fclose(fp);
+
+    if (E->parallel.me == 0) {write_pvts(E, cycles);}
 
 
     return;
