@@ -251,24 +251,25 @@ static void vtk_output_comp_nd(struct All_variables *E, FILE *fp)
 {
     int i, j, k;
     char name[255];
-
+    int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
+    float* compo[nodes];
     for(k=0;k<E->composition.ncomp;k++) {
 
     snprintf(name, 255, "        <DataArray type=\"Float32\" Name=\"composition%d\" format=\"binary\">\n", (k+1));
 
     fputs(name, fp); 
-
+    
+    DoubleToFloatArray(E->composition.comp_node, nodes, compo);
     /*for(j=1; j<=E->sphere.caps_per_proc; j++) {
         for(i=1; i<=E->lmesh.nno; i++) {
             fprintf(fp,"%.6e\n",E->composition.comp_node[j][k][i]);
             }
         }*/
-    write_array(E->sphere.caps_per_proc*E->lmesh.nno,&E->composition.comp_node[1][1][1],fp);
+    write_array(nodes,compo,fp);
 
     fputs("        </DataArray>\n", fp);
 
     }
-
     return;
 }
 
@@ -650,7 +651,7 @@ void write_pvts (struct All_variables *E, int cycles)
 			(k%E->parallel.nprocz)*E->lmesh.elz, (k%E->parallel.nprocz + 1)*E->lmesh.elz, 
 			(j%E->parallel.nprocx)*E->lmesh.elx, (j%E->parallel.nprocx+1)*E->lmesh.elx, 
 			(i%E->parallel.nprocy)*E->lmesh.ely, (i%E->parallel.nprocy+1)*E->lmesh.ely,
-			E->control.data_file, 
+			E->control.data_prefix, 
 			i*E->parallel.nprocx*E->parallel.nprocy+j*E->parallel.nprocy+k, cycles);
 
 			}
