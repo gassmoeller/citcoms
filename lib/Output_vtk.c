@@ -252,19 +252,19 @@ static void vtk_output_comp_nd(struct All_variables *E, FILE *fp)
     int i, j, k;
     char name[255];
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
-    float* compo[nodes];
+    float compo[nodes];
     for(k=0;k<E->composition.ncomp;k++) {
 
     snprintf(name, 255, "        <DataArray type=\"Float32\" Name=\"composition%d\" format=\"binary\">\n", (k+1));
 
     fputs(name, fp); 
     
-    DoubleToFloatArray(E->composition.comp_node, nodes, compo);
-    /*for(j=1; j<=E->sphere.caps_per_proc; j++) {
+    for(j=1; j<=E->sphere.caps_per_proc; j++) {
         for(i=1; i<=E->lmesh.nno; i++) {
-            fprintf(fp,"%.6e\n",E->composition.comp_node[j][k][i]);
-            }
-        }*/
+            compo[(j-1)*E->lmesh.nno+i-1] = (float) (E->composition.comp_node[j][k][i]);
+	    }
+        }
+
     write_array(nodes,compo,fp);
 
     fputs("        </DataArray>\n", fp);
