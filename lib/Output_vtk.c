@@ -643,16 +643,16 @@ void write_pvts (struct All_variables *E, int cycles)
 		"      <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"binary\" />\n"
 		"    </PPoints>\n", fp);
 
-	for(i=0; i < E->parallel.nprocz;i++){
+	for(i=0; i < E->parallel.nprocy;i++){
 		for(j=0; j < E->parallel.nprocx;j++){
-			for(k=0; k < E->parallel.nprocy;k++){
+			for(k=0; k < E->parallel.nprocz;k++){
 
 		fprintf(fp, "    <Piece Extent=\"%d %d %d %d %d %d\" Source=\"%s.proc%d.%d.vts\"/>\n",
-			(k%E->parallel.nprocz)*E->lmesh.elz, (k%E->parallel.nprocz + 1)*E->lmesh.elz, 
+			(k%E->parallel.nprocz)*E->lmesh.elz, (k%E->parallel.nprocz+1)*E->lmesh.elz, 
 			(j%E->parallel.nprocx)*E->lmesh.elx, (j%E->parallel.nprocx+1)*E->lmesh.elx, 
 			(i%E->parallel.nprocy)*E->lmesh.ely, (i%E->parallel.nprocy+1)*E->lmesh.ely,
 			E->control.data_prefix, 
-			i*E->parallel.nprocx*E->parallel.nprocy+j*E->parallel.nprocy+k, cycles);
+			i*E->parallel.nprocx*E->parallel.nprocz+j*E->parallel.nprocz+k, cycles);
 
 			}
 		}
