@@ -141,6 +141,7 @@ PyObject * pyCitcom_BC_set_properties(PyObject *self, PyObject *args)
 
     getIntProperty(properties, "side_sbcs", E->control.side_sbcs, fp);
     getIntProperty(properties, "pseudo_free_surf", E->control.pseudo_free_surf, fp);
+    getIntProperty(properties, "vertbc", E->mesh.vertbc, fp);
 
     getIntProperty(properties, "topvbc", E->mesh.topvbc, fp);
     getFloatProperty(properties, "topvbxval", E->control.VBXtopval, fp);

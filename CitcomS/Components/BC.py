@@ -65,6 +65,7 @@ class BC(CitcomComponent):
 
         side_sbcs = pyre.inventory.bool("side_sbcs", default=False)
         pseudo_free_surf = pyre.inventory.bool("pseudo_free_surf", default=False)
+	vertbc = pyre.inventory.int("vertbc", default=0)	
 
         topvbc = pyre.inventory.int("topvbc", default=0)
         topvbxval = pyre.inventory.float("topvbxval", default=0.0)

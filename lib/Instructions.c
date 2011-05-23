@@ -447,6 +447,8 @@ void read_initial_settings(struct All_variables *E)
   input_int("topvbc",&(E->mesh.topvbc),"0",m);
   input_int("botvbc",&(E->mesh.botvbc),"0",m);
 
+  input_int("vertbc",&(E->mesh.vertbc),"0",m);
+
   input_float("topvbxval",&(E->control.VBXtopval),"0.0",m);
   input_float("botvbxval",&(E->control.VBXbotval),"0.0",m);
   input_float("topvbyval",&(E->control.VBYtopval),"0.0",m);

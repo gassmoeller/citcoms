@@ -344,6 +344,7 @@ struct MESH_DATA {/* general information concerning the fe mesh */
     int topvbc;
     int botvbc;
     int sidevbc;
+    int vertbc;
 
 
     int periodic_x;
