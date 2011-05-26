@@ -294,7 +294,7 @@ void vtk_output_surf(struct All_variables *E,  FILE *fp, int cycles)
 
   if (E->output.surf && (E->parallel.me_loc[3]==E->parallel.nprocz-1)) {
 
-    fputs("        <DataArray type=\"Float32\" Name=\"surface\" format=\"ascii\">\n", fp);
+    fputs("        <DataArray type=\"Float32\" Name=\"surface\" format=\"binary\">\n", fp);
 
     for(j=1;j<=E->sphere.caps_per_proc;j++)  {
         /* choose either STD topo or pseudo-free-surf topo */
@@ -303,12 +303,13 @@ void vtk_output_surf(struct All_variables *E,  FILE *fp, int cycles)
         else
             topo = E->slice.tpg[j];
 
+    write_array(E->lmesh.nsf,topo,fp);
 
-        for(i=1;i<=E->lmesh.nsf;i++)   {
+/*        for(i=1;i<=E->lmesh.nsf;i++)   {
           for(k=1;k<=E->lmesh.noz-1;k++)   
             fprintf(fp, "%.4e\n", 0.0);
           fprintf(fp, "%.4e\n", topo[i]);
-        }
+        }*/
 
     }
 
