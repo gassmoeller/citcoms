@@ -348,14 +348,25 @@ static void constant_temperature_profile(struct All_variables *E, double mantle_
 
 static void constant_temperature_profile_random(struct All_variables *E, double mantle_temp)
 {
-    int m, i;
+    int m,i,j,k,node;
     
+    int nox = E->lmesh.nox;
+    int noy = E->lmesh.noy;
+    int noz = E->lmesh.noz;
+
     srand(time(0));
 
     for(m=1; m<=E->sphere.caps_per_proc; m++)
-        for(i=1; i<=E->lmesh.nno; i++)
-            E->T[m][i] = mantle_temp + 0.1*0.001*((double)(rand()%1000));
-
+        for(i=1; i<=noy; i++)
+	    for(j=1; j<=nox; j++)
+	        for(k=1; k<=noz; k++){
+            	   node = k + (j-1)*noz + (i-1)*nox*noz;
+		   
+		   if ((i>1) && (i<noy) && (j>1) && (j<nox) && (k>1) && (k<noz)){
+		    E->T[m][node] = mantle_temp + 0.1*0.001*((double)(rand()%1000));}
+		   else {
+		    E->T[m][node] = mantle_temp;}
+		}
     return;
 }
 
