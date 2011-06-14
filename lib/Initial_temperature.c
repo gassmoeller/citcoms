@@ -745,6 +745,12 @@ static void construct_tic_from_input(struct All_variables *E)
 	constant_temperature_profile_random(E, mantle_temperature);
 	break;
 
+    case 102:
+	/* same as 101, but with spherical anomaly, like chemical LLSVP */
+	mantle_temperature = E->control.mantle_temp;
+	constant_temperature_profile_random(E, mantle_temperature);
+        add_spherical_anomaly(E);	
+
     default:
         /* unknown option */
         fprintf(stderr,"Invalid value: 'tic_method=%d'\n", E->convection.tic_method);
