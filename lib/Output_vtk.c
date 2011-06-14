@@ -691,8 +691,8 @@ void vtk_output(struct All_variables *E, int cycles)
 
     if (E->output.comp_nd && E->composition.on) {
     vtk_output_comp_nd(E, fp);}
-
-    vtk_output_surf(E, fp, cycles); 
+    if (E->output.surf){
+    vtk_output_surf(E, fp, cycles); }
     
     vtk_point_data_trailer(E, fp);
 
