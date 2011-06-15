@@ -750,6 +750,7 @@ static void construct_tic_from_input(struct All_variables *E)
 	mantle_temperature = E->control.mantle_temp;
 	constant_temperature_profile_random(E, mantle_temperature);
         add_spherical_anomaly(E);	
+	break;
 
     default:
         /* unknown option */
