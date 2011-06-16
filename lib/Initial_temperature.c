@@ -559,6 +559,64 @@ static void add_perturbations_at_all_layers(struct All_variables *E)
     return;
 }
 
+static void add_sudden_spherical_anomaly(struct All_variables *E)
+{
+    int i, j ,k , m, node;
+    int nox, noy, noz;
+
+    double theta_center, fi_center, r_center,x_center[4],dx[4];
+    double radius, amp, r1,rout,rin;
+    const double e_4 = 1e-4;
+    double distance;
+
+    noy = E->lmesh.noy;
+    nox = E->lmesh.nox;
+    noz = E->lmesh.noz;
+
+    rout = E->sphere.ro;
+    rin = E->sphere.ri;
+
+
+    theta_center = E->convection.blob_center[0];
+    fi_center    = E->convection.blob_center[1];
+    r_center     = E->convection.blob_center[2];
+    radius       = E->convection.blob_radius;
+    amp          = E->convection.blob_dT;
+    
+    if(E->parallel.me == 0)
+      fprintf(stderr,"center=(%e %e %e) radius=%e dT=%e\n",
+	      theta_center, fi_center, r_center, radius, amp);
+    
+    rtp2xyzd(r_center, theta_center, fi_center, (x_center+1));
+
+    /* compute temperature field according to nodal coordinate */
+    for(m=1; m<=E->sphere.caps_per_proc; m++)
+        for(i=1; i<=noy; i++)
+            for(j=1; j<=nox;j ++)
+                for(k=1; k<=noz; k++) {
+                    node = k + (j-1)*noz + (i-1)*nox*noz;
+		    dx[1] = E->x[m][1][node] - x_center[1];
+		    dx[2] = E->x[m][2][node] - x_center[2];
+		    dx[3] = E->x[m][3][node] - x_center[3];
+                    distance = sqrt(dx[1]*dx[1] + dx[2]*dx[2] + dx[3]*dx[3]);
+
+                    if (distance < radius){
+		      E->T[m][node] += amp;
+
+		      if(E->convection.blob_bc_persist){
+			r1 = E->sx[m][3][node];
+			if((fabs(r1 - rout) < e_4) || (fabs(r1 - rin) < e_4)){
+			  /* at bottom or top of box, assign as TBC */
+			  E->sphere.cap[m].TB[1][node]=E->T[m][node];
+			  E->sphere.cap[m].TB[2][node]=E->T[m][node];
+			  E->sphere.cap[m].TB[3][node]=E->T[m][node];
+			}
+		      }
+		    }
+                }
+    return;
+}
+
 
 static void add_spherical_anomaly(struct All_variables *E)
 {
@@ -749,7 +807,7 @@ static void construct_tic_from_input(struct All_variables *E)
 	/* same as 101, but with spherical anomaly, like chemical LLSVP */
 	mantle_temperature = E->control.mantle_temp;
 	constant_temperature_profile_random(E, mantle_temperature);
-        add_spherical_anomaly(E);	
+        add_sudden_spherical_anomaly(E);	
 	break;
 
     default:
