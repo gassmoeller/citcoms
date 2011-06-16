@@ -688,12 +688,14 @@ void vtk_output(struct All_variables *E, int cycles)
 //    fprintf(stderr,"Viscosity written from %d",E->parallel.me);
     if (E->output.stress){
     vtk_output_stress(E, fp);
-//    fprintf(stderr,"stress written from %d",E->parallel.me);}
+//    fprintf(stderr,"stress written from %d",E->parallel.me);
+}
 
 
     if (E->output.comp_nd && E->composition.on) {
     vtk_output_comp_nd(E, fp);
-//    fprintf(stderr,"composition written from %d",E->parallel.me);}
+//    fprintf(stderr,"composition written from %d",E->parallel.me);
+}
     if (E->output.surf){
     vtk_output_surf(E, fp, cycles); 
 //    fprintf(stderr,"surface written from %d",E->parallel.me);
