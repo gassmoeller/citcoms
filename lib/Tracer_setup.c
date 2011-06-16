@@ -1265,7 +1265,8 @@ static void init_tracer_flavors(struct All_variables *E)
     int j, kk, number_of_tracers;
     int i;
     double flavor;
-    double the,phi,rad;
+    double the,phi,rad,xyz[3];
+    double anomaly_center[3];
 
     switch(E->trace.ic_method_for_flavors){
     case 0:
@@ -1301,10 +1302,12 @@ static void init_tracer_flavors(struct All_variables *E)
 	  the = E->trace.basicq[j][0][kk];
 	  phi = E->trace.basicq[j][1][kk];
 	  rad = E->trace.basicq[j][2][kk];
+	  rtp2xyzd(rad,the,phi, xyz);
 
           flavor = E->trace.nflavors - 1;
           for (i=0; i<E->trace.nflavors-1; i++) {
-             if (((rad - E->trace.z_interface[i])*(rad - E->trace.z_interface[i])*1.0)+((the-1.5)*(the-1.5)*1.0)+((phi-0.5)*(phi-0.5)*1.0)<0.01) { 
+	  rtp2xyzd(z_interface[i],1.5,0.5,anomaly_center);
+             if (((xyz[0]-anomaly_center[0])*(xyz[0]*anomaly_center[0])*1.0)+((xyz[1]-anomaly_center[1])*(xyz[1]-anomaly_center[1])*1.0)+((xyz[2]-anomaly_center[2])*(xyz[2]-anomaly_center[2])*1.0)<0.01) { 
                           flavor = i;
                           break;
              }         

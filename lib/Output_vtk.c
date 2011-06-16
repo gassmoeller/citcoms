@@ -685,18 +685,18 @@ void vtk_output(struct All_variables *E, int cycles)
     vtk_output_temp(E, fp);
     vtk_output_velo(E, fp);
     vtk_output_visc(E, fp);
-    fprintf(stderr,"Viscosity written from %d",E->parallel.me);
+//    fprintf(stderr,"Viscosity written from %d",E->parallel.me);
     if (E->output.stress){
     vtk_output_stress(E, fp);
-    fprintf(stderr,"stress written from %d",E->parallel.me);}
+//    fprintf(stderr,"stress written from %d",E->parallel.me);}
 
 
     if (E->output.comp_nd && E->composition.on) {
     vtk_output_comp_nd(E, fp);
-    fprintf(stderr,"composition written from %d",E->parallel.me);}
+//    fprintf(stderr,"composition written from %d",E->parallel.me);}
     if (E->output.surf){
     vtk_output_surf(E, fp, cycles); 
-    fprintf(stderr,"surface written from %d",E->parallel.me);
+//    fprintf(stderr,"surface written from %d",E->parallel.me);
 }
     
     vtk_point_data_trailer(E, fp);
@@ -705,11 +705,11 @@ void vtk_output(struct All_variables *E, int cycles)
     vtk_cell_data_header(E, fp);
     /**/
     vtk_cell_data_trailer(E, fp);
-    fprintf(stderr,"precoord written from %d",E->parallel.me);
+//    fprintf(stderr,"precoord written from %d",E->parallel.me);
 
     /* write coordinate */
     vtk_output_coord(E, fp);
-    fprintf(stderr,"postcoord written from %d",E->parallel.me);
+//    fprintf(stderr,"postcoord written from %d",E->parallel.me);
 
 
     vts_file_trailer(E, fp);
