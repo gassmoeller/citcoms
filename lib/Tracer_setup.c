@@ -1306,8 +1306,8 @@ static void init_tracer_flavors(struct All_variables *E)
 
           flavor = E->trace.nflavors - 1;
           for (i=0; i<E->trace.nflavors-1; i++) {
-	  rtp2xyzd(E->trace.z_interface[i],1.5,0.5,anomaly_center);
-             if (((xyz[0]-anomaly_center[0])*(xyz[0]-anomaly_center[0])*1.0)+((xyz[1]-anomaly_center[1])*(xyz[1]-anomaly_center[1])*1.0)+((xyz[2]-anomaly_center[2])*(xyz[2]-anomaly_center[2])*1.0)<0.01) { 
+	  rtp2xyzd(E->convection.blob_center[2],E->convection.blob_center[0],E->convection.blob_center[1],anomaly_center);
+             if (((xyz[0]-anomaly_center[0])*(xyz[0]-anomaly_center[0])*1.0)+((xyz[1]-anomaly_center[1])*(xyz[1]-anomaly_center[1])*1.0)+((xyz[2]-anomaly_center[2])*(xyz[2]-anomaly_center[2])*1.0)<E->convection.blob_radius*E->convection.blob_radius) { 
                           flavor = i;
                           break;
              }         
