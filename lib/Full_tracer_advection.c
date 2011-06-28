@@ -1942,6 +1942,12 @@ static void write_trace_instructions(struct All_variables *E)
  
 	}
 #endif
+
+       else if (E->trace.ic_method_for_flavors == 2) {
+            fprintf(E->trace.fpt,"Sphere in depth\n");
+                fprintf(E->trace.fpt,"Center Height: %f\n",E->convection.blob_center[2]);
+        }
+
         else {
             fprintf(E->trace.fpt,"Sorry-This IC methods for Flavors are Unavailable %d\n",E->trace.ic_method_for_flavors);
             fflush(E->trace.fpt);

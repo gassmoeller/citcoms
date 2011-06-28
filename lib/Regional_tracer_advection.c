@@ -191,9 +191,8 @@ static void write_trace_instructions(struct All_variables *E)
 #endif
 
         else if (E->trace.ic_method_for_flavors == 2) {
-            fprintf(E->trace.fpt,"Box below layer\n");
-            for (i=0; i<E->trace.nflavors-1; i++)
-                fprintf(E->trace.fpt,"Interface Height: %d %f\n",i,E->trace.z_interface[i]);
+            fprintf(E->trace.fpt,"Sphere in depth\n");
+                fprintf(E->trace.fpt,"Center Height: %f\n",E->convection.blob_center[2]);
         }
 
         else {
