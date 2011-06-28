@@ -349,6 +349,7 @@ static void constant_temperature_profile(struct All_variables *E, double mantle_
 static void constant_temperature_profile_random(struct All_variables *E, double mantle_temp)
 {
     int m,i,j,k,node;
+    double rand0to1,numbounds;
     double* a[E->sphere.caps_per_proc+1];
     for(m=1;m<=E->sphere.caps_per_proc;m++){
     a[m] = (double *)malloc ((E->lmesh.nno+1)*sizeof(double));}
@@ -368,14 +369,16 @@ static void constant_temperature_profile_random(struct All_variables *E, double 
             for(j=1; j<=nox; j++)
                 for(k=1; k<=noz; k++){
                    node = k + (j-1)*noz + (i-1)*nox*noz;
-		   if ((i>1) && (i<noy) && (j>1) && (j<nox) && (k>1) && (k<noz)){
-		   a[m][node] = 0.1*0.001*((double)(rand()%1000));}
-		   else {
-		   a[m][node] = 0.05*0.001*((double)(rand()%1000));}
-}
-	fprintf(stderr,"Set up a. Example %f %f %f", a[1][1], a[1][15],a[1][100]);
+                   numbounds = 0.0;
+                   if ((i==1) || (i==noy)) numbounds += 1.0;
+                   if ((j==1) || (j==nox)) numbounds += 1.0;
+                   if ((k==1) || (k==noz)) numbounds += 1.0;
+
+                   rand0to1 = 0.001*((double)(rand()%1000));
+		   a[m][node] = E->convection.perturb_mag[0]/(numbounds+1.0)*rand0to1;
+                }
+
 	(E->exchange_node_d)(E,a,E->mesh.levmax);
-	fprintf(stderr,"Executed exchange_node_d");
 
      for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=noy; i++)
