@@ -323,9 +323,10 @@ void write_pvts(struct All_variables *E, int cycles)
 {
     FILE *fp;
     char pvts_file[255];
-    int i,j,k;
-    snprintf(pvts_file, 255, "%s.%d.pvts",
-    E->control.data_file, cycles);
+    int i,j,k,l;
+    l = E->parallel.me/(E->parallel.nprocx*E->parallel.nprocy*E->parallel.nprocz);
+    snprintf(pvts_file, 255, "%s.%d.%d.pvts",
+    E->control.data_file,l,cycles);
     fp = output_open(pvts_file, "w");
 
     const char format[] =
@@ -374,7 +375,7 @@ void write_pvts(struct All_variables *E, int cycles)
                     (j%E->parallel.nprocx)*E->lmesh.elx, (j%E->parallel.nprocx+1)*E->lmesh.elx, 
                     (i%E->parallel.nprocy)*E->lmesh.ely, (i%E->parallel.nprocy+1)*E->lmesh.ely,
                     E->control.data_prefix, 
-                    i*E->parallel.nprocx*E->parallel.nprocz+j*E->parallel.nprocz+k, cycles);
+                    l*E->parallel.nproc/E->sphere.caps+i*E->parallel.nprocx*E->parallel.nprocz+j*E->parallel.nprocz+k, cycles);
             }
         }
     }
@@ -411,7 +412,7 @@ static void write_ascii_array(int nn, int perLine, float *array, FILE *fp)
 void FloatToUnsignedChar(float * floatarray, int nn, unsigned char * chararray)
 {
     /* simple float to unsigned chararray routine via union
-    nn=length(intarray) chararray has to be BIG ENOUGH!*/
+    nn=length(intarray) chararray has to be BIG ENOUGH! */
     int i;
     union FloatToUnsignedChars
         {
@@ -431,8 +432,8 @@ void FloatToUnsignedChar(float * floatarray, int nn, unsigned char * chararray)
 
 void IntToUnsignedChar(int * intarray, int nn, unsigned char * chararray)
 {
-    /*simple int - to unsigned chararray routine via union
-    nn=length(intarray) chararray has to be BIG ENOUGH!*/
+    /* simple int - to unsigned chararray routine via union
+    nn=length(intarray) chararray has to be BIG ENOUGH! */
     int i;
     union IntToUnsignedChars
         {
@@ -450,84 +451,74 @@ void IntToUnsignedChar(int * intarray, int nn, unsigned char * chararray)
 }
 
 
-void usercompress(unsigned char* in, int nn, unsigned char** out, int *nn2)
-// compression routine
+void zlibcompress(unsigned char* in, int nn, unsigned char** out, int *nn2)
+/* function to compress "in" to "out" reducing size from nn to nn2 */
 {
-    // creates temporarily output array
-    // hope compressed data will be <= uncompressed
-    // otherwise...  ??
-    unsigned char* outtemp = malloc(sizeof(unsigned char)*nn);
-    int ntemp=0; // position in "outtemp"
+    /* hope compressed data will be <= uncompressed */
+    *out = malloc(sizeof(unsigned char)*nn);
+    int ntemp=0; 
 
-    // in and out of z-stream
+    /* in and out of z-stream */
     unsigned char inz[CHUNK];
     unsigned char outz[CHUNK];
 
-    // compression level
-    // could be better, don't know the options
+    /* compression level */
     int level = Z_DEFAULT_COMPRESSION;
     int ret,flush;
-    int i;
-    // the compression stream
-    z_stream strm;
+    int i,j,k;
+
+    /* zlib compression stream */
+    z_stream strm;   
 
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
 
-    // maschine is running?
+    /* zlib init */
     ret = deflateInit(&strm, level);
     if (ret == Z_OK){
-        i=0;       // will store position in "in" array
-        int j=0;       // will store position in "inz" array
-        int k;
+        i=0;     // position in "in" array
         do{
-            j=0; // new filling of "inz"
+            j=0; // position in "inz"
             do{
                 inz[j++]=in[i++];
             } while((j<CHUNK) && (i<nn)); // stopps if "inz"-buffer is full or "in" array empty
-            strm.avail_in=j;        // zlib can use j chars in "inz"
+            strm.avail_in=j;              // set number of input chars
 
-            flush = (i==nn) ? Z_FINISH : Z_NO_FLUSH; // will tell zlib if we are done
-            strm.next_in = inz; // data array, zlib should use
+            flush = (i==nn) ? Z_FINISH : Z_NO_FLUSH; // done?
+            strm.next_in = inz;           // set input buffer
 
             do{
-                strm.avail_out = CHUNK; // zlib can write "CHUNK" chars
-                strm.next_out = outz;   // in "outz"
+                strm.avail_out = CHUNK;   // set number of max output chars
+                strm.next_out = outz;     // set output buffer
 
-                // zlib compression
-                ret = deflate(&strm, flush);    /* no bad return value */
-                assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
+                /* zlib compress */
+                ret = deflate(&strm, flush);    
+                assert(ret != Z_STREAM_ERROR);  
 
-                // zlib changed strm.avail_out=CHUNK
-                // to the number of chars we can NOT use
-                // in outz
+                /* zlib changed strm.avail_out=CHUNK
+                 to the number of chars we can NOT use
+                 in outz */
 
-                // saving good part of "outz" to "outtemp"
                 for (k=0;k<CHUNK-strm.avail_out;k++){
-                    outtemp[ntemp+k]=outz[k];
+                    (*out)[ntemp+k]=outz[k];
                 }
-                // have to increase position in "outtemp"
+
+                /* increase position in "out" */
                 ntemp+=(CHUNK-strm.avail_out);
             }while(strm.avail_out==0);
             assert(strm.avail_in == 0);
 
         }while (flush != Z_FINISH);
-        // DONE
     }
-    //else{cout << "Problem in Compression!"<<endl;}
-    else{}
+    else{fprintf(stderr,"Error during compression init\n");}
+
     // now we know how short "out" should be!
     *nn2=ntemp;
-    // and can create an array with the right size
-    *out = malloc(sizeof(unsigned char)*ntemp);
-
-    // copying (memcpy could be better, anyway)
-    for (i=0;i<ntemp; i++){(*out)[i]=outtemp[i];}
+    *out = realloc(*out,sizeof(unsigned char)*ntemp);
 
     (void)deflateEnd(&strm);
 
-    if(outtemp){free(outtemp);}
     return;
 }
 
@@ -537,39 +528,32 @@ void base64(unsigned char * in, int nn, unsigned char* out)
     with base64(in) "out" needs to be big enough!!!
     length(out) >= 4* |^ nn/3.0 ^| */
     char cb64[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    unsigned char * inblock = malloc(sizeof(unsigned char)*3);        // input array for base64
-    //unsigned char * outblock = new unsigned char [4];     // output array for base64      
-    int len=3;
+    int len;
     int i;
-    // idee:
-    // repeat       3 chars -> 4 chars      with len=3
-    // if not enough chars left, flood with 0'
-    // and set len to (1,2)
 
     for (i=0; i < nn; i+=3){
-        inblock[0]=in[i];
-        if ( i+1 < nn){
-            inblock[1]=in[i+1];
-            if ( i+2 < nn){
-                inblock[2]=in[i+2];
-                len=3;
-            }
-            else{
-                len=2;
-                inblock[2]=0;
-            }
+
+        len = (3 < nn-i ? 3 : nn-i);
+        if (len >= 3){
+        /* normal base64 encoding */
+            out[i/3*4+0] = cb64[ in[i] >> 2 ];
+            out[i/3*4+1] = cb64[ ((in[i] & 0x03) << 4) | ((in[i+1] & 0xf0) >> 4) ];
+            out[i/3*4+2] = cb64[ ((in[i+1] & 0x0f) << 2) | ((in[i+2] & 0xc0) >> 6)];
+            out[i/3*4+3] = cb64[ in[i+2] & 0x3f ];
+        } else if (len == 2){
+        /* at the end of array fill up with '=' */
+            out[i/3*4+0] = cb64[ in[i] >> 2 ];
+            out[i/3*4+1] = cb64[ ((in[i] & 0x03) << 4) | ((in[i+1] & 0xf0) >> 4) ];
+            out[i/3*4+2] = cb64[((in[i+1] & 0x0f) << 2)];
+            out[i/3*4+3] = (unsigned char) '=';
+        } else if (len == 1){    
+        /* at the end of array fill up with '=' */
+            out[i/3*4+0] = cb64[ in[i] >> 2 ];
+            out[i/3*4+1] = cb64[ ((in[i] & 0x03) << 4) ];
+            out[i/3*4+2] = (unsigned char) '=';
+            out[i/3*4+3] = (unsigned char) '=';
         }
-        else{
-            len=1;
-            inblock[1]=0; inblock[2]=0;
-        }
-        //normal base64 endcoding
-        out[i/3*4] = cb64[ inblock[0] >> 2 ];
-        out[i/3*4+1] = cb64[ ((inblock[0] & 0x03) << 4) | ((inblock[1] & 0xf0) >> 4) ];
-        out[i/3*4+2] = (unsigned char) (len > 1 ? cb64[ ((inblock[1] & 0x0f) << 2) | ((inblock[2] & 0xc0) >> 6) ] : '=');
-        out[i/3*4+3] = (unsigned char) (len > 2 ? cb64[ inblock[2] & 0x3f ] : '=');
     }
-    free(inblock);
 }
 
 
@@ -636,15 +620,15 @@ static void write_binary_array(int nn, float* array, FILE * f)
     unsigned char * compressedarray;
     unsigned char ** pointertocompressedarray= &compressedarray;
 
-    /*compression routine: creates compressedarray and gives the new length of data in compressedarraylength*/
-    usercompress(chararray,chararraylength,pointertocompressedarray,&compressedarraylength);
+    /* compression routine */
+    zlibcompress(chararray,chararraylength,pointertocompressedarray,&compressedarraylength);
 
-    /*special header for zip compressed and bas64 encoded data
-    header needs 4 int32 = 16 byte -> 24 byte due to base64 (4*16/3)*/
+    /* special header for zip compressed and bas64 encoded data
+    header needs 4 int32 = 16 byte -> 24 byte due to base64 (4*16/3) */
     int base64plusheadlength = 24 + 4*ceil((float) compressedarraylength/3.0);
     unsigned char * base64plusheadarray= malloc(sizeof(unsigned char)* base64plusheadlength);
 
-    /* fills base64plusheadarray with everything ready for simple writing*/
+    /* fills base64plusheadarray with everything ready for simple writing */
     base64plushead(compressedarray,compressedarraylength, chararraylength, base64plusheadarray);
 	
     write_vtsarray(base64plusheadlength, base64plusheadarray, f);
@@ -698,8 +682,7 @@ void vtk_output(struct All_variables *E, int cycles)
 
     fclose(fp);
 
-    /* if processor == 0 write summary file .pvts for simple reading */
-    if (E->parallel.me == 0) {write_pvts(E, cycles);}
-
+    /* if processor if first of cap write summary for simple reading */
+       if (E->parallel.me%(E->parallel.nprocx*E->parallel.nprocy*E->parallel.nprocz) == 0) write_pvts(E, cycles);
     return;
 }
