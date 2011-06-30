@@ -33,13 +33,14 @@
 #include "element_definitions.h"
 #include "global_defs.h"
 #include "output.h"
+#include "string.h"
 
 #include "zlib.h"
 
 #define CHUNK 16384
 
-static void write_array(int nn, float * array, FILE * f);
-void DoubleToFloatArray(double* doublearray, int nn, float* floatarray);
+static void write_binary_array(int nn, float* array, FILE * f);
+static void write_ascii_array(int nn, int perLine, float *array, FILE *fp);
 
 static void vts_file_header(struct All_variables *E, FILE *fp)
 {
@@ -60,6 +61,7 @@ static void vts_file_header(struct All_variables *E, FILE *fp)
     snprintf(header, 1024, format, extent, extent);
 
     fputs(header, fp);
+
     return;
 }
 
@@ -72,6 +74,7 @@ static void vts_file_trailer(struct All_variables *E, FILE *fp)
         "</VTKFile>\n";
 
     fputs(trailer, fp);
+
     return;
 }
 
@@ -79,6 +82,8 @@ static void vts_file_trailer(struct All_variables *E, FILE *fp)
 static void vtk_point_data_header(struct All_variables *E, FILE *fp)
 {
     fputs("      <PointData Scalars=\"temperature\" Vectors=\"velocity\">\n", fp);
+
+
     return;
 }
 
@@ -106,16 +111,20 @@ static void vtk_cell_data_trailer(struct All_variables *E, FILE *fp)
 
 static void vtk_output_temp(struct All_variables *E, FILE *fp)
 {
-    int i, j;
+    int i;
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
-    const int lev = E->mesh.levmax;
     float* floattemp = malloc(nodes*sizeof(float));
 
-    fputs("        <DataArray type=\"Float32\" Name=\"temperature\" format=\"binary\">\n", fp);
+    fprintf(fp, "        <DataArray type=\"Float32\" Name=\"temperature\" format=\"%s\">\n", E->output.vtk_format);
 
-    DoubleToFloatArray(&E->T[1][1], nodes, floattemp);
-    write_array(nodes,floattemp,fp);
+    for(i=0;i <= nodes;i++) 
+        floattemp[i] =  (float) *(E->T[1]+i+1);
 
+    if (strcmp(E->output.vtk_format,"binary") == 0) {
+        write_binary_array(nodes,floattemp,fp);
+    } else {
+        write_ascii_array(nodes,1,floattemp,fp);
+    }
     fputs("        </DataArray>\n", fp);
     free(floattemp);
     return;
@@ -130,7 +139,8 @@ static void vtk_output_velo(struct All_variables *E, FILE *fp)
     float *V[4];
     const int lev = E->mesh.levmax;
     float* floatvel = malloc(nodes*3*sizeof(float));
-    fputs("        <DataArray type=\"Float32\" Name=\"velocity\" NumberOfComponents=\"3\" format=\"binary\">\n", fp);
+
+    fprintf(fp, "        <DataArray type=\"Float32\" Name=\"velocity\" NumberOfComponents=\"3\" format=\"%s\">\n", E->output.vtk_format);
 
     for(j=1; j<=E->sphere.caps_per_proc; j++) {
         V[1] = E->sphere.cap[j].V[1];
@@ -148,8 +158,13 @@ static void vtk_output_velo(struct All_variables *E, FILE *fp)
             floatvel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+2] = (float)(-V[1][i]*sint + V[3][i]*cost);
         }
     }
-    write_array(nodes*3,floatvel,fp);
+
+    if (strcmp(E->output.vtk_format, "binary") == 0) 
+        write_binary_array(nodes*3,floatvel,fp);
+    else 
+        write_ascii_array(nodes*3,3,floatvel,fp);
     fputs("        </DataArray>\n", fp);
+
     free(floatvel);
     return;
 }
@@ -157,14 +172,16 @@ static void vtk_output_velo(struct All_variables *E, FILE *fp)
 
 static void vtk_output_visc(struct All_variables *E, FILE *fp)
 {
-    int i, j;
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
     int lev = E->mesh.levmax;
 
-    fputs("        <DataArray type=\"Float32\" Name=\"viscosity\" format=\"binary\">\n", fp);
-    
-    write_array(nodes,&E->VI[lev][1][1],fp);
-
+    fprintf(fp, "        <DataArray type=\"Float32\" Name=\"viscosity\" format=\"%s\">\n", E->output.vtk_format);
+        if (strcmp(E->output.vtk_format, "binary") == 0) {
+            write_binary_array(nodes,&E->VI[lev][1][1],fp);
+        } else {
+            write_ascii_array(nodes,1,&E->VI[lev][1][1],fp);
+        }
+       
     fputs("        </DataArray>\n", fp);
     return;
 }
@@ -179,16 +196,20 @@ static void vtk_output_coord(struct All_variables *E, FILE *fp)
     float* floatpos = malloc(nodes*3*sizeof(float));
 
     fputs("      <Points>\n", fp);
-    fputs("        <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"binary\">\n", fp);
+    fprintf(fp, "        <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"%s\">\n", E->output.vtk_format);
 
     for(j=1; j<=E->sphere.caps_per_proc; j++) {
         for(i=1; i<=E->lmesh.nno; i++){
-            floatpos[((j-1)*E->lmesh.nno+i-1)*3] = (float)(E->x[j][1][i]);
-	    floatpos[((j-1)*E->lmesh.nno+i-1)*3+1]=(float)(E->x[j][2][i]);
-	    floatpos[((j-1)*E->lmesh.nno+i-1)*3+2]=(float)(E->x[j][3][i]);
+                floatpos[((j-1)*E->lmesh.nno+i-1)*3] = (float)(E->x[j][1][i]);
+	        floatpos[((j-1)*E->lmesh.nno+i-1)*3+1]=(float)(E->x[j][2][i]);
+	        floatpos[((j-1)*E->lmesh.nno+i-1)*3+2]=(float)(E->x[j][3][i]);
         }
     }
-    write_array(nodes*3,floatpos,fp);
+
+    if (strcmp(E->output.vtk_format, "binary") == 0)
+        write_binary_array(nodes*3,floatpos,fp);
+    else
+        write_ascii_array(nodes*3,3,floatpos,fp);    
     fputs("        </DataArray>\n", fp);
     fputs("      </Points>\n", fp);
     free(floatpos);
@@ -197,7 +218,6 @@ static void vtk_output_coord(struct All_variables *E, FILE *fp)
 
 static void vtk_output_stress(struct All_variables *E, FILE *fp)
 {
-    int m, node;
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
    /* for stress computation */
     void allocate_STD_mem();
@@ -205,26 +225,19 @@ static void vtk_output_stress(struct All_variables *E, FILE *fp)
     void free_STD_mem();
     float *SXX[NCS],*SYY[NCS],*SXY[NCS],*SXZ[NCS],*SZY[NCS],*SZZ[NCS];
     float *divv[NCS],*vorv[NCS];
-  /*  */
+
+    /* those are sorted like stt spp srr stp str srp  */
     allocate_STD_mem(E, SXX, SYY, SZZ, SXY, SXZ, SZY, divv, vorv);
     compute_nodal_stress(E, SXX, SYY, SZZ, SXY, SXZ, SZY, divv, vorv);
     free_STD_mem(E, SXX, SYY, SZZ, SXY, SXZ, SZY, divv, vorv);
 
-    fputs("        <DataArray type=\"Float32\" Name=\"stress\" NumberOfComponents=\"6\" format=\"binary\">\n", fp);
+    fprintf(fp, "        <DataArray type=\"Float32\" Name=\"stress\" NumberOfComponents=\"6\" format=\"%s\">\n", E->output.vtk_format);
 
-/*  for(m=1;m<=E->sphere.caps_per_proc;m++) {*/
-    /* those are sorted like stt spp srr stp str srp  */
-    /*for (node=1;node<=E->lmesh.nno;node++) {   
-      fprintf(fp, "%.4e %.4e %.4e %.4e %.4e %.4e\n",
-              E->gstress[m][(node-1)*6+1],
-              E->gstress[m][(node-1)*6+2],
-              E->gstress[m][(node-1)*6+3],
-              E->gstress[m][(node-1)*6+4],
-              E->gstress[m][(node-1)*6+5],
-              E->gstress[m][(node-1)*6+6]);
+    if (strcmp(E->output.vtk_format, "binary") == 0) {
+        write_binary_array(nodes*6,&E->gstress[1][1],fp);
+    } else {
+        write_ascii_array(nodes*6,6,&E->gstress[1][1],fp);
     }
-  }*/
-    write_array(nodes*6,&E->gstress[1][1],fp);
 
     fputs("        </DataArray>\n", fp);
     return;
@@ -238,27 +251,28 @@ static void vtk_output_comp_nd(struct All_variables *E, FILE *fp)
     float* floatcompo = malloc (nodes*sizeof(float));
     
     for(k=0;k<E->composition.ncomp;k++) {
-        snprintf(name, 255, "        <DataArray type=\"Float32\" Name=\"composition%d\" format=\"binary\">\n", (k+1));
+        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"composition%d\" format=\"%s\">\n", k+1, E->output.vtk_format);
 
-        fputs(name, fp); 
-    
         for(j=1; j<=E->sphere.caps_per_proc; j++) {
             for(i=1; i<=E->lmesh.nno; i++) {
                 floatcompo[(j-1)*E->lmesh.nno+i-1] = (float) (E->composition.comp_node[j][k][i]);
 	    }
         }
 
-        write_array(nodes,floatcompo,fp);
+        if (strcmp(E->output.vtk_format, "binary") == 0)
+            write_binary_array(nodes,floatcompo,fp);
+        else
+            write_ascii_array(nodes,1,floatcompo,fp);
         fputs("        </DataArray>\n", fp);
-        free(floatcompo);
     }
+    free(floatcompo);
     return;
 }
 
 
 void vtk_output_surf(struct All_variables *E,  FILE *fp, int cycles)
 {
-    int i, j, k, s;
+    int i, j, k;
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
     char output_file[255];
     float* floattopo = malloc (nodes*sizeof(float));
@@ -275,11 +289,11 @@ void vtk_output_surf(struct All_variables *E,  FILE *fp, int cycles)
         get_STD_topo(E,E->slice.tpg,E->slice.tpgb,E->slice.divg,E->slice.vort,cycles);
     }
 
-    fputs("        <DataArray type=\"Float32\" Name=\"surface\" format=\"binary\">\n", fp);
+    fprintf(fp,"        <DataArray type=\"Float32\" Name=\"surface\" format=\"%s\">\n", E->output.vtk_format);
 
     for(j=1;j<=E->sphere.caps_per_proc;j++){
         for(i=1;i<=E->lmesh.nsf;i++){
-            for(k=1;k<=E->lmesh.noz-1;k++){
+            for(k=1;k<=E->lmesh.noz;k++){
                 floattopo[(j-1)*E->lmesh.nno + (i-1)*E->lmesh.noz + k-1] = 0.0; 
             }
 
@@ -293,18 +307,105 @@ void vtk_output_surf(struct All_variables *E,  FILE *fp, int cycles)
 
             }
         }
-                       
-
-            write_array(nodes,floattopo,fp);
-
-/*        for(i=1;i<=E->lmesh.nsf;i++)   
-          for(k=1;k<=E->lmesh.noz-1;k++)   
-            fprintf(fp, "%.4e\n", 0.0);
-          fprintf(fp, "%.4e\n", topo[i]);
-         */
     }
+
+    if (strcmp(E->output.vtk_format, "binary") == 0)
+        write_binary_array(nodes,floattopo,fp);
+    else
+        write_ascii_array(nodes,1,floattopo,fp);
+
     fputs("        </DataArray>\n", fp);
   return;
+}
+
+
+void write_pvts(struct All_variables *E, int cycles)
+{
+    FILE *fp;
+    char pvts_file[255];
+    int i,j,k;
+    snprintf(pvts_file, 255, "%s.%d.pvts",
+    E->control.data_file, cycles);
+    fp = output_open(pvts_file, "w");
+
+    const char format[] =
+        "<?xml version=\"1.0\"?>\n"
+        "<VTKFile type=\"PStructuredGrid\" version=\"0.1\" compressor=\"vtkZLibDataCompressor\" byte_order=\"LittleEndian\">\n"
+        "  <PStructuredGrid WholeExtent=\"%s\" GhostLevel=\"#\">\n"
+        "    <PPointData Scalars=\"temperature\" Vectors=\"velocity\">\n"
+        "      <DataArray type=\"Float32\" Name=\"temperature\" format=\"%s\"/>\n"
+        "      <DataArray type=\"Float32\" Name=\"velocity\" NumberOfComponents=\"3\" format=\"%s\"/>\n"
+        "      <DataArray type=\"Float32\" Name=\"viscosity\" format=\"%s\"/>\n";
+
+    char extent[64], header[1024];
+
+    snprintf(extent, 64, "%d %d %d %d %d %d",
+        E->lmesh.ezs, E->lmesh.ezs + E->lmesh.elz*E->parallel.nprocz,
+        E->lmesh.exs, E->lmesh.exs + E->lmesh.elx*E->parallel.nprocx,
+        E->lmesh.eys, E->lmesh.eys + E->lmesh.ely*E->parallel.nprocy);
+
+    snprintf(header, 1024, format, extent, E->output.vtk_format, 
+             E->output.vtk_format, E->output.vtk_format);
+    fputs(header, fp);
+
+    if (E->output.stress){
+        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"stress\" NumberOfComponents=\"6\" format=\"%s\"/>\n", E->output.vtk_format);
+    }
+    if (E->output.comp_nd && E->composition.on){
+        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"composition1\" format=\"%s\"/>\n", E->output.vtk_format);
+    }
+    if (E->output.surf){
+        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"surface\" format=\"%s\"/>\n", E->output.vtk_format); 
+    }
+
+    fputs("    </PPointData>\n \n"
+    "    <PCellData>\n"
+    "    </PCellData>\n \n"
+    "    <PPoints>\n"
+    "      <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"binary\" />\n"
+    "    </PPoints>\n", fp);
+
+    for(i=0; i < E->parallel.nprocy;i++){
+        for(j=0; j < E->parallel.nprocx;j++){
+            for(k=0; k < E->parallel.nprocz;k++){
+                fprintf(fp, "    <Piece Extent=\"%d %d %d %d %d %d\" Source=\"%s.proc%d.%d.vts\"/>\n",
+                    (k%E->parallel.nprocz)*E->lmesh.elz, 
+                    (k%E->parallel.nprocz+1)*E->lmesh.elz, 
+                    (j%E->parallel.nprocx)*E->lmesh.elx, (j%E->parallel.nprocx+1)*E->lmesh.elx, 
+                    (i%E->parallel.nprocy)*E->lmesh.ely, (i%E->parallel.nprocy+1)*E->lmesh.ely,
+                    E->control.data_prefix, 
+                    i*E->parallel.nprocx*E->parallel.nprocz+j*E->parallel.nprocz+k, cycles);
+            }
+        }
+    }
+
+    fputs("  </PStructuredGrid>\n",fp);
+    fputs("</VTKFile>",fp);
+
+    fclose(fp);
+}
+
+static void write_ascii_array(int nn, int perLine, float *array, FILE *fp)
+{
+    int i;
+
+    switch (perLine) {
+    case 1:
+        for(i=0; i<nn; i++)
+            fprintf(fp, "%.4e\n", array[i]);
+        break;
+    case 3:
+        for(i=0; i < nn/3; i++)
+            fprintf(fp,"%.4e %.4e %.4e\n",array[3*i],array[3*i+1],array[3*i+2]);
+        break;
+    case 6:
+        for(i=0; i < nn/6; i++)
+            fprintf(fp,"%.4e %.4e %.4e %.4e %.4e %.4e\n",
+                    array[6*i],array[6*i+1],array[6*i+2],
+                    array[6*i+3],array[6*i+4],array[6*i+5]);
+        break;
+    }
+    return;
 }
 
 void FloatToUnsignedChar(float * floatarray, int nn, unsigned char * chararray)
@@ -326,16 +427,6 @@ void FloatToUnsignedChar(float * floatarray, int nn, unsigned char * chararray)
         chararray[4*i+3]=floattransform.output[3];
     }
     return;
-}
-
-void DoubleToFloatArray(double* doublearray, int nn, float* floatarray)
-{
-    /*converts array of double values to floatvalues */
-    int i;
-	
-    for (i=0; i<nn; i++){
-        floatarray[i]=(float)(doublearray[i]);
-    }
 }
 
 void IntToUnsignedChar(int * intarray, int nn, unsigned char * chararray)
@@ -380,7 +471,6 @@ void usercompress(unsigned char* in, int nn, unsigned char** out, int *nn2)
     // the compression stream
     z_stream strm;
 
-    // nothing to see here
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
@@ -425,7 +515,7 @@ void usercompress(unsigned char* in, int nn, unsigned char** out, int *nn2)
         }while (flush != Z_FINISH);
         // DONE
     }
-    //else{cout << "ARRG! Problem in Compression!"<<endl;}
+    //else{cout << "Problem in Compression!"<<endl;}
     else{}
     // now we know how short "out" should be!
     *nn2=ntemp;
@@ -531,13 +621,11 @@ void write_vtsarray(int nn, unsigned char * array, FILE * f)
 {
     /*binary output routine*/
     int i;
-    for(i=0; i < nn; i++){
-        fprintf(f,"%c",(char) array[i]);
-    }
+    fwrite(array,sizeof(unsigned char),nn,f);
     fprintf (f,"\n");
 }
 
-static void write_array(int nn, float* array, FILE * f)
+static void write_binary_array(int nn, float* array, FILE * f)
 {
     /* writes vtk-data array of floats and performs zip and base64 encoding */
     int chararraylength=4*nn;	/* nn floats -> 4*nn unsigned chars */
@@ -564,88 +652,25 @@ static void write_array(int nn, float* array, FILE * f)
     free(base64plusheadarray);
 }
 
-void write_pvts(struct All_variables *E, int cycles)
-{
-    FILE *fp;
-    char pvts_file[255];
-    int i,j,k;
-    snprintf(pvts_file, 255, "%s.%d.pvts",
-    E->control.data_file, cycles);
-    fp = output_open(pvts_file, "w");
-
-    const char format[] =
-        "<?xml version=\"1.0\"?>\n"
-        "<VTKFile type=\"PStructuredGrid\" version=\"0.1\" compressor=\"vtkZLibDataCompressor\" byte_order=\"LittleEndian\">\n"
-        "  <PStructuredGrid WholeExtent=\"%s\" GhostLevel=\"#\">\n"
-        "    <PPointData Scalars=\"temperature\" Vectors=\"velocity\">\n"
-        "      <DataArray type=\"Float32\" Name=\"temperature\" format=\"binary\"/>\n"
-        "      <DataArray type=\"Float32\" Name=\"velocity\" NumberOfComponents=\"3\" format=\"binary\"/>\n"
-        "      <DataArray type=\"Float32\" Name=\"viscosity\" format=\"binary\"/>\n";
-
-    char extent[64], header[1024];
-
-    snprintf(extent, 64, "%d %d %d %d %d %d",
-        E->lmesh.ezs, E->lmesh.ezs + E->lmesh.elz*E->parallel.nprocz,
-        E->lmesh.exs, E->lmesh.exs + E->lmesh.elx*E->parallel.nprocx,
-        E->lmesh.eys, E->lmesh.eys + E->lmesh.ely*E->parallel.nprocy);
-
-    snprintf(header, 1024, format, extent);
-    fputs(header, fp);
-
-    if (E->output.stress){
-        fputs("      <DataArray type=\"Float32\" Name=\"stress\" NumberOfComponents=\"6\" format=\"binary\"/>\n", fp);
-    }
-    if (E->output.comp_nd && E->composition.on){
-        fputs("      <DataArray type=\"Float32\" Name=\"composition1\" format=\"binary\"/>\n", fp);
-    }
-    if (E->output.surf){
-        fputs("      <DataArray type=\"Float32\" Name=\"surface\" format=\"binary\"/>\n", fp); 
-    }
-
-    fputs("    </PPointData>\n \n"
-    "    <PCellData>\n"
-    "    </PCellData>\n \n"
-    "    <PPoints>\n"
-    "      <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"binary\" />\n"
-    "    </PPoints>\n", fp);
-
-    for(i=0; i < E->parallel.nprocy;i++){
-        for(j=0; j < E->parallel.nprocx;j++){
-            for(k=0; k < E->parallel.nprocz;k++){
-                fprintf(fp, "    <Piece Extent=\"%d %d %d %d %d %d\" Source=\"%s.proc%d.%d.vts\"/>\n",
-                    (k%E->parallel.nprocz)*E->lmesh.elz, 
-                    (k%E->parallel.nprocz+1)*E->lmesh.elz, 
-                    (j%E->parallel.nprocx)*E->lmesh.elx, (j%E->parallel.nprocx+1)*E->lmesh.elx, 
-                    (i%E->parallel.nprocy)*E->lmesh.ely, (i%E->parallel.nprocy+1)*E->lmesh.ely,
-                    E->control.data_prefix, 
-                    i*E->parallel.nprocx*E->parallel.nprocz+j*E->parallel.nprocz+k, cycles);
-            }
-        }
-    }
-
-    fputs("  </PStructuredGrid>\n",fp);
-    fputs("</VTKFile>",fp);
-
-    fclose(fp);
-}
-
 /**********************************************************************/
 
 void vtk_output(struct All_variables *E, int cycles)
 {
     char output_file[255];
     FILE *fp;
-
     snprintf(output_file, 255, "%s.proc%d.%d.vts",
              E->control.data_file, E->parallel.me, cycles);
     fp = output_open(output_file, "w");
 
+    /* first, write volume data to vts file */
     vts_file_header(E, fp);
 
     /* write node-based field */
     vtk_point_data_header(E, fp);
     vtk_output_temp(E, fp);
+    
     vtk_output_velo(E, fp);
+
     vtk_output_visc(E, fp);
 
     if (E->output.stress){
