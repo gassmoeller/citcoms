@@ -386,6 +386,40 @@ void write_pvts(struct All_variables *E, int cycles)
     fclose(fp);
 }
 
+void write_pvd(struct All_variables *E, int cycles)
+{
+    FILE *fp;
+    char pvd_file[255];
+    int i;
+    snprintf(pvd_file, 255, "%s.pvd",
+    E->control.data_file);
+
+    if (cycles == 0){
+        fp = output_open(pvd_file, "w");
+        const char format[] =
+            "<?xml version=\"1.0\"?>\n"
+            "<VTKFile type=\"Collection\" version=\"0.1\" compressor=\"vtkZLibDataCompressor\" byte_order=\"LittleEndian\">\n"
+            "  <Collection>\n";
+
+        fputs(format,fp);
+        fclose(fp);
+    }
+    fp = output_open(pvd_file, "a");
+
+    for (i=0;i<E->sphere.caps;i++){
+        fprintf(fp, "    <DataSet timestep=\"%.0f\" group=\"\" part=\"%d\" file=\"%s.%d.%d.pvts\"/>\n",E->monitor.elapsed_time*E->data.scalet*1000,i,E->control.data_prefix,i,cycles);
+    }
+    fflush(fp);
+    fprintf(stderr,"output.steps=%d, cycles=%d",E->output.steps,cycles);
+    if (cycles == E->output.steps){
+        const char format[] = 
+            "  </Collection>\n"
+            "</VTKFile>\n";
+        fputs(format,fp);
+        fclose(fp);
+    }
+}
+
 static void write_ascii_array(int nn, int perLine, float *array, FILE *fp)
 {
     int i;
@@ -642,6 +676,10 @@ void vtk_output(struct All_variables *E, int cycles)
 {
     char output_file[255];
     FILE *fp;
+    int procs_per_cap;
+
+    procs_per_cap = E->parallel.nprocx*E->parallel.nprocy*E->parallel.nprocz;
+
     snprintf(output_file, 255, "%s.proc%d.%d.vts",
              E->control.data_file, E->parallel.me, cycles);
     fp = output_open(output_file, "w");
@@ -683,6 +721,9 @@ void vtk_output(struct All_variables *E, int cycles)
     fclose(fp);
 
     /* if processor if first of cap write summary for simple reading */
-       if (E->parallel.me%(E->parallel.nprocx*E->parallel.nprocy*E->parallel.nprocz) == 0) write_pvts(E, cycles);
+    if (E->parallel.me%procs_per_cap == 0) write_pvts(E, cycles);
+
+    /* if processor is second write pvd for real time in vtk */
+    if (E->parallel.me == 1%procs_per_cap) write_pvd(E, cycles);
     return;
 }

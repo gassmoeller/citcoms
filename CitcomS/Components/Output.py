@@ -59,6 +59,8 @@ class Output(CitcomComponent):
         vtk_format = inv.str("vtk_format", default="ascii",
                              validator=inv.choice(["binary", "ascii"]))
 
+        steps = inv.int("steps", default="1")
+
         # experimental vtk output
         gzdir_vtkio = inv.int("gzdir_vtkio", default=0)
         # remove net rotation
