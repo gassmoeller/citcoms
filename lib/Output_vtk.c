@@ -410,7 +410,6 @@ void write_pvd(struct All_variables *E, int cycles)
         fprintf(fp, "    <DataSet timestep=\"%.0f\" group=\"\" part=\"%d\" file=\"%s.%d.%d.pvts\"/>\n",E->monitor.elapsed_time*E->data.scalet*1000,i,E->control.data_prefix,i,cycles);
     }
     fflush(fp);
-    fprintf(stderr,"output.steps=%d, cycles=%d",E->output.steps,cycles);
     if (cycles == E->output.steps){
         const char format[] = 
             "  </Collection>\n"
