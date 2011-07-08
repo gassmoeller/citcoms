@@ -46,6 +46,7 @@ class IC(CitcomComponent):
         inv.perturbl = map(int, inv.perturbl)
         inv.perturbm = map(int, inv.perturbm)
         inv.blob_center = map(float, inv.blob_center)
+        inv.blob_radius = map(float, inv.blob_radius)
 
         IC_set_properties(self.all_variables, self.inventory, stream)
 
@@ -132,7 +133,7 @@ class IC(CitcomComponent):
 
         # for tic_method=2
         blob_center = pyre.inventory.list("blob_center", default=[-999., -999., -999.])
-        blob_radius = pyre.inventory.float("blob_radius", default=0.063)
+        blob_radius = pyre.inventory.list("blob_radius", default=[0.063, 0.063, 0.063])
         blob_dT = pyre.inventory.float("blob_dT", default=0.18)
 
 

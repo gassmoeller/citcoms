@@ -1424,7 +1424,7 @@ void h5output_meta(struct All_variables *E)
     if (E->convection.tic_method == 2)
     {
         status = set_attribute_float_vector(input, "blob_center", 3, E->convection.blob_center);
-        status = set_attribute_float(input, "blob_radius", E->convection.blob_radius);
+        status = set_attribute_float_vector(input, "blob_radius", 3, E->convection.blob_radius);
         status = set_attribute_float(input, "blob_dT", E->convection.blob_dT);
     }
 

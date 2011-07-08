@@ -152,7 +152,7 @@ void tic_input(struct All_variables *E)
 	  E->convection.blob_center[2] = 0.5*(E->sphere.ri+E->sphere.ro);
 	}
       }
-      input_float("blob_radius", &(E->convection.blob_radius), "0.063,0.0,1.0", m);
+      input_float_vector("blob_radius", 3, E->convection.blob_radius, m);
       input_float("blob_dT", &(E->convection.blob_dT), "0.18,nomin,nomax", m);
       input_boolean("blob_bc_persist",&(E->convection.blob_bc_persist),"off",m);
       break;
@@ -589,7 +589,7 @@ static void add_sudden_spherical_anomaly(struct All_variables *E)
     int nox, noy, noz;
 
     double theta_center, fi_center, r_center,x_center[4],dx[4];
-    double radius, amp, r1,rout,rin;
+    double radius[3], amp, r1,rout,rin;
     const double e_4 = 1e-4;
     double distance;
 
@@ -608,10 +608,9 @@ static void add_sudden_spherical_anomaly(struct All_variables *E)
     amp          = E->convection.blob_dT;
     
     if(E->parallel.me == 0)
-      fprintf(stderr,"center=(%e %e %e) radius=%e dT=%e\n",
-	      theta_center, fi_center, r_center, radius, amp);
+      fprintf(stderr,"center=(%e %e %e) radius=(%e %e %e) dT=%e\n",
+	      theta_center, fi_center, r_center, radius[0], radius[1], radius[2], amp);
     
-    rtp2xyzd(r_center, theta_center, fi_center, (x_center+1));
 
     /* compute temperature field according to nodal coordinate */
     for(m=1; m<=E->sphere.caps_per_proc; m++)
@@ -619,12 +618,11 @@ static void add_sudden_spherical_anomaly(struct All_variables *E)
             for(j=1; j<=nox;j ++)
                 for(k=1; k<=noz; k++) {
                     node = k + (j-1)*noz + (i-1)*nox*noz;
-		    dx[1] = E->x[m][1][node] - x_center[1];
-		    dx[2] = E->x[m][2][node] - x_center[2];
-		    dx[3] = E->x[m][3][node] - x_center[3];
-                    distance = sqrt(dx[1]*dx[1] + dx[2]*dx[2] + dx[3]*dx[3]);
+		    dx[1] = E->sx[m][1][node] - theta_center;
+		    dx[2] = E->sx[m][2][node] - fi_center;
+		    dx[3] = E->sx[m][3][node] - r_center;
 
-                    if (distance < radius){
+                    if ((dx[1]*dx[1]/radius[0]) + (dx[2]*dx[2]/radius[1]) + (dx[3]*dx[3]/radius[2]) < 1){
 		      E->T[m][node] += amp;
 
 		      if(E->convection.blob_bc_persist){
@@ -648,7 +646,7 @@ static void add_spherical_anomaly(struct All_variables *E)
     int nox, noy, noz;
 
     double theta_center, fi_center, r_center,x_center[4],dx[4];
-    double radius, amp, r1,rout,rin;
+    double radius[3], amp, r1,rout,rin;
     const double e_4 = 1e-4;
     double distance;
 
@@ -667,8 +665,8 @@ static void add_spherical_anomaly(struct All_variables *E)
     amp          = E->convection.blob_dT;
     
     if(E->parallel.me == 0)
-      fprintf(stderr,"center=(%e %e %e) radius=%e dT=%e\n",
-	      theta_center, fi_center, r_center, radius, amp);
+      fprintf(stderr,"center=(%e %e %e) radius=(%e %e %e) dT=%e\n",
+	      theta_center, fi_center, r_center, radius[0], radius[1], radius[2], amp);
     
     rtp2xyzd(r_center, theta_center, fi_center, (x_center+1));
 
@@ -683,8 +681,8 @@ static void add_spherical_anomaly(struct All_variables *E)
 		    dx[3] = E->x[m][3][node] - x_center[3];
                     distance = sqrt(dx[1]*dx[1] + dx[2]*dx[2] + dx[3]*dx[3]);
 
-                    if (distance < radius){
-		      E->T[m][node] += amp * exp(-1.0*distance/radius);
+                    if (distance < radius[0]){
+		      E->T[m][node] += amp * exp(-1.0*distance/radius[0]);
 
 		      if(E->convection.blob_bc_persist){
 			r1 = E->sx[m][3][node];
@@ -831,6 +829,7 @@ static void construct_tic_from_input(struct All_variables *E)
 	/* same as 101, but with spherical anomaly, like chemical LLSVP */
 	mantle_temperature = E->control.mantle_temp;
 	constant_temperature_profile_random(E, mantle_temperature);
+        add_bottom_tbl(E, E->convection.half_space_age, mantle_temperature);
         add_sudden_spherical_anomaly(E);	
 	break;
 

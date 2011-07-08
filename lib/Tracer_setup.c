@@ -1265,8 +1265,8 @@ static void init_tracer_flavors(struct All_variables *E)
     int j, kk, number_of_tracers;
     int i;
     double flavor;
-    double the,phi,rad,xyz[3];
-    double anomaly_center[3];
+    double the,phi,rad,dx[3];
+    double radius[3];
 
     switch(E->trace.ic_method_for_flavors){
     case 0:
@@ -1299,15 +1299,14 @@ static void init_tracer_flavors(struct All_variables *E)
 
 	number_of_tracers = E->trace.ntracers[j];
 	for (kk=1;kk<=number_of_tracers;kk++) {
-	  the = E->trace.basicq[j][0][kk];
-	  phi = E->trace.basicq[j][1][kk];
-	  rad = E->trace.basicq[j][2][kk];
-	  rtp2xyzd(rad,the,phi, xyz);
+	  dx[0] = E->trace.basicq[j][0][kk] - E->convection.blob_center[0];
+	  dx[1] = E->trace.basicq[j][1][kk] - E->convection.blob_center[1];
+	  dx[2] = E->trace.basicq[j][2][kk] - E->convection.blob_center[2];
+          radius = E->convection.blob_radius;
 
           flavor = E->trace.nflavors - 1;
           for (i=0; i<E->trace.nflavors-1; i++) {
-	  rtp2xyzd(E->convection.blob_center[2],E->convection.blob_center[0],E->convection.blob_center[1],anomaly_center);
-             if (((xyz[0]-anomaly_center[0])*(xyz[0]-anomaly_center[0])*1.0)+((xyz[1]-anomaly_center[1])*(xyz[1]-anomaly_center[1])*1.0)+((xyz[2]-anomaly_center[2])*(xyz[2]-anomaly_center[2])*1.0)<E->convection.blob_radius*E->convection.blob_radius) { 
+             if ((dx[0]*dx[0]/radius[0]) + (dx[1]*dx[1]/radius[1]) + (dx[2]*dx[2]/radius[2]) < 1) { 
                           flavor = i;
                           break;
              }         

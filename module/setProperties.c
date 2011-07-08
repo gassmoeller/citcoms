@@ -277,7 +277,7 @@ PyObject * pyCitcom_IC_set_properties(PyObject *self, PyObject *args)
         E->convection.blob_center[1] = 0.5*(E->control.fi_min+E->control.fi_max);
         E->convection.blob_center[2] = 0.5*(E->sphere.ri+E->sphere.ro);
     }
-    getFloatProperty(properties, "blob_radius", E->convection.blob_radius, fp);
+    getFloatVectorProperty(properties, "blob_radius", E->convection.blob_radius, 3, fp);
     getFloatProperty(properties, "blob_dT", E->convection.blob_dT, fp);
 
     PUTS(("\n"));
