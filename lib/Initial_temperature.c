@@ -589,7 +589,8 @@ static void add_sudden_spherical_anomaly(struct All_variables *E)
     int nox, noy, noz;
 
     double theta_center, fi_center, r_center,x_center[4],dx[4];
-    double radius[3], amp, r1,rout,rin;
+    double amp, r1,rout,rin;
+    float* radius;
     const double e_4 = 1e-4;
     double distance;
 
@@ -622,7 +623,7 @@ static void add_sudden_spherical_anomaly(struct All_variables *E)
 		    dx[2] = E->sx[m][2][node] - fi_center;
 		    dx[3] = E->sx[m][3][node] - r_center;
 
-                    if ((dx[1]*dx[1]/radius[0]) + (dx[2]*dx[2]/radius[1]) + (dx[3]*dx[3]/radius[2]) < 1){
+                    if ((dx[1]*dx[1]/(radius[0]*radius[0])) + (dx[2]*dx[2]/(radius[1]*radius[1])) + (dx[3]*dx[3]/(radius[2]*radius[2])) < 1){
 		      E->T[m][node] += amp;
 
 		      if(E->convection.blob_bc_persist){
@@ -646,7 +647,8 @@ static void add_spherical_anomaly(struct All_variables *E)
     int nox, noy, noz;
 
     double theta_center, fi_center, r_center,x_center[4],dx[4];
-    double radius[3], amp, r1,rout,rin;
+    double amp, r1,rout,rin;
+    float* radius;
     const double e_4 = 1e-4;
     double distance;
 
