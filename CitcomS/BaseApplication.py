@@ -79,7 +79,7 @@ class BaseApplication(Application):
         self.controller.launch(self)
 
         # subsequent steps
-        self.controller.march(steps=self.inventory.steps)
+        self.controller.march(steps=self.inventory.steps,totalTime=self.inventory.totalTime)
         return
 
 
@@ -111,7 +111,7 @@ class BaseApplication(Application):
         import pyre.inventory
 
         steps = pyre.inventory.int("steps", default=1)
-
+        totalTime = pyre.inventory.float("totalTime", default=0)
 
 
 # version
