@@ -37,6 +37,7 @@ static void horizontal_bc();
 static void velocity_apply_periodic_bcs();
 static void temperature_apply_periodic_bcs();
 static void velocity_refl_vert_bc();
+static void velocity_mixed_vert_bc();
 static void temperature_refl_vert_bc();
 static void velocity_noslip_vert_bc();
 void read_temperature_boundary_from_file(struct All_variables *);
@@ -111,8 +112,11 @@ void regional_velocity_boundary_conditions(E)
       if(E->mesh.vertbc == 0) {
        velocity_refl_vert_bc(E);
        }
-     else if (E->mesh.vertbc == 1) {
+      else if (E->mesh.vertbc == 1) {
        velocity_noslip_vert_bc(E);
+       }
+      else if (E->mesh.vertbc == 2) {
+        velocity_mixed_vert_bc(E);
        }
 
       if(E->control.side_sbcs)
@@ -609,6 +613,197 @@ static void velocity_noslip_vert_bc(E)
                 E->NODE[level][m][node2] = E->NODE[level][m][node2] & (~VBX);
                 E->NODE[level][m][node2] = E->NODE[level][m][node2] | SBX;
                 }*/
+            }
+
+       }       /* end for m  */
+       }
+       }       /*  end for loop level  */
+
+
+  return;
+  }
+
+static void velocity_mixed_vert_bc(E)
+    struct All_variables *E;
+{
+  int m,i,j,ii,jj;
+  int node1,node2;
+  int level,nox,noy,noz;
+  const int dims=E->mesh.nsd;
+  const float depth=1.1;
+
+ /*  for two YOZ planes   */
+
+  if (E->parallel.me_loc[1]==0 || E->parallel.me_loc[1]==E->parallel.nprocx-1)
+   for (m=1;m<=E->sphere.caps_per_proc;m++)
+    for(j=1;j<=E->lmesh.noy;j++)
+      for(i=1;i<=E->lmesh.noz;i++)  {
+        node1 = i + (j-1)*E->lmesh.noz*E->lmesh.nox;
+        node2 = node1 + (E->lmesh.nox-1)*E->lmesh.noz;
+
+        ii = i + E->lmesh.nzs - 1;
+        if (E->parallel.me_loc[1]==0 )  {
+           E->sphere.cap[m].VB[1][node1] = 0.0;
+           if ((E->sx[m][3][node1] < depth) || ((ii != 1) && (ii != E->mesh.noz)))
+             E->sphere.cap[m].VB[3][node1] = 0.0;
+           if ((E->sx[m][3][node1] < depth))
+	     E->sphere.cap[m].VB[2][node1] = 0.0;
+               }
+        if (E->parallel.me_loc[1]==E->parallel.nprocx-1)  {
+           E->sphere.cap[m].VB[1][node2] = 0.0;
+           if ((E->sx[m][3][node2] < depth) || ((ii != 1) && (ii != E->mesh.noz)))
+             E->sphere.cap[m].VB[3][node2] = 0.0;
+           if ((E->sx[m][3][node2] < depth))
+	     E->sphere.cap[m].VB[2][node2] = 0.0;
+           }
+        }      /* end loop for i and j */
+
+/*  for two XOZ  planes  */
+
+
+    if (E->parallel.me_loc[2]==0)
+     for (m=1;m<=E->sphere.caps_per_proc;m++)
+      for(j=1;j<=E->lmesh.nox;j++)
+        for(i=1;i<=E->lmesh.noz;i++)       {
+          node1 = i + (j-1)*E->lmesh.noz;
+          ii = i + E->lmesh.nzs - 1;
+
+          E->sphere.cap[m].VB[2][node1] = 0.0;
+          if((E->sx[m][3][node1] < depth) || ((ii != 1) && (ii != E->mesh.noz)))
+            E->sphere.cap[m].VB[3][node1] = 0.0;
+          if ((E->sx[m][3][node1] < depth))
+	    E->sphere.cap[m].VB[1][node1] = 0.0;
+          }    /* end of loop i & j */
+
+    if (E->parallel.me_loc[2]==E->parallel.nprocy-1)
+     for (m=1;m<=E->sphere.caps_per_proc;m++)
+      for(j=1;j<=E->lmesh.nox;j++)
+        for(i=1;i<=E->lmesh.noz;i++)       {
+          node2 = (E->lmesh.noy-1)*E->lmesh.noz*E->lmesh.nox + i + (j-1)*E->lmesh.noz;
+          ii = i + E->lmesh.nzs - 1;
+
+          E->sphere.cap[m].VB[2][node2] = 0.0;
+          if((E->sx[m][3][node2] < depth) || ((ii != 1) && (ii != E->mesh.noz)))
+            E->sphere.cap[m].VB[3][node2] = 0.0;
+          if ((E->sx[m][3][node2] < depth))
+	    E->sphere.cap[m].VB[1][node2] = 0.0;
+          }    /* end of loop i & j */
+
+
+  /* all vbc's apply at all levels  */
+  for(level=E->mesh.levmax;level>=E->mesh.levmin;level--) {
+
+    if ( (E->control.CONJ_GRAD && level==E->mesh.levmax) ||E->control.NMULTIGRID)  {
+    noz = E->lmesh.NOZ[level] ;
+    noy = E->lmesh.NOY[level] ;
+    nox = E->lmesh.NOX[level] ;
+
+     for (m=1;m<=E->sphere.caps_per_proc;m++)  {
+       if (E->parallel.me_loc[1]==0 || E->parallel.me_loc[1]==E->parallel.nprocx-1) {
+         for(j=1;j<=noy;j++)
+          for(i=1;i<=noz;i++) {
+          node1 = i + (j-1)*noz*nox;
+          node2 = node1 + (nox-1)*noz;
+          ii = i + E->lmesh.NZS[level] - 1;
+          if (E->parallel.me_loc[1]==0 )  {
+          if (E->sx[m][3][node1] < depth){
+/* No-Slip Randbedingung */
+            E->NODE[level][m][node1] = E->NODE[level][m][node1] | VBX;
+	    E->NODE[level][m][node1] = E->NODE[level][m][node1] | VBY;
+	    E->NODE[level][m][node1] = E->NODE[level][m][node1] | VBZ;
+            E->NODE[level][m][node1] = E->NODE[level][m][node1] & (~SBX);
+	    E->NODE[level][m][node1] = E->NODE[level][m][node1] & (~SBY);
+	    E->NODE[level][m][node1] = E->NODE[level][m][node1] & (~SBZ);
+/* End No-Slip */
+          } else{ // Free-slip
+            E->NODE[level][m][node1] = E->NODE[level][m][node1] | VBX;
+            E->NODE[level][m][node1] = E->NODE[level][m][node1] & (~SBX);
+            if((ii!=1) && (ii!=E->mesh.NOZ[level])) {
+               E->NODE[level][m][node1] = E->NODE[level][m][node1] & (~VBY);
+               E->NODE[level][m][node1] = E->NODE[level][m][node1] | SBY;
+               E->NODE[level][m][node1] = E->NODE[level][m][node1] & (~VBZ);
+               E->NODE[level][m][node1] = E->NODE[level][m][node1] | SBZ;
+               }}
+            } 
+          if (E->parallel.me_loc[1]==E->parallel.nprocx-1)  {
+          if (E->sx[m][3][node2] < depth){
+/* No-Slip Randbedingung */
+            E->NODE[level][m][node2] = E->NODE[level][m][node2] | VBX;
+	    E->NODE[level][m][node2] = E->NODE[level][m][node2] | VBY;
+	    E->NODE[level][m][node2] = E->NODE[level][m][node2] | VBZ;
+            E->NODE[level][m][node2] = E->NODE[level][m][node2] & (~SBX);
+	    E->NODE[level][m][node2] = E->NODE[level][m][node2] & (~SBY);
+	    E->NODE[level][m][node2] = E->NODE[level][m][node2] & (~SBZ);
+/* End No-Slip */
+            }else{
+            E->NODE[level][m][node2] = E->NODE[level][m][node2] | VBX;
+            E->NODE[level][m][node2] = E->NODE[level][m][node2] & (~SBX);
+            if((ii!=1) && (ii!=E->mesh.NOZ[level])) {
+              E->NODE[level][m][node2] = E->NODE[level][m][node2] & (~VBY);
+              E->NODE[level][m][node2] = E->NODE[level][m][node2] | SBY;
+              E->NODE[level][m][node2] = E->NODE[level][m][node2] & (~VBZ);
+              E->NODE[level][m][node2] = E->NODE[level][m][node2] | SBZ;
+                  }}
+            }
+          }   /* end for loop i & j */
+
+         }
+
+
+      if (E->parallel.me_loc[2]==0)
+        for(j=1;j<=nox;j++)
+          for(i=1;i<=noz;i++) {
+            node1 = i + (j-1)*noz;
+            ii = i + E->lmesh.NZS[level] - 1;
+            jj = j + E->lmesh.NXS[level] - 1;
+          if (E->sx[m][3][node1] < depth){
+/* No-Slip Randbedingung */
+            E->NODE[level][m][node1] = E->NODE[level][m][node1] | VBX;
+	    E->NODE[level][m][node1] = E->NODE[level][m][node1] | VBY;
+	    E->NODE[level][m][node1] = E->NODE[level][m][node1] | VBZ;
+            E->NODE[level][m][node1] = E->NODE[level][m][node1] & (~SBX);
+	    E->NODE[level][m][node1] = E->NODE[level][m][node1] & (~SBY);
+	    E->NODE[level][m][node1] = E->NODE[level][m][node1] & (~SBZ);
+/* End No-Slip */
+          }else{ //Free-slip
+            E->NODE[level][m][node1] = E->NODE[level][m][node1] | VBY;
+            E->NODE[level][m][node1] = E->NODE[level][m][node1] & (~SBY);
+            if((ii!= 1) && (ii != E->mesh.NOZ[level]))  {
+                E->NODE[level][m][node1] = E->NODE[level][m][node1] & (~VBZ);
+                E->NODE[level][m][node1] = E->NODE[level][m][node1] | SBZ;
+                }
+            if((jj!=1) && (jj!=E->mesh.NOX[level]) && (ii!=1) && (ii!=E->mesh.NOZ[level])){
+                E->NODE[level][m][node1] = E->NODE[level][m][node1] & (~VBX);
+                E->NODE[level][m][node1] = E->NODE[level][m][node1] | SBX;
+                } }
+                }    /* end for loop i & j  */
+
+      if (E->parallel.me_loc[2]==E->parallel.nprocy-1)
+        for(j=1;j<=nox;j++)
+          for(i=1;i<=noz;i++)       {
+            node2 = (noy-1)*noz*nox + i + (j-1)*noz;
+            ii = i + E->lmesh.NZS[level] - 1;
+            jj = j + E->lmesh.NXS[level] - 1;
+          if (E->sx[m][3][node2] < depth){
+/* No-Slip Randbedingung */
+            E->NODE[level][m][node2] = E->NODE[level][m][node2] | VBX;
+	    E->NODE[level][m][node2] = E->NODE[level][m][node2] | VBY;
+	    E->NODE[level][m][node2] = E->NODE[level][m][node2] | VBZ;
+            E->NODE[level][m][node2] = E->NODE[level][m][node2] & (~SBX);
+	    E->NODE[level][m][node2] = E->NODE[level][m][node2] & (~SBY);
+	    E->NODE[level][m][node2] = E->NODE[level][m][node2] & (~SBZ);
+/* End No-Slip */
+           }else{ //Free-slip
+            E->NODE[level][m][node2] = E->NODE[level][m][node2] | VBY;
+            E->NODE[level][m][node2] = E->NODE[level][m][node2] & (~SBY);
+            if((ii!= 1) && (ii != E->mesh.NOZ[level]))  {
+                E->NODE[level][m][node2] = E->NODE[level][m][node2] & (~VBZ);
+                E->NODE[level][m][node2] = E->NODE[level][m][node2] | SBZ;
+                }
+            if((jj!=1) && (jj!=E->mesh.NOX[level]) && (ii!=1) && (ii!=E->mesh.NOZ[level])){
+                E->NODE[level][m][node2] = E->NODE[level][m][node2] & (~VBX);
+                E->NODE[level][m][node2] = E->NODE[level][m][node2] | SBX;
+                }}
             }
 
        }       /* end for m  */
