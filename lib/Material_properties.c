@@ -38,6 +38,7 @@
 
 static void read_refstate(struct All_variables *E);
 static void adams_williamson_eos(struct All_variables *E);
+static void new_eos(struct All_variables *E);
 
 int layers_r(struct All_variables *,float);
 
@@ -84,6 +85,10 @@ void reference_state(struct All_variables *E)
     case 1:
         /* Adams-Williamson EoS */
         adams_williamson_eos(E);
+        break;
+    case 2:
+        /* New EoS */
+        new_eos(E);
         break;
     default:
         if (E->parallel.me) {
@@ -176,4 +181,24 @@ static void adams_williamson_eos(struct All_variables *E)
     return;
 }
 
+static void new_eos(struct All_variables *E)
+{
+    int i;
+    double r, z, beta;
+
+    beta = E->control.disptn_number * E->control.inv_gruneisen;
+
+    for(i=1; i<=E->lmesh.noz; i++) {
+	r = E->sx[1][3][i];
+	z = 1 - r;
+	E->refstate.rho[i] = exp(beta*z);
+	E->refstate.gravity[i] = 1;
+	E->refstate.thermal_expansivity[i] = 0.2 + 0.8 * (E->sx[1][3][i]- E->sphere.ri)/(E->sphere.ro - E->sphere.ri);
+	E->refstate.heat_capacity[i] = 1;
+	/*E->refstate.thermal_conductivity[i] = 1;*/
+	/*E->refstate.Tadi[i] = (E->control.adiabaticT0 + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;*/
+    }
+
+    return;
+}
 
