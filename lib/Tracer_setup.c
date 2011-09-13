@@ -1304,8 +1304,8 @@ static void init_tracer_flavors(struct All_variables *E)
 	  dx[2] = E->trace.basicq[j][2][kk] - E->convection.blob_center[2];
           radius = E->convection.blob_radius;
 
-          flavor = E->trace.nflavors - 1;
-          for (i=0; i<E->trace.nflavors-1; i++) {
+          flavor = 0;
+          for (i=1; i<E->trace.nflavors; i++) {
              if ((dx[0]*dx[0]/(radius[0]*radius[0])) + (dx[1]*dx[1]/(radius[1]*radius[1])) + (dx[2]*dx[2]/(radius[2]*radius[2])) < 1) { 
                           flavor = i;
                           break;
