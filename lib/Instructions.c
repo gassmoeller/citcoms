@@ -1370,17 +1370,18 @@ static void open_log(struct All_variables *E)
   char logfile[255];
 
   E->fp = NULL;
-  if (strcmp(E->output.format, "ascii-gz") == 0)
-    sprintf(logfile,"%s/log", E->control.data_dir);
-  else
-    sprintf(logfile,"%s.log", E->control.data_file);
+  if (E->parallel.me == 0) {
+    if (strcmp(E->output.format, "ascii-gz") == 0)
+      sprintf(logfile,"%s/log", E->control.data_dir);
+    else
+      sprintf(logfile,"%s.log", E->control.data_file);
 
-  if (E->control.restart || E->control.post_p)
-      /* append the log file if restart */
-      E->fp = output_open(logfile, "a");
-  else
-      E->fp = output_open(logfile, "w");
-
+    if (E->control.restart || E->control.post_p)
+        /* append the log file if restart */
+        E->fp = output_open(logfile, "a");
+    else
+        E->fp = output_open(logfile, "w");
+  }
   return;
 }
 
