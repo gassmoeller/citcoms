@@ -940,7 +940,7 @@ void visc_from_T(E,EEta,propogate)
                     }
 
 		    if (zzz>=0.4332){
-			EEta[m][ (i-1)*vpts + jj ] = 18.6;
+			EEta[m][ (i-1)*vpts + jj ] = 1.86;
 			EEta[m][ (i-1)*vpts + jj ] = EEta[m][ (i-1)*vpts + jj ] * exp(-14.0*(temp-E->control.mantle_temp));}
 		    if (zzz<=0.4332 && zzz>0.4112){
 			EEta[m][ (i-1)*vpts + jj ] = 3.54;
@@ -1003,7 +1003,7 @@ void visc_from_T(E,EEta,propogate)
 		    	EEta[m][ (i-1)*vpts + jj ] = 0.241;
 			EEta[m][ (i-1)*vpts + jj ] = EEta[m][ (i-1)*vpts + jj ] * exp(-14.0*(temp-E->control.mantle_temp));}
 		    if (zzz<= 0.0157 && zzz>=0){
-			EEta[m][ (i-1)*vpts + jj ] = 0.241;
+			EEta[m][ (i-1)*vpts + jj ] = 2.41;
 			EEta[m][ (i-1)*vpts + jj ] = EEta[m][ (i-1)*vpts + jj ] * exp(-14.0*(temp-E->control.mantle_temp));}
 		}}
 		break;
