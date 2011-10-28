@@ -66,6 +66,22 @@ void mat_prop_allocate(struct All_variables *E)
     /* reference profile of temperature */
     E->refstate.Tadi = (double *) malloc((noz+1)*sizeof(double));
 
+    /* reference profile of free enthalpy */
+    /* only used in viscosity option 104 */
+    E->refstate.free_enthalpy = (double *) malloc((noz+1)*sizeof(double));
+
+    /* reference profile of radial viscosity */
+    /* only used in viscosity option 104 */
+    E->refstate.rad_viscosity = (double *) malloc((noz+1)*sizeof(double));
+
+    /* reference profile of stress dependence of viscosity */
+    /* only used in viscosity option 104 */
+    E->refstate.stress_exp = (double *) malloc((noz+1)*sizeof(double));
+
+    /* reference profile of density contrast */
+    /* only used in tracer option */
+    E->refstate.delta_rho1 = (double *) malloc((noz+1)*sizeof(double));
+
 }
 
 
@@ -134,14 +150,17 @@ static void read_refstate(struct All_variables *E)
 
     for(i=1; i<=E->lmesh.noz; i++) {
         fgets(buffer, 255, fp);
-        if(sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf\n",
+        if(sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
                   &(E->refstate.rho[i]),
                   &(E->refstate.gravity[i]),
                   &(E->refstate.thermal_expansivity[i]),
                   &(E->refstate.heat_capacity[i]),
                   &(E->refstate.Tadi[i]),
-                  &not_used2,
-                  &not_used3) != 7) {
+                  &(E->refstate.free_enthalpy[i]),
+                  &(E->refstate.rad_viscosity[i]),
+                  &(E->refstate.stress_exp[i]),
+                  &(E->refstate.delta_rho1[i]),
+                  &not_used3) != 10) {
             fprintf(stderr,"Error while reading file '%s'\n", E->refstate.filename);
             exit(8);
         }
@@ -175,7 +194,12 @@ static void adams_williamson_eos(struct All_variables *E)
 	E->refstate.thermal_expansivity[i] = 1;
 	E->refstate.heat_capacity[i] = 1;
 	/*E->refstate.thermal_conductivity[i] = 1;*/
-	E->refstate.Tadi[i] = (E->control.adiabaticT0 + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;
+        E->refstate.free_enthalpy[i] = 1;
+        E->refstate.rad_viscosity[i] = 1;
+        //E->refstate.stress_exp[i] = 1;
+	E->refstate.Tadi[i] = (E->control.TBCtopval + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;
+        //E->refstate.Tadi[i] = 1;
+        E->refstate.delta_rho1[i] = 1.0;
     }
 
     return;
@@ -196,7 +220,12 @@ static void new_eos(struct All_variables *E)
 	E->refstate.thermal_expansivity[i] = 0.2 + 0.8 * (E->sx[1][3][i]- E->sphere.ri)/(E->sphere.ro - E->sphere.ri);
 	E->refstate.heat_capacity[i] = 1;
 	/*E->refstate.thermal_conductivity[i] = 1;*/
-	E->refstate.Tadi[i] = (E->control.adiabaticT0 + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;
+        E->refstate.free_enthalpy[i] = 1;
+        E->refstate.rad_viscosity[i] = 1;
+        E->refstate.stress_exp[i] = 1;
+	/*E->refstate.Tadi[i] = (E->control.adiabaticT0 + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;*/
+        E->refstate.Tadi[i] = 1;
+        E->refstate.delta_rho1[i] = 1.0;
     }
 
     return;
