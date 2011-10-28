@@ -554,6 +554,11 @@ struct REF_STATE {
     /*double *thermal_conductivity;*/
     double *gravity;
     double *Tadi;
+    double *free_enthalpy;
+    double *rad_viscosity;
+    double *stress_exp;
+    double *delta_rho1;
+    /*double *delta_rho2;*/
 };
 
 
@@ -644,7 +649,8 @@ struct Output {
     int comp_el;      /* whether to output composition at elements */
     int comp_nd;      /* whether to output composition at nodes */
     int heating;      /* whether to output heating terms at elements */
-
+    int density;      /* whether to output density */
+    int svelo;        /* whether to output spherical velocities (debugging) */
 
   /* flags used by GZDIR */
   struct gzd_struc gzdir;
