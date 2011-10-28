@@ -305,6 +305,83 @@ static void linear_temperature_profile(struct All_variables *E)
     return;
 }
 
+static void read_in_temperature_profile(struct All_variables *E)
+{
+    int m, i, j, k, node;
+    int nox, noy, noz;
+    double r1,DeltaT;
+
+    nox = E->lmesh.nox;
+    noy = E->lmesh.noy;
+    noz = E->lmesh.noz;
+    DeltaT = E->control.Atemp * E->data.ref_viscosity * E->data.therm_diff /(E->data.density*E->data.therm_exp*E->data.grav_acc*E->data.radius_km*E->data.radius_km*E->data.radius_km*1000000000);
+
+
+    for(m=1; m<=E->sphere.caps_per_proc; m++)
+        for(i=1; i<=noy; i++)
+            for(j=1; j<=nox;j ++)
+                for(k=1; k<=noz; k++) {
+                    node = k + (j-1)*noz + (i-1)*nox*noz;
+                    r1 = E->sx[m][3][node];
+                    E->T[m][node] = (E->refstate.Tadi[k]-273.0)/DeltaT;
+                    if (r1*6371 > 6271) E->T[m][node] -= (1340.0/4000.0)*erfc((1.0-r1)*6371.0/100.0);
+                    if (r1*6371 < 6371-2690) E->T[m][node] += (1700.0/4000.0)*erfc((2890.0-(1.0-r1)*6371.0)/200.0);
+                    
+                }
+    return;
+}
+
+static void adiabatic_profile(struct All_variables *E)
+{
+    int m, i, j, k, node;
+    int nox, noy, noz;
+    double r1,DeltaT;
+
+    nox = E->lmesh.nox;
+    noy = E->lmesh.noy;
+    noz = E->lmesh.noz;
+    DeltaT = E->control.Atemp * E->data.ref_viscosity * E->data.therm_diff /(E->data.density*E->data.therm_exp*E->data.grav_acc*E->data.radius_km*E->data.radius_km*E->data.radius_km*1000000000);
+
+
+    for(m=1; m<=E->sphere.caps_per_proc; m++)
+        for(i=1; i<=noy; i++)
+            for(j=1; j<=nox;j ++)
+                for(k=1; k<=noz; k++) {
+                    node = k + (j-1)*noz + (i-1)*nox*noz;
+                    r1 = E->sx[m][3][node];
+                    E->T[m][node] = E->refstate.Tadi[k];
+                    //if (r1*6371 > 6271) E->T[m][node] -= (1340.0/2740.0)*erfc((1.0-r1)*6371.0/100.0);
+                    //if (r1*6371 < 6371-2690) E->T[m][node] += (1700.0/2740.0)*erfc((2890.0-(1.0-r1)*6371.0)/200.0);
+                    
+                }
+    return;
+}
+
+static void own_linear_temperature_profile(struct All_variables *E)
+{
+    int m, i, j, k, node;
+    int nox, noy, noz;
+    double r1;
+
+    nox = E->lmesh.nox;
+    noy = E->lmesh.noy;
+    noz = E->lmesh.noz;
+
+    for(m=1; m<=E->sphere.caps_per_proc; m++)
+        for(i=1; i<=noy; i++)
+            for(j=1; j<=nox;j ++)
+                for(k=1; k<=noz; k++) {
+                    node = k + (j-1)*noz + (i-1)*nox*noz;
+                    r1 = E->sx[m][3][node];
+                    E->T[m][node] = E->control.mantle_temp - exp(5.7*(E->sphere.ro - r1)/(E->sphere.ro - E->sphere.ri))/2740.0;
+                    if (r1*6371 > 6271) E->T[m][node] -= (1340.0/2740.0)*erfc((1.0-r1)*6371.0/100.0);
+                    if (r1*6371 < 6371-2690) E->T[m][node] += (1700.0/2740.0)*erfc((2890.0-(1.0-r1)*6371.0)/200.0);
+                    
+                }
+
+    return;
+}
+
 
 static void conductive_temperature_profile(struct All_variables *E)
 {
@@ -834,6 +911,19 @@ static void construct_tic_from_input(struct All_variables *E)
         add_bottom_tbl(E, E->convection.half_space_age, mantle_temperature);
         add_sudden_spherical_anomaly(E);	
 	break;
+    case 103:
+        /* own temperature profile with results from bunge and steinberger */
+        own_linear_temperature_profile(E); 
+        break;
+    case 104:
+        /* Read in depth-dependent temperature profile from refstate */
+        read_in_temperature_profile(E);
+        break;
+
+    case 105:
+        adiabatic_profile(E);
+        add_sudden_spherical_anomaly(E);
+        break;
 
     default:
         /* unknown option */
