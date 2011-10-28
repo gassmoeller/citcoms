@@ -173,12 +173,12 @@ void get_buoyancy(struct All_variables *E, double **buoy)
     if(E->control.tracer &&
        (E->composition.ichemical_buoyancy)) {
       for(j=0;j<E->composition.ncomp;j++) {
-	/* TODO: how to scale chemical buoyancy wrt reference density? solved 5 lines below RG*/
+	/* TODO: how to scale chemical buoyancy wrt reference density? */
 	temp2 = E->composition.buoyancy_ratio[j] * temp;
             for(m=1;m<=E->sphere.caps_per_proc;m++)
 	      for(i=1;i<=E->lmesh.nno;i++)
                 nz = ((i-1) % E->lmesh.noz) + 1;
-		buoy[m][i] -= temp2 * E->refstate.delta_rho1[nz] * E->composition.comp_node[m][j][i] / E->refstate.rho[nz];
+		buoy[m][i] -= temp2 * E->refstate.delta_rho1[nz] * E->composition.comp_node[m][j][i];
       }
     }
 #ifdef USE_GGRD
