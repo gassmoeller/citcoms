@@ -940,16 +940,20 @@ void visc_from_T(E,EEta,propogate)
                     }
 
 		    if (zzz>=0.4332){
-			EEta[m][ (i-1)*vpts + jj ] = 1.86;
+			EEta[m][ (i-1)*vpts + jj ] = 112;
+			//EEta[m][ (i-1)*vpts + jj ] = 1.86;
 			EEta[m][ (i-1)*vpts + jj ] = EEta[m][ (i-1)*vpts + jj ] * exp(-14.0*(temp-E->control.mantle_temp));}
 		    if (zzz<=0.4332 && zzz>0.4112){
-			EEta[m][ (i-1)*vpts + jj ] = 3.54;
+			EEta[m][ (i-1)*vpts + jj ] = 112;
+			//EEta[m][ (i-1)*vpts + jj ] = 3.54;
 			EEta[m][ (i-1)*vpts + jj ] = EEta[m][ (i-1)*vpts + jj ] * exp(-14.0*(temp-E->control.mantle_temp));}
 		    if (zzz<=0.4112 && zzz>0.3893){
-			EEta[m][ (i-1)*vpts + jj ] = 33.2;
+			EEta[m][ (i-1)*vpts + jj ] = 112;
+			//EEta[m][ (i-1)*vpts + jj ] = 33.2;
 			EEta[m][ (i-1)*vpts + jj ] = EEta[m][ (i-1)*vpts + jj ] * exp(-14.0*(temp-E->control.mantle_temp));}
 		    if (zzz<=0.3893 && zzz>0.3673){
-			EEta[m][ (i-1)*vpts + jj ] = 88.5;
+			//EEta[m][ (i-1)*vpts + jj ] = 88.5;
+			EEta[m][ (i-1)*vpts + jj ] = 112;
 			EEta[m][ (i-1)*vpts + jj ] = EEta[m][ (i-1)*vpts + jj ] * exp(-14.0*(temp-E->control.mantle_temp));}
 		    if (zzz<=0.3673 && zzz>0.3453){
 			EEta[m][ (i-1)*vpts + jj ] = 112;
@@ -1009,7 +1013,8 @@ void visc_from_T(E,EEta,propogate)
 		break;
     case 104:
 	// Bernhards Viscosity profile with consistent Temperature Dependency
-        DeltaT = E->control.Atemp * E->data.ref_viscosity * E->data.therm_diff /(E->data.density*E->data.therm_exp*E->data.grav_acc*E->data.radius_km*E->data.radius_km*E->data.radius_km*1000000000);
+
+            compute_horiz_avg(E);
 
         for(m=1;m<=E->sphere.caps_per_proc;m++)
             for(i=1;i<=nel;i++)   {
@@ -1028,11 +1033,8 @@ void visc_from_T(E,EEta,propogate)
                         temp += min(TT[kk],one) * E->N.vpt[GNVINDEX(kk,jj)];
                         zzz += zz[kk] * E->N.vpt[GNVINDEX(kk,jj)];
                     }
-                    iz = (int)((1.0-zzz/0.45)*(E->mesh.noz))+1-E->lmesh.nzs;
-                    if (E->control.inv_gruneisen != 0.0){
-                    EEta[m][ (i-1)*vpts + jj ] = E->refstate.rad_viscosity[iz]*exp(-1.0*E->refstate.free_enthalpy[iz] *(temp*DeltaT+273-E->refstate.Tadi[iz])/(E->refstate.stress_exp[iz]*8.314*E->refstate.Tadi[iz]*(temp*DeltaT+273.0)));
-                    } else {
-                    EEta[m][ (i-1)*vpts + jj ] = E->refstate.rad_viscosity[iz]*exp(-1.0*E->refstate.free_enthalpy[iz] *(temp*DeltaT+273-E->refstate.Tadi[iz]+0.25*zzz*E->data.radius_km)/(E->refstate.stress_exp[iz]*8.314*E->refstate.Tadi[iz]*(temp*DeltaT+273.0)));}
+                    iz = i % E->mesh.elz + 1;
+                    EEta[m][ (i-1)*vpts + jj ] = E->refstate.rad_viscosity[iz]*exp(-1.0*E->refstate.free_enthalpy[iz] *(temp-E->Have.T[iz])/(E->refstate.stress_exp[iz]*8.314*E->refstate.Tadi[iz]*(temp+E->control.surface_temp)));
                     
 		}}
 		break;
