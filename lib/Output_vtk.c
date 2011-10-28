@@ -169,6 +169,31 @@ static void vtk_output_velo(struct All_variables *E, FILE *fp)
     return;
 }
 
+static void vtk_output_svelo(struct All_variables *E, FILE *fp)
+{
+    int i, j;
+    int nodes=E->sphere.caps_per_proc*E->lmesh.nno;
+    float* floatsvel = malloc(nodes*3*sizeof(float));
+
+    fprintf(fp, "        <DataArray type=\"Float32\" Name=\"spherical velocity\" NumberOfComponents=\"3\" format=\"%s\">\n", E->output.vtk_format);
+
+    for(j=1; j<=E->sphere.caps_per_proc; j++) {
+        for(i=1; i<=E->lmesh.nno; i++) {
+            floatsvel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+0] = (float)(E->sphere.cap[j].V[1][i]);
+            floatsvel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+1] = (float)(E->sphere.cap[j].V[2][i]);
+            floatsvel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+2] = (float)(E->sphere.cap[j].V[3][i]);
+        }
+    }
+
+    if (strcmp(E->output.vtk_format, "binary") == 0) 
+        write_binary_array(nodes*3,floatsvel,fp);
+    else 
+        write_ascii_array(nodes*3,3,floatsvel,fp);
+    fputs("        </DataArray>\n", fp);
+
+    free(floatsvel);
+    return;
+}
 
 static void vtk_output_visc(struct All_variables *E, FILE *fp)
 {
@@ -186,6 +211,56 @@ static void vtk_output_visc(struct All_variables *E, FILE *fp)
     return;
 }
 
+static void vtk_output_dens(struct All_variables *E, FILE *fp)
+{
+    int lev = E->mesh.levmax;
+    int i,j;
+    int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
+    float* floatdensity = malloc(nodes*sizeof(float));
+
+        for(j=1; j<=E->sphere.caps_per_proc; j++) {
+            for(i=1; i<=E->lmesh.nno; i++) {
+                floatdensity[(j-1)*E->lmesh.nno+i-1] = (float)(E->buoyancy[j][i]);
+	    }
+        }
+
+    fprintf(fp, "        <DataArray type=\"Float32\" Name=\"density\" format=\"%s\">\n", E->output.vtk_format);
+        if (strcmp(E->output.vtk_format, "binary") == 0) {
+            write_binary_array(nodes,floatdensity,fp);
+        } else {
+            write_ascii_array(nodes,1,floatdensity,fp);
+        }
+       
+    fputs("        </DataArray>\n", fp);
+    return;
+}
+
+static void vtk_output_tracer(struct All_variables *E, FILE *fp)
+{
+    int lev = E->mesh.levmax;
+    int i,j,numtracers,flavor;
+    int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
+    float* floattracer = malloc(nodes*sizeof(float));
+
+        for(j=1; j<=E->sphere.caps_per_proc; j++) {
+            for(i=1; i<=E->lmesh.nel; i++) {
+                numtracers = 0;
+                for (flavor=0; flavor<E->trace.nflavors; flavor++)
+                    numtracers += E->trace.ntracer_flavor[j][flavor][i];
+                floattracer[(j-1)*E->lmesh.nel+i-1] = (float)(numtracers);
+	    }
+        }
+
+    fprintf(fp, "        <DataArray type=\"Float32\" Name=\"numtracer\" format=\"%s\">\n", E->output.vtk_format);
+        if (strcmp(E->output.vtk_format, "binary") == 0) {
+            write_binary_array(nodes,floattracer,fp);
+        } else {
+            write_ascii_array(nodes,1,floattracer,fp);
+        }
+       
+    fputs("        </DataArray>\n", fp);
+    return;
+}
 
 static void vtk_output_coord(struct All_variables *E, FILE *fp)
 {
@@ -358,10 +433,22 @@ void write_pvts(struct All_variables *E, int cycles)
     if (E->output.surf){
         fprintf(fp,"      <DataArray type=\"Float32\" Name=\"surface\" format=\"%s\"/>\n", E->output.vtk_format); 
     }
+    if (E->output.density){
+        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"density\" format=\"%s\"/>\n", E->output.vtk_format); 
+    }
+
+    if (E->output.svelo){
+        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"spherical velocity\" NumberOfComponents=\"3\" format=\"%s\"/>\n", E->output.vtk_format); 
+    }
 
     fputs("    </PPointData>\n \n"
-    "    <PCellData>\n"
-    "    </PCellData>\n \n"
+    "    <PCellData>\n",fp);
+
+    if (E->output.tracer){
+        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"Numtracer\" NumberOfComponents=\"1\" format=\"%s\"/>\n", E->output.vtk_format); 
+    }
+
+    fputs("    </PCellData>\n \n"
     "    <PPoints>\n"
     "      <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"binary\" />\n"
     "    </PPoints>\n", fp);
@@ -702,12 +789,21 @@ void vtk_output(struct All_variables *E, int cycles)
 
     if (E->output.surf){
     vtk_output_surf(E, fp, cycles);}
+
+    if (E->output.density){
+    vtk_output_dens(E, fp);}
+
+    if (E->output.svelo){
+    vtk_output_svelo(E, fp);}
     
     vtk_point_data_trailer(E, fp);
 
     /* write element-based field */
     vtk_cell_data_header(E, fp);
     /**/
+    if (E->output.tracer){
+    vtk_output_tracer(E, fp);}
+
     vtk_cell_data_trailer(E, fp);
 
     /* write coordinate */
