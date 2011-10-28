@@ -1488,6 +1488,8 @@ static void output_parse_optional(struct  All_variables *E)
     E->output.comp_el = 0;
     E->output.comp_nd = 0;
     E->output.heating = 0;
+    E->output.density = 0;
+    E->output.svelo = 0;
 
     while(1) {
         /* get next field */
@@ -1516,6 +1518,10 @@ static void output_parse_optional(struct  All_variables *E)
             E->output.surf = 1;
         else if(strcmp(prev, "botm")==0)
             E->output.botm = 1;
+        else if(strcmp(prev, "density")==0)
+            E->output.density = 1;
+        else if(strcmp(prev, "svelo")==0)
+            E->output.svelo = 1;
         else if(strcmp(prev, "geoid")==0)
 	    if (E->parallel.nprocxy != 12) {
 		fprintf(stderr, "Warning: geoid calculation only works in full version. Disabled\n");
