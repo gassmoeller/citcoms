@@ -177,7 +177,8 @@ void get_buoyancy(struct All_variables *E, double **buoy)
 	temp2 = E->composition.buoyancy_ratio[j] * temp;
             for(m=1;m<=E->sphere.caps_per_proc;m++)
 	      for(i=1;i<=E->lmesh.nno;i++)
-		buoy[m][i] -= temp2 * E->composition.comp_node[m][j][i];
+                nz = ((i-1) % E->lmesh.noz) + 1;
+		buoy[m][i] -= temp2 * E->refstate.delta_rho1[nz] * E->composition.comp_node[m][j][i];
       }
     }
 #ifdef USE_GGRD
