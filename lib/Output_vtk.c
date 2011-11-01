@@ -444,7 +444,7 @@ void write_pvts(struct All_variables *E, int cycles)
     fputs("    </PPointData>\n \n"
     "    <PCellData>\n",fp);
 
-    if (E->output.tracer){
+    if (E->output.tracer && E->composition.on){
         fprintf(fp,"      <DataArray type=\"Float32\" Name=\"Numtracer\" NumberOfComponents=\"1\" format=\"%s\"/>\n", E->output.vtk_format); 
     }
 
@@ -801,7 +801,7 @@ void vtk_output(struct All_variables *E, int cycles)
     /* write element-based field */
     vtk_cell_data_header(E, fp);
     /**/
-    if (E->output.tracer){
+    if (E->output.tracer && E->composition.on){
     vtk_output_tracer(E, fp);}
 
     vtk_cell_data_trailer(E, fp);
