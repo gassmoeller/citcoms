@@ -395,9 +395,10 @@ static void pg_solver(struct All_variables *E,
     void get_rtf_at_vpts();
     void velo_from_element();
 
-    int el,e,a,i,a1,m;
+    int el,e,a,i,a1,m,nz;
     double Eres[9],rtf[4][9];  /* correction to the (scalar) Tdot field */
     float VV[4][9];
+    double therm_diff; /* Effective depth-dependent diffusivity */
 
     struct Shape_function PG;
 
@@ -414,16 +415,19 @@ static void pg_solver(struct All_variables *E,
     for (m=1;m<=E->sphere.caps_per_proc;m++)
        for(el=1;el<=E->lmesh.nel;el++)    {
 
+          nz = ((i-1) % E->lmesh.elz) + 1;
+          therm_diff = diff * (E->refstate.thermal_conductivity[nz] + E->refstate.thermal_conductivity[nz+1])/2;
+
           velo_from_element(E,VV,m,el,sphere_key);
 
           get_rtf_at_vpts(E, m, lev, el, rtf);
 
           /* XXX: replace diff with refstate.thermal_conductivity */
           pg_shape_fn(E, el, &PG, &(E->gNX[m][el]), VV,
-                      rtf, diff, m);
+                      rtf, therm_diff,m);
           element_residual(E, el, &PG, &(E->gNX[m][el]), &(E->gDA[m][el]),
                            VV, T, Tdot,
-                           Q0, Eres, rtf, diff, E->sphere.cap[m].TB,
+                           Q0, Eres, rtf, therm_diff, E->sphere.cap[m].TB,
                            FLAGS, m);
 
         for(a=1;a<=ends;a++) {

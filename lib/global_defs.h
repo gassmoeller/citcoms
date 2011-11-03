@@ -551,7 +551,7 @@ struct REF_STATE {
     double *rho;
     double *thermal_expansivity;
     double *heat_capacity;
-    /*double *thermal_conductivity;*/
+    double *thermal_conductivity;
     double *gravity;
     double *Tadi;
     double *free_enthalpy;

@@ -61,7 +61,7 @@ void mat_prop_allocate(struct All_variables *E)
     E->refstate.heat_capacity = (double *) malloc((noz+1)*sizeof(double));
 
     /* reference profile of thermal conductivity */
-    /*E->refstate.thermal_conductivity = (double *) malloc((noz+1)*sizeof(double));*/
+    E->refstate.thermal_conductivity = (double *) malloc((noz+1)*sizeof(double));
 
     /* reference profile of temperature */
     E->refstate.Tadi = (double *) malloc((noz+1)*sizeof(double));
@@ -160,7 +160,7 @@ static void read_refstate(struct All_variables *E)
                   &(E->refstate.rad_viscosity[i]),
                   &(E->refstate.stress_exp[i]),
                   &(E->refstate.delta_rho1[i]),
-                  &not_used3) != 10) {
+                  &(E->refstate.thermal_conductivity[i]) != 10) {
             fprintf(stderr,"Error while reading file '%s'\n", E->refstate.filename);
             exit(8);
         }
@@ -193,10 +193,10 @@ static void adams_williamson_eos(struct All_variables *E)
 	E->refstate.gravity[i] = 1;
 	E->refstate.thermal_expansivity[i] = 1;
 	E->refstate.heat_capacity[i] = 1;
-	/*E->refstate.thermal_conductivity[i] = 1;*/
+	E->refstate.thermal_conductivity[i] = 1;
         E->refstate.free_enthalpy[i] = 1;
         E->refstate.rad_viscosity[i] = 1;
-        //E->refstate.stress_exp[i] = 1;
+        E->refstate.stress_exp[i] = 1;
 	E->refstate.Tadi[i] = (E->control.TBCtopval + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;
         //E->refstate.Tadi[i] = 1;
         E->refstate.delta_rho1[i] = 1.0;
@@ -219,7 +219,7 @@ static void new_eos(struct All_variables *E)
 	E->refstate.gravity[i] = 1;
 	E->refstate.thermal_expansivity[i] = 0.2 + 0.8 * (E->sx[1][3][i]- E->sphere.ri)/(E->sphere.ro - E->sphere.ri);
 	E->refstate.heat_capacity[i] = 1;
-	/*E->refstate.thermal_conductivity[i] = 1;*/
+	E->refstate.thermal_conductivity[i] = 1;
         E->refstate.free_enthalpy[i] = 1;
         E->refstate.rad_viscosity[i] = 1;
         E->refstate.stress_exp[i] = 1;
