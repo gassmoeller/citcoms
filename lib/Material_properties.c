@@ -160,7 +160,7 @@ static void read_refstate(struct All_variables *E)
                   &(E->refstate.rad_viscosity[i]),
                   &(E->refstate.stress_exp[i]),
                   &(E->refstate.delta_rho1[i]),
-                  &(E->refstate.thermal_conductivity[i]) != 10) {
+                  &(E->refstate.thermal_conductivity[i])) != 10) {
             fprintf(stderr,"Error while reading file '%s'\n", E->refstate.filename);
             exit(8);
         }
