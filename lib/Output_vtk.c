@@ -345,12 +345,13 @@ static void vtk_output_comp_nd(struct All_variables *E, FILE *fp)
 }
 
 
-void vtk_output_surf(struct All_variables *E,  FILE *fp, int cycles)
+void vtk_output_surf_botm(struct All_variables *E,  FILE *fp, int cycles)
 {
     int i, j, k;
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
     char output_file[255];
     float* floattopo = malloc (nodes*sizeof(float));
+    float* floatheating = malloc (nodes*sizeof(float));
 
     if((E->output.write_q_files == 0) || (cycles == 0) ||
       (cycles % E->output.write_q_files)!=0)
@@ -372,7 +373,7 @@ void vtk_output_surf(struct All_variables *E,  FILE *fp, int cycles)
                 floattopo[(j-1)*E->lmesh.nno + (i-1)*E->lmesh.noz + k-1] = 0.0; 
             }
 
-            if (E->parallel.me_loc[3]==E->parallel.nprocz-1) {
+            if (E->output.surf && (E->parallel.me_loc[3]==E->parallel.nprocz-1)) {
 
                 /* choose either STD topo or pseudo-free-surf topo */
                 if(E->control.pseudo_free_surf)
@@ -381,6 +382,19 @@ void vtk_output_surf(struct All_variables *E,  FILE *fp, int cycles)
                 floattopo[(j-1)*E->lmesh.nno + i*E->lmesh.noz-1] = E->slice.tpg[j][i];
 
             }
+
+            if (E->output.botm && (E->parallel.me_loc[3]==0)){
+
+                /* choose either STD topo or pseudo-free-surf topo */
+                if(E->control.pseudo_free_surf)
+                /* is this integrated at the moment? */
+                /*floattopo[(j-1)*E->lmesh.nno + (i-1)*E->lmesh.noz] = E->slice.freesurf[j][i];*/
+                fprintf(stderr,"Bottom topography for pseudo free surface currently not possible");
+                else
+                floattopo[(j-1)*E->lmesh.nno + (i-1)*E->lmesh.noz] = E->slice.tpgb[j][i];
+
+            }
+          
         }
     }
 
@@ -390,6 +404,27 @@ void vtk_output_surf(struct All_variables *E,  FILE *fp, int cycles)
         write_ascii_array(nodes,1,floattopo,fp);
 
     fputs("        </DataArray>\n", fp);
+
+    fprintf(fp,"        <DataArray type=\"Float32\" Name=\"heatflux\" format=\"%s\">\n", E->output.vtk_format);
+    for(j=1;j<=E->sphere.caps_per_proc;j++){
+        for(i=1;i<=E->lmesh.nsf;i++){
+            for(k=1;k<=E->lmesh.noz;k++)
+                floatheating[(j-1)*E->lmesh.nno + (i-1)*E->lmesh.noz + k-1] = 0.0; 
+            floatheating[(j-1)*E->lmesh.nno + i*E->lmesh.noz-1] = E->slice.shflux[j][i];
+            floatheating[(j-1)*E->lmesh.nno + (i-1)*E->lmesh.noz] = E->slice.bhflux[j][i];
+        }
+    }
+
+    if (strcmp(E->output.vtk_format, "binary") == 0)
+        write_binary_array(nodes,floatheating,fp);
+    else
+        write_ascii_array(nodes,1,floatheating,fp);
+
+    fputs("        </DataArray>\n", fp);
+
+  free(floattopo);
+  free(floatheating);
+
   return;
 }
 
@@ -428,10 +463,12 @@ void write_pvts(struct All_variables *E, int cycles)
         fprintf(fp,"      <DataArray type=\"Float32\" Name=\"stress\" NumberOfComponents=\"6\" format=\"%s\"/>\n", E->output.vtk_format);
     }
     if (E->output.comp_nd && E->composition.on){
-        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"composition1\" format=\"%s\"/>\n", E->output.vtk_format);
+        for (i=0;i<E->composition.ncomp;i++)
+            fprintf(fp,"      <DataArray type=\"Float32\" Name=\"composition%d\" format=\"%s\"/>\n",i+1, E->output.vtk_format);
     }
-    if (E->output.surf){
+    if (E->output.surf || E->output.botm){
         fprintf(fp,"      <DataArray type=\"Float32\" Name=\"surface\" format=\"%s\"/>\n", E->output.vtk_format); 
+        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"heatflux\" format=\"%s\"/>\n", E->output.vtk_format); 
     }
     if (E->output.density){
         fprintf(fp,"      <DataArray type=\"Float32\" Name=\"density\" format=\"%s\"/>\n", E->output.vtk_format); 
@@ -788,7 +825,7 @@ void vtk_output(struct All_variables *E, int cycles)
     vtk_output_comp_nd(E, fp);}
 
     if (E->output.surf){
-    vtk_output_surf(E, fp, cycles);}
+    vtk_output_surf_botm(E, fp, cycles);}
 
     if (E->output.density){
     vtk_output_dens(E, fp);}
