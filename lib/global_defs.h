@@ -557,8 +557,7 @@ struct REF_STATE {
     double *free_enthalpy;
     double *rad_viscosity;
     double *stress_exp;
-    double *delta_rho1;
-    /*double *delta_rho2;*/
+    double **delta_rho;
 };
 
 

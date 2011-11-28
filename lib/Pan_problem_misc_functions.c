@@ -178,7 +178,7 @@ void get_buoyancy(struct All_variables *E, double **buoy)
             for(m=1;m<=E->sphere.caps_per_proc;m++)
 	      for(i=1;i<=E->lmesh.nno;i++){
                 nz = ((i-1) % E->lmesh.noz) + 1;
-		buoy[m][i] -= temp2 * E->refstate.delta_rho1[nz] * E->composition.comp_node[m][j][i];
+		buoy[m][i] -= temp2 * E->refstate.delta_rho[j+1][nz] * E->composition.comp_node[m][j][i];
             }
       }
     }

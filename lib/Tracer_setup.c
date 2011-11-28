@@ -44,6 +44,7 @@
 #include "parsing.h"
 #include "parallel_related.h"
 #include "composition_related.h"
+#include "element_definitions.h"
 
 #ifdef USE_GGRD
 #include "ggrd_handling.h"
@@ -91,7 +92,7 @@ void sphere_to_cart(struct All_variables *,
                     double *, double *, double *);
 int icheck_processor_shell(struct All_variables *,
                            int , double );
-
+static void chemical_changes(struct All_variables *E);
 
 
 void tracer_input(struct All_variables *E)
@@ -266,7 +267,7 @@ void tracer_advection(struct All_variables *E)
     /* advect tracers */
     predict_tracers(E);
     correct_tracers(E);
-
+    if (E->trace.ic_method_for_flavors == 3) chemical_changes(E);
     /* check that the number of tracers is conserved */
     check_sum(E);
 
@@ -772,8 +773,6 @@ static void make_tracer_array(struct All_variables *E)
 
     return;
 }
-
-
 
 static void generate_random_tracers(struct All_variables *E,
                                     int tracers_cap, int j)
@@ -1316,6 +1315,25 @@ static void init_tracer_flavors(struct All_variables *E)
       }
       break;
 
+    case 3:
+
+        for (j=1;j<=E->sphere.caps_per_proc;j++) {
+
+        number_of_tracers = E->trace.ntracers[j];
+        for (kk=1;kk<=number_of_tracers;kk++) {
+          rad = E->trace.basicq[j][2][kk];
+
+              if (rad > E->trace.z_interface[0]) {
+                  flavor = 2;}
+              else if (rad < E->trace.z_interface[1]){
+                  flavor = 1;}
+              else flavor = 0;
+          E->trace.extraq[j][0][kk] = flavor;
+              }
+          }
+      break;
+
+
     case 99:			/* (will override restart) */
 #ifndef USE_GGRD
       fprintf(stderr,"ic_method_for_flavors %i requires the ggrd routines from hc, -DUSE_GGRD\n",
@@ -1829,4 +1847,13 @@ int icheck_that_processor_shell(struct All_variables *E,
     return 0;
 }
 
+void chemical_changes(struct All_variables *E)
+{
+    int j,kk;
 
+    for (j=1;j<=E->sphere.caps_per_proc;j++) {
+        for (kk=1;kk<=E->trace.ntracers[j];kk++) {
+
+            if (E->trace.basicq[j][2][kk] > 0.997) E->trace.extraq[j][0][kk] = 2;        }
+    }
+}

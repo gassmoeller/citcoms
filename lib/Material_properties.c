@@ -47,6 +47,7 @@ void mat_prop_allocate(struct All_variables *E)
     int noz = E->lmesh.noz;
     int nno = E->lmesh.nno;
     int nel = E->lmesh.nel;
+    int i;
 
     /* reference profile of density */
     E->refstate.rho = (double *) malloc((noz+1)*sizeof(double));
@@ -80,7 +81,9 @@ void mat_prop_allocate(struct All_variables *E)
 
     /* reference profile of density contrast */
     /* only used in tracer option */
-    E->refstate.delta_rho1 = (double *) malloc((noz+1)*sizeof(double));
+    E->refstate.delta_rho = (double **) malloc((E->composition.ncomp+1)*sizeof(double*));
+    for(i=1;i<=E->composition.ncomp;i++){
+    E->refstate.delta_rho[i] = (double *) malloc((noz+1)*sizeof(double));}
 
 }
 
@@ -150,7 +153,7 @@ static void read_refstate(struct All_variables *E)
 
     for(i=1; i<=E->lmesh.noz; i++) {
         fgets(buffer, 255, fp);
-        if(sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
+        if(sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
                   &(E->refstate.rho[i]),
                   &(E->refstate.gravity[i]),
                   &(E->refstate.thermal_expansivity[i]),
@@ -159,8 +162,9 @@ static void read_refstate(struct All_variables *E)
                   &(E->refstate.free_enthalpy[i]),
                   &(E->refstate.rad_viscosity[i]),
                   &(E->refstate.stress_exp[i]),
-                  &(E->refstate.delta_rho1[i]),
-                  &(E->refstate.thermal_conductivity[i])) != 10) {
+                  &(E->refstate.delta_rho[1][i]),
+                  &(E->refstate.delta_rho[2][i]),
+                  &(E->refstate.thermal_conductivity[i])) != 11) {
             fprintf(stderr,"Error while reading file '%s'\n", E->refstate.filename);
             exit(8);
         }
@@ -181,7 +185,7 @@ static void read_refstate(struct All_variables *E)
 
 static void adams_williamson_eos(struct All_variables *E)
 {
-    int i;
+    int i,j;
     double r, z, beta;
 
     beta = E->control.disptn_number * E->control.inv_gruneisen;
@@ -199,7 +203,9 @@ static void adams_williamson_eos(struct All_variables *E)
         E->refstate.stress_exp[i] = 1;
 	E->refstate.Tadi[i] = (E->control.TBCtopval + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;
         //E->refstate.Tadi[i] = 1;
-        E->refstate.delta_rho1[i] = 1.0;
+        for(j=1;j<E->composition.ncomp+1;j++){
+            E->refstate.delta_rho[j][i] = 1.0;}
+
     }
 
     return;
@@ -225,7 +231,8 @@ static void new_eos(struct All_variables *E)
         E->refstate.stress_exp[i] = 1;
 	/*E->refstate.Tadi[i] = (E->control.adiabaticT0 + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;*/
         E->refstate.Tadi[i] = 1;
-        E->refstate.delta_rho1[i] = 1.0;
+        for(j=1;j<E->composition.ncomp+1;j++){
+            E->refstate.delta_rho[j][i] = 1.0;}
     }
 
     return;
