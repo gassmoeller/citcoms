@@ -211,9 +211,9 @@ static void modified_Trampert_Vacher_Vlaar_PEPI2001(struct All_variables *E,
                 dvs += dC * (dlnvsdc[0] + dlnvsdc[1]*d + dlnvsdc[2]*d2);
             }
 
-        rho[i] = rhor[nz] * (1 + drho);
-        vp[i] = vpr[nz] * (1 + dvp);
-        vs[i] = vsr[nz] * (1 + dvs);
+        rho[i] = drho; //rhor[nz] * (1 + drho);
+        vp[i] = dvp; //vpr[nz] * (1 + dvp);
+        vs[i] = dvs; //vsr[nz] * (1 + dvs);
 
         /** debug **
         fprintf(stderr, "node=%d dT=%f K, dC=%f, %e %e %e\n",
