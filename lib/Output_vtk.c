@@ -195,6 +195,93 @@ static void vtk_output_svelo(struct All_variables *E, FILE *fp)
     return;
 }
 
+void vtk_output_seismic(struct All_variables *E, FILE *fp)
+{
+    void get_prem(double, double*, double*, double*);
+    void compute_seismic_model(const struct All_variables*, double*, double*, double*);
+
+    char output_file[255];
+    int i;
+
+    double *rho, *vp, *vs;
+    float *floatrho, *floatvp, *floatvs;
+    const int nodes = E->lmesh.nno;
+
+    rho = malloc(nodes * sizeof(double));
+    vp = malloc(nodes * sizeof(double));
+    vs = malloc(nodes * sizeof(double));
+    floatrho = malloc(nodes * sizeof(float));
+    floatvp = malloc(nodes * sizeof(float));
+    floatvs = malloc(nodes * sizeof(float));
+
+    if(rho==NULL || vp==NULL || vs==NULL) {
+        fprintf(stderr, "Error while allocating memory\n");
+        abort();
+    }
+
+    /* isotropic seismic velocity only */
+    /* XXX: update for anisotropy in the future */
+    compute_seismic_model(E, rho, vp, vs);
+
+    for (i=0;i<nodes;i++){
+        floatrho[i] = (float) rho[i];
+        floatvp[i]  = (float) vp[i];
+        floatvs[i]  = (float) vs[i];
+    }
+
+
+    if (strcmp(E->output.vtk_format, "binary") == 0){
+        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Rho\" format=\"%s\">\n", E->output.vtk_format);
+        write_binary_array(nodes,floatrho,fp);
+        fputs("        </DataArray>\n", fp);
+        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vp\" format=\"%s\">\n", E->output.vtk_format);
+        write_binary_array(nodes,floatvp,fp);
+        fputs("        </DataArray>\n", fp);
+        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vs\" format=\"%s\">\n", E->output.vtk_format);
+        write_binary_array(nodes,floatvs,fp);
+        fputs("        </DataArray>\n", fp);
+    }else {
+        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Rho\" format=\"%s\">\n", E->output.vtk_format);
+        write_ascii_array(nodes,1,floatrho,fp);
+        fputs("        </DataArray>\n", fp);
+        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vp\" format=\"%s\">\n", E->output.vtk_format);
+        write_ascii_array(nodes,1,floatvp,fp);
+        fputs("        </DataArray>\n", fp);
+        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vs\" format=\"%s\">\n", E->output.vtk_format);
+        write_ascii_array(nodes,1,floatvs,fp);
+        fputs("        </DataArray>\n", fp);
+    }
+
+
+#if 0
+    /** debug **/
+    sprintf(output_file,"%s.dv.%d.%d", E->control.data_file, E->parallel.me, cycles);
+    fp = output_open(output_file, "w");
+    fprintf(fp, "%d %d %.5e\n", cycles, E->lmesh.nno, E->monitor.elapsed_time);
+    for(i=0; i<E->lmesh.nno; i++) {
+        double vpr, vsr, rhor;
+        int nz = (i % E->lmesh.noz) + 1;
+        get_prem(E->sx[1][3][nz], &vpr, &vsr, &rhor);
+
+        fprintf(fp, "%.4e %.4e %.4e\n",
+                rho[i]/rhor - 1.0,
+                vp[i]/vpr - 1.0,
+                vs[i]/vsr - 1.0);
+
+    }
+    fclose(fp);
+#endif
+
+    free(rho);
+    free(vp);
+    free(vs);
+    free(floatrho);
+    free(floatvp);
+    free(floatvs);
+    return;
+}
+
+
 static void vtk_output_visc(struct All_variables *E, FILE *fp)
 {
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
@@ -476,6 +563,12 @@ void write_pvts(struct All_variables *E, int cycles)
 
     if (E->output.svelo){
         fprintf(fp,"      <DataArray type=\"Float32\" Name=\"spherical velocity\" NumberOfComponents=\"3\" format=\"%s\"/>\n", E->output.vtk_format); 
+    }
+
+    if (E->output.seismic){
+        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"seismic rho\" format=\"%s\"/>\n", E->output.vtk_format); 
+        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"seismic vp\" format=\"%s\"/>\n", E->output.vtk_format); 
+        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"seismic vs\" format=\"%s\"/>\n", E->output.vtk_format); 
     }
 
     fputs("    </PPointData>\n \n"
@@ -832,6 +925,9 @@ void vtk_output(struct All_variables *E, int cycles)
 
     if (E->output.svelo){
     vtk_output_svelo(E, fp);}
+
+    if (E->output.seismic){
+    vtk_output_seismic(E, fp);}
     
     vtk_point_data_trailer(E, fp);
 
