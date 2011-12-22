@@ -78,6 +78,18 @@ void composition_input(struct All_variables *E)
 
     }
 
+    input_int("zdep_buoyancy", &(E->composition.zdep_buoyancy),"1,0,nomax",m);
+    if(E->composition.zdep_buoyancy){
+        input_int("tdep_buoyancy", &(E->composition.tdep_buoyancy),"1,0,nomax",m);
+        if(E->composition.tdep_buoyancy){
+            input_int("delta_temp",&(E->composition.delta_temp),"1,0,nomax",m);
+            input_int("start_temp",&(E->composition.start_temp),"1,0,nomax",m);
+            input_int("end_temp",&(E->composition.end_temp),"1,0,nomax",m);
+            input_int("ntdeps",&(E->composition.ntdeps),"1,0,nomax",m);
+        }
+        else E->composition.ntdeps = 1;
+    }
+    else E->composition.tdep_buoyancy = 0;
 
     /* compositional rheology */
     /* what was this about? there is a CDEPV for compositional rheology TWB  */
