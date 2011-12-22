@@ -109,7 +109,14 @@ class Tracer(CitcomComponent):
         # ibuoy_type=1 (ratio method)
         buoy_type = inv.int("buoy_type", default=1)
         buoyancy_ratio = inv.list("buoyancy_ratio", default=[1.0])
-
+        zdep_buoyancy = inv.int("zdep_buoyancy", default=0)
+        density_file = inv.str("density_file", default="density.dat")
+        tdep_buoyancy = inv.int("tdep_buoyancy", default=0)
+        delta_temp = inv.int("delta_temp", default=0)
+        start_temp = inv.int("start_temp", default=0)
+        end_temp = inv.int("end_temp", default=0)
+        ntdeps = inv.int("ntdeps", default=0)
+        
         # This is not used anymore and is left here for backward compatibility
         reset_initial_composition = inv.bool("reset_initial_composition",
                                              default=False)

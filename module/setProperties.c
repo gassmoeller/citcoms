@@ -364,7 +364,7 @@ PyObject * pyCitcom_Param_set_properties(PyObject *self, PyObject *args)
     PUTS(("[CitcomS.solver.param]\n"));
 
     getIntProperty(properties, "reference_state", E->refstate.choice, fp);
-    if(E->refstate.choice == 0) {
+    if(E->refstate.choice == 0 || E->refstate.choice == 3) {
         getStringProperty(properties, "refstate_file", E->refstate.filename, fp);
     }
 
@@ -474,6 +474,7 @@ PyObject * pyCitcom_Solver_set_properties(PyObject *self, PyObject *args)
 
     getFloatProperty(properties, "rayleigh", E->control.Atemp, fp);
     getFloatProperty(properties, "dissipation_number", E->control.disptn_number, fp);
+    getFloatProperty(properties, "adiabaticT0", E->control.adiabaticT0, fp);
     getFloatProperty(properties, "gruneisen", tmp, fp);
      /* special case: if tmp==0, set gruneisen as inf */
      if(tmp != 0)
@@ -721,6 +722,23 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
                                                          *sizeof(double));
 
         getDoubleVectorProperty(properties, "buoyancy_ratio", E->composition.buoyancy_ratio, E->composition.ncomp, fp);
+        getIntProperty(properties, "zdep_buoyancy", E->composition.zdep_buoyancy, fp);
+
+        if(E->composition.zdep_buoyancy==1){
+            getStringProperty(properties, "density_file", E->refstate.densityfilename, fp);
+            getIntProperty(properties, "tdep_buoyancy", E->composition.tdep_buoyancy, fp);
+
+            if(E->composition.tdep_buoyancy==1){
+                getIntProperty(properties, "delta_temp", E->composition.delta_temp, fp);
+                getIntProperty(properties, "start_temp", E->composition.start_temp, fp);
+                getIntProperty(properties, "end_temp", E->composition.end_temp, fp);
+                getIntProperty(properties, "ntdeps", E->composition.ntdeps, fp);
+            } else {
+                E->composition.ntdeps = 1;
+            }
+        } else {
+                E->composition.tdep_buoyancy = 0;
+        }
     }
 
 

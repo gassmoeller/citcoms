@@ -37,6 +37,7 @@
 #include "parallel_related.h"
 
 static void read_refstate(struct All_variables *E);
+static void read_densityfile(struct All_variables *E);
 static void adams_williamson_eos(struct All_variables *E);
 static void new_eos(struct All_variables *E);
 
@@ -47,7 +48,7 @@ void mat_prop_allocate(struct All_variables *E)
     int noz = E->lmesh.noz;
     int nno = E->lmesh.nno;
     int nel = E->lmesh.nel;
-    int i;
+    int i,j;
 
     /* reference profile of density */
     E->refstate.rho = (double *) malloc((noz+1)*sizeof(double));
@@ -80,10 +81,21 @@ void mat_prop_allocate(struct All_variables *E)
     E->refstate.stress_exp = (double *) malloc((noz+1)*sizeof(double));
 
     /* reference profile of density contrast */
-    /* only used in tracer option */
-    E->refstate.delta_rho = (double **) malloc((E->composition.ncomp+1)*sizeof(double*));
-    for(i=1;i<=E->composition.ncomp;i++){
-    E->refstate.delta_rho[i] = (double *) malloc((noz+1)*sizeof(double));}
+    /* only used in composition option zdep_buoyancy or tdep_buoyancy*/
+    E->refstate.delta_rho = (double ***) malloc((E->composition.ncomp+2)*sizeof(double **));
+
+    if (E->composition.zdep_buoyancy == 1){
+        for(i=1;i<=E->composition.ncomp;i++){
+            E->refstate.delta_rho[i] = (double **) malloc((noz+1)*sizeof(double *));
+            if (E->composition.tdep_buoyancy == 1)
+                for(j=1;j<=noz;j++)
+                    E->refstate.delta_rho[i][j] = (double *) malloc(((E->composition.end_temp-E->composition.start_temp)/E->composition.delta_temp + 2)*sizeof(double));
+            else 
+                for(j=1;j<=noz;j++)
+                    E->refstate.delta_rho[i][j] = (double *) malloc(2*sizeof(double));
+        }
+    }
+
 
 }
 
@@ -109,6 +121,10 @@ void reference_state(struct All_variables *E)
         /* New EoS */
         new_eos(E);
         break;
+    case 3:
+        /* read from a file */
+        read_refstate(E);
+        break;
     default:
         if (E->parallel.me) {
             fprintf(stderr, "Unknown option for reference state\n");
@@ -117,6 +133,9 @@ void reference_state(struct All_variables *E)
         }
         parallel_process_termination();
     }
+
+    if(E->composition.zdep_buoyancy)
+        read_densityfile(E);
 
     if(E->parallel.me == 0) {
       fprintf(stderr, "   nz     radius      depth    rho              layer\n");
@@ -153,7 +172,7 @@ static void read_refstate(struct All_variables *E)
 
     for(i=1; i<=E->lmesh.noz; i++) {
         fgets(buffer, 255, fp);
-        if(sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
+        if(sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
                   &(E->refstate.rho[i]),
                   &(E->refstate.gravity[i]),
                   &(E->refstate.thermal_expansivity[i]),
@@ -162,9 +181,7 @@ static void read_refstate(struct All_variables *E)
                   &(E->refstate.free_enthalpy[i]),
                   &(E->refstate.rad_viscosity[i]),
                   &(E->refstate.stress_exp[i]),
-                  &(E->refstate.delta_rho[1][i]),
-                  &(E->refstate.delta_rho[2][i]),
-                  &(E->refstate.thermal_conductivity[i])) != 11) {
+                  &(E->refstate.thermal_conductivity[i])) != 9) {
             fprintf(stderr,"Error while reading file '%s'\n", E->refstate.filename);
             exit(8);
         }
@@ -182,10 +199,41 @@ static void read_refstate(struct All_variables *E)
     return;
 }
 
+static void read_densityfile(struct All_variables *E)
+{
+    FILE *fp;
+    int i,j,k;
+    char buffer[255];
+
+    fp = fopen(E->refstate.densityfilename, "r");
+    if(fp == NULL) {
+        fprintf(stderr, "Cannot open density file: %s\n",
+                E->refstate.densityfilename);
+        parallel_process_termination();
+    }
+
+    /* skip these lines, which belong to other processors */
+    for(i=1; i<E->lmesh.nzs*E->composition.ntdeps*E->composition.ncomp; i++) {
+        fgets(buffer, 255, fp);
+    }
+        for(j=1; j<=E->lmesh.noz; j++) {
+            for(k=1; k<=E->composition.ntdeps; k++){
+                for(i=1; i<=E->composition.ncomp; i++){
+        fgets(buffer, 255, fp);
+        if(sscanf(buffer, "%lf",&(E->refstate.delta_rho[i][j][k]))!=1){
+            fprintf(stderr,"Error while reading file '%s'\n", E->refstate.densityfilename);
+            exit(8);
+        }
+    }}}
+
+    fclose(fp);
+    return;
+}
+
 
 static void adams_williamson_eos(struct All_variables *E)
 {
-    int i,j;
+    int i,j,k;
     double r, z, beta;
 
     beta = E->control.disptn_number * E->control.inv_gruneisen;
@@ -204,7 +252,8 @@ static void adams_williamson_eos(struct All_variables *E)
 	E->refstate.Tadi[i] = (E->control.TBCtopval + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;
         //E->refstate.Tadi[i] = 1;
         for(j=1;j<E->composition.ncomp+1;j++){
-            E->refstate.delta_rho[j][i] = 1.0;}
+          for(k=1;k<=210;k++){
+            E->refstate.delta_rho[j][i][k] = 1.0;}}
 
     }
 
@@ -213,7 +262,7 @@ static void adams_williamson_eos(struct All_variables *E)
 
 static void new_eos(struct All_variables *E)
 {
-    int i;
+    int i,j,k;
     double r, z, beta;
 
     beta = E->control.disptn_number * E->control.inv_gruneisen;
@@ -232,7 +281,8 @@ static void new_eos(struct All_variables *E)
 	/*E->refstate.Tadi[i] = (E->control.adiabaticT0 + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;*/
         E->refstate.Tadi[i] = 1;
         for(j=1;j<E->composition.ncomp+1;j++){
-            E->refstate.delta_rho[j][i] = 1.0;}
+          for(k=1;k<=210;k++){
+            E->refstate.delta_rho[j][i][k] = 1.0;}}
     }
 
     return;

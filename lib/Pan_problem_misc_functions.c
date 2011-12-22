@@ -148,7 +148,7 @@ void apply_side_sbc(struct All_variables *E)
 
 void get_buoyancy(struct All_variables *E, double **buoy)
 {
-    int i,j,m,n,nz,nxny;
+    int i,j,m,n,nz,nxny,nT;
     int lev = E->mesh.levmax;
     double temp,temp2,rfac,cost2;
     void remove_horiz_ave2(struct All_variables*, double**);
@@ -168,20 +168,46 @@ void get_buoyancy(struct All_variables *E, double **buoy)
         buoy[m][i] =  temp * E->refstate.rho[nz]
 	  * E->refstate.thermal_expansivity[nz] * E->T[m][i];
       }
-    
     /* chemical buoyancy */
     if(E->control.tracer &&
        (E->composition.ichemical_buoyancy)) {
+      if(E->composition.zdep_buoyancy == 0 && E->composition.tdep_buoyancy == 0)
       for(j=0;j<E->composition.ncomp;j++) {
 	/* TODO: how to scale chemical buoyancy wrt reference density? */
 	temp2 = E->composition.buoyancy_ratio[j] * temp;
             for(m=1;m<=E->sphere.caps_per_proc;m++)
 	      for(i=1;i<=E->lmesh.nno;i++){
-                nz = ((i-1) % E->lmesh.noz) + 1;
-		buoy[m][i] -= temp2 * E->refstate.delta_rho[j+1][nz] * E->composition.comp_node[m][j][i];
+		buoy[m][i] -= temp2 * E->composition.comp_node[m][j][i];
             }
       }
     }
+    else if(E->composition.zdep_buoyancy && E->composition.tdep_buoyancy == 0)
+      for(j=0;j<E->composition.ncomp;j++) {
+	temp2 = E->composition.buoyancy_ratio[j] * temp;
+            for(m=1;m<=E->sphere.caps_per_proc;m++)
+	      for(i=1;i<=E->lmesh.nno;i++){
+                nz = ((i-1) % E->lmesh.noz) + 1;
+                nT = 1;
+		buoy[m][i] -= temp2 * E->refstate.delta_rho[j+1][nz][nT] * E->composition.comp_node[m][j][i];
+            }
+      }
+    else if(E->composition.zdep_buoyancy && E->composition.tdep_buoyancy)
+      for(j=0;j<E->composition.ncomp;j++) {
+	temp2 = E->composition.buoyancy_ratio[j] * temp;
+            for(m=1;m<=E->sphere.caps_per_proc;m++)
+	      for(i=1;i<=E->lmesh.nno;i++){
+                nz = ((i-1) % E->lmesh.noz) + 1;
+                if(E->control.disptn_number == 0)
+                    nT = ((int)((E->T[m][i] + E->control.surface_temp - E->control.adiabaticT0) * E->data.ref_temperature - E->composition.start_temp + E->refstate.Tadi[nz]) / E->composition.delta_temp + 1);
+                else
+                    nT = ((int)((E->T[m][i] + E->control.surface_temp) * E->data.ref_temperature - E->composition.start_temp) / E->composition.delta_temp + 1);
+
+		buoy[m][i] -= temp2 * E->refstate.delta_rho[j+1][nz][nT] * E->composition.comp_node[m][j][i];
+            }
+    }
+
+
+
 #ifdef USE_GGRD
     /* surface layer Rayleigh modification? */
     if(E->control.ggrd.ray_control)

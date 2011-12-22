@@ -1323,11 +1323,11 @@ static void init_tracer_flavors(struct All_variables *E)
         for (kk=1;kk<=number_of_tracers;kk++) {
           rad = E->trace.basicq[j][2][kk];
 
-              if (rad > E->trace.z_interface[0]) {
-                  flavor = 2;}
-              else if (rad < E->trace.z_interface[1]){
+          flavor = 0;
+             /* if (rad > 0.992){
+                  flavor = 1;}*/
+              if (rad > 0.9985 || rad < 0.575) {
                   flavor = 1;}
-              else flavor = 0;
           E->trace.extraq[j][0][kk] = flavor;
               }
           }
@@ -1854,6 +1854,10 @@ void chemical_changes(struct All_variables *E)
     for (j=1;j<=E->sphere.caps_per_proc;j++) {
         for (kk=1;kk<=E->trace.ntracers[j];kk++) {
 
-            if (E->trace.basicq[j][2][kk] > 0.997) E->trace.extraq[j][0][kk] = 2;        }
+         /*   if (E->trace.basicq[j][2][kk] > 0.992 && E->trace.extraq[j][0][kk] == 0) E->trace.extraq[j][0][kk] = 1;        */
+
+            if (E->trace.basicq[j][2][kk] > 0.9985) E->trace.extraq[j][0][kk] = 1;
+
+}
     }
 }

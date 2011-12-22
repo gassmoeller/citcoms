@@ -621,6 +621,8 @@ void read_initial_settings(struct All_variables *E)
   input_float("rayleigh",&(E->control.Atemp),"essential",m);
 
   input_float("dissipation_number",&(E->control.disptn_number),"0.0",m);
+  input_float("adiabaticT0",&(E->control.adiabaticT0),"0.0",m);
+
   input_float("gruneisen",&(tmp),"0.0",m);
   /* special case: if tmp==0, set gruneisen as inf */
   if(tmp != 0)

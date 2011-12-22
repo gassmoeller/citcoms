@@ -455,7 +455,7 @@ struct CONTROL {
     float surface_temp;
 
     /* adiabatic temperature extrapolated to the surface */
-    /* float adiabaticT0; */
+    float adiabaticT0;
 
     /**/
     int compress_iter_maxstep;
@@ -548,6 +548,7 @@ struct CONTROL {
 struct REF_STATE {
     int choice;
     char filename[200];
+    char densityfilename[200];
     double *rho;
     double *thermal_expansivity;
     double *heat_capacity;
@@ -557,7 +558,7 @@ struct REF_STATE {
     double *free_enthalpy;
     double *rad_viscosity;
     double *stress_exp;
-    double **delta_rho;
+    double ***delta_rho;
 };
 
 
@@ -669,6 +670,14 @@ struct COMPOSITION {
     int on;
 
     int ibuoy_type;
+    int zdep_buoyancy;
+    int tdep_buoyancy;
+
+    int delta_temp;
+    int start_temp;
+    int end_temp;
+    int ntdeps;
+
     int ncomp;
     double *buoyancy_ratio;
 
