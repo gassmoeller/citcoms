@@ -301,13 +301,14 @@ static void vtk_output_visc(struct All_variables *E, FILE *fp)
 static void vtk_output_dens(struct All_variables *E, FILE *fp)
 {
     int lev = E->mesh.levmax;
-    int i,j;
+    int i,j,m,nz;
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
     float* floatdensity = malloc(nodes*sizeof(float));
 
         for(j=1; j<=E->sphere.caps_per_proc; j++) {
             for(i=1; i<=E->lmesh.nno; i++) {
-                floatdensity[(j-1)*E->lmesh.nno+i-1] = (float)(E->buoyancy[j][i]);
+                nz = ((i-1) % E->lmesh.noz) + 1;
+                floatdensity[(j-1)*E->lmesh.nno+i-1] = (float)(E->buoyancy[j][i]/(E->control.Atemp*E->refstate.gravity[nz]*E->refstate.rho[nz]));
 	    }
         }
 
@@ -319,6 +320,7 @@ static void vtk_output_dens(struct All_variables *E, FILE *fp)
         }
        
     fputs("        </DataArray>\n", fp);
+    free(floatdensity);
     return;
 }
 
@@ -346,6 +348,7 @@ static void vtk_output_tracer(struct All_variables *E, FILE *fp)
         }
        
     fputs("        </DataArray>\n", fp);
+    free(floattracer);
     return;
 }
 
