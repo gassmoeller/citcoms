@@ -49,7 +49,7 @@
 "entry(sys.argv[3:], kwds={'requires': requires})"
 
 /* include the implementation of _mpi */
-#include "mpi/_mpi.c"
+#include "../python/pythia-0.8.1.13-py2.6.egg/mpi/_mpi.c"
 
 struct _inittab inittab[] = {
     { "_mpi", init_mpi },
