@@ -115,7 +115,7 @@ class Tracer(CitcomComponent):
         delta_temp = inv.int("delta_temp", default=0)
         start_temp = inv.int("start_temp", default=0)
         end_temp = inv.int("end_temp", default=0)
-        ntdeps = inv.int("ntdeps", default=0)
+        ntdeps = inv.int("ntdeps", default=1)
         
         # This is not used anymore and is left here for backward compatibility
         reset_initial_composition = inv.bool("reset_initial_composition",

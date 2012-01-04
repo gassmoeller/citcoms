@@ -134,7 +134,7 @@ void reference_state(struct All_variables *E)
         parallel_process_termination();
     }
 
-    if(E->composition.zdep_buoyancy)
+    if(E->composition.zdep_buoyancy == 1)
         read_densityfile(E);
 
     if(E->parallel.me == 0) {
