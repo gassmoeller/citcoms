@@ -200,9 +200,11 @@ void get_buoyancy(struct All_variables *E, double **buoy)
 	      for(i=1;i<=E->lmesh.nno;i++){
                 nz = ((i-1) % E->lmesh.noz) + 1;
                 if(E->control.disptn_number == 0){
-                    nT = ((int)((E->T[m][i] + E->control.surface_temp - E->control.adiabaticT0) * E->data.ref_temperature - E->composition.start_temp + E->refstate.Tadi[nz]) / E->composition.delta_temp + 1);}
-                else{
+                    nT = ((int)((E->T[m][i] + E->control.surface_temp - E->control.adiabaticT0) * E->data.ref_temperature - E->composition.start_temp + E->refstate.Tadi[nz]) / E->composition.delta_temp + 1);
+                }else{
                     nT = ((int)((E->T[m][i] + E->control.surface_temp) * E->data.ref_temperature - E->composition.start_temp) / E->composition.delta_temp + 1);}
+                    if (nT < 1) nT = 1;
+                    if (nT > E->composition.ntdeps) nT = E->composition.ntdeps;
 
                 //fprintf(stderr,"nz is %d, nT is %d, delta_rho is %f\n",nz,nT,E->refstate.delta_rho[j+1][nz][nT]);
 		buoy[m][i] -= temp2 * E->refstate.delta_rho[j+1][nz][nT] * E->composition.comp_node[m][j][i];

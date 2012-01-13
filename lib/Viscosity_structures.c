@@ -1033,8 +1033,8 @@ void visc_from_T(E,EEta,propogate)
                         temp += min(TT[kk],one) * E->N.vpt[GNVINDEX(kk,jj)];
                         zzz += zz[kk] * E->N.vpt[GNVINDEX(kk,jj)];
                     }
-                    iz = i % E->mesh.elz + 1;
-                    EEta[m][ (i-1)*vpts + jj ] = E->refstate.rad_viscosity[iz]*exp(-1.0*E->refstate.free_enthalpy[iz] *(temp-E->Have.T[iz])/(E->refstate.stress_exp[iz]*8.314*E->refstate.Tadi[iz]*(temp+E->control.surface_temp)));
+                    iz = (i-1) % E->lmesh.elz + 1;
+                    EEta[m][ (i-1)*vpts + jj ] = 0.5*(E->refstate.rad_viscosity[iz]+E->refstate.rad_viscosity[iz+1])*exp(-1.0*0.5*(E->refstate.free_enthalpy[iz]+E->refstate.free_enthalpy[iz+1]) *(temp-E->Have.T[iz])/(0.5*(E->refstate.stress_exp[iz]+E->refstate.stress_exp[iz+1])*8.314*0.5*(E->refstate.Tadi[iz]+E->refstate.Tadi[iz+1])*(temp+E->control.surface_temp)));
                     
 		}}
 		break;
