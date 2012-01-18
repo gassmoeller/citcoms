@@ -38,6 +38,7 @@
 
 static void read_refstate(struct All_variables *E);
 static void read_densityfile(struct All_variables *E);
+static void read_continent_position(struct All_variables *E);
 static void adams_williamson_eos(struct All_variables *E);
 static void new_eos(struct All_variables *E);
 
@@ -96,6 +97,10 @@ void mat_prop_allocate(struct All_variables *E)
         }
     }
 
+    E->refstate.cont_position = (int **) malloc((E->lmesh.nox+1)*sizeof(int *));
+    for (i=1;i<=E->lmesh.nox;i++){
+        E->refstate.cont_position[i] = (int *) malloc((E->lmesh.noy+1)*sizeof(int));
+    }
 
 }
 
@@ -136,6 +141,9 @@ void reference_state(struct All_variables *E)
 
     if(E->composition.zdep_buoyancy == 1)
         read_densityfile(E);
+
+    if(1 && ((E->parallel.me+1) % E->parallel.nprocz == 0))
+        read_continent_position(E);
 
     if(E->parallel.me == 0) {
       fprintf(stderr, "   nz     radius      depth    rho              layer\n");
@@ -196,6 +204,44 @@ static void read_refstate(struct All_variables *E)
     }
 
     fclose(fp);
+    return;
+}
+
+
+static void read_continent_position(struct All_variables *E)
+{
+    FILE *fp;
+    int i,j,k;
+    char buffer[255];
+
+   sprintf(buffer,"continents.%d",E->sphere.capid[1]-1);
+    fp = fopen(buffer, "r");
+    if(fp == NULL) {
+        fprintf(stderr, "Cannot open continent file: %s\n",
+                buffer);
+        parallel_process_termination();
+    }
+
+        for(j=0; j<E->mesh.nox; j++) {
+            for(k=0; k<E->mesh.noy; k++){
+                fgets(buffer, 255, fp);
+                if((j>=E->parallel.me_loc[1]*E->lmesh.elx) && (j<=(E->parallel.me_loc[1]+1)*E->lmesh.elx)){ // in x-Range
+                    if((k>=E->parallel.me_loc[2]*E->lmesh.ely) && (k<=(E->parallel.me_loc[2]+1)*E->lmesh.ely)){
+                        if(sscanf(buffer, "%d",&(E->refstate.cont_position[(j + E->parallel.me_loc[1])%E->lmesh.nox + 1][(k + E->parallel.me_loc[2])%E->lmesh.noy + 1]))!=1){
+                            fprintf(stderr,"Error while reading file '%s'\n", E->refstate.densityfilename);
+            exit(8);
+        }}
+    }}}
+
+    fclose(fp);
+
+    if(E->parallel.me == 1){
+    for (i=1;i<=E->lmesh.nox;i++){
+    for (j=1;j<=E->lmesh.noy;j++){
+    fprintf(stderr,"cont_status:%d\n",E->refstate.cont_position[i][j]);
+}}}
+
+
     return;
 }
 

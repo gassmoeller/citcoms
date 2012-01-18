@@ -870,6 +870,7 @@ static void generate_random_tracers(struct All_variables *E,
 
     } /* end while */
 
+    find_tracers(E);
     return;
 }
 
@@ -1266,6 +1267,10 @@ static void init_tracer_flavors(struct All_variables *E)
     double flavor;
     double the,phi,rad,dx[3];
     float* radius;
+        int el = 0;
+        int jj = 0;
+        int cont;
+        const int ends = enodes[E->mesh.nsd];
 
     switch(E->trace.ic_method_for_flavors){
     case 0:
@@ -1328,6 +1333,18 @@ static void init_tracer_flavors(struct All_variables *E)
                   flavor = 1;}*/
               if (rad > 0.9985 || rad < 0.575) {
                   flavor = 1;}
+
+          el = E->trace.ielement[j][kk];
+          if ((E->parallel.me == 1) && (kk==1)){
+          fprintf(stderr,"Element number of the %dth tracer: %d\n",kk,el);
+          fprintf(stderr,"Node number of one: %d\n",E->ien[j][el].node[1]);
+          }
+          cont = 0;
+          for(jj=1;jj<=4;jj++){
+                    cont += E->refstate.cont_position[((E->ien[j][el].node[2*jj]-1)/E->lmesh.noz)%(E->lmesh.nox) + 1][((E->ien[j][el].node[2*jj]-1)/(E->lmesh.noz*E->lmesh.nox))+1];
+                }
+          if((rad > 0.95) && (cont != 0)) flavor = 2;
+
           E->trace.extraq[j][0][kk] = flavor;
               }
           }

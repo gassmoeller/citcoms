@@ -559,6 +559,7 @@ struct REF_STATE {
     double *rad_viscosity;
     double *stress_exp;
     double ***delta_rho;
+    int **cont_position;
 };
 
 
