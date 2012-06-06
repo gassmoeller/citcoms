@@ -271,7 +271,7 @@ PyObject * pyCitcom_IC_set_properties(PyObject *self, PyObject *args)
     getFloatProperty(properties, "half_space_age", E->convection.half_space_age, fp);
     getFloatProperty(properties, "mantle_temp", E->control.mantle_temp, fp);
 
-    getFloatVectorProperty(properties, "blob_center", E->convection.blob_center, 3, fp);
+    getFloatVectorProperty(properties, "blob_center", E->convection.blob_center, 6, fp);
     if( E->convection.blob_center[0] == -999.0 && E->convection.blob_center[1] == -999.0 && E->convection.blob_center[2] == -999.0 ) {
         E->convection.blob_center[0] = 0.5*(E->control.theta_min+E->control.theta_max);
         E->convection.blob_center[1] = 0.5*(E->control.fi_min+E->control.fi_max);
@@ -720,8 +720,12 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
 
         E->composition.buoyancy_ratio = (double*) malloc(E->composition.ncomp
                                                          *sizeof(double));
+        E->composition.initial_content = (double*) malloc(E->composition.ncomp
+                                                         *sizeof(double));
 
         getDoubleVectorProperty(properties, "buoyancy_ratio", E->composition.buoyancy_ratio, E->composition.ncomp, fp);
+        getDoubleVectorProperty(properties, "initial_content", E->composition.initial_content, E->composition.ncomp, fp);
+        getIntProperty(properties, "continents", E->composition.continents, fp);
         getIntProperty(properties, "zdep_buoyancy", E->composition.zdep_buoyancy, fp);
 
         if(E->composition.zdep_buoyancy==1){

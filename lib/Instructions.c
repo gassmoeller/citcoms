@@ -1487,6 +1487,7 @@ static void output_parse_optional(struct  All_variables *E)
     E->output.seismic = 0;
     E->output.coord_bin = 0;
     E->output.tracer = 0;
+    E->output.tracer_origin = 0;
     E->output.comp_el = 0;
     E->output.comp_nd = 0;
     E->output.heating = 0;
@@ -1545,12 +1546,16 @@ static void output_parse_optional(struct  All_variables *E)
                 fprintf(E->fp, "Total temperature contrast = %f K\n", E->data.ref_temperature);
             }
         }
+        else if(strcmp(prev, "tracer_origin")==0)
+            E->output.tracer_origin = 1;
         else if(strcmp(prev, "tracer")==0)
             E->output.tracer = 1;
         else if(strcmp(prev, "comp_el")==0)
             E->output.comp_el = 1;
         else if(strcmp(prev, "comp_nd")==0)
             E->output.comp_nd = 1;
+        else if(strcmp(prev, "material")==0)
+            E->output.material = 1;
         else if(strcmp(prev, "heating")==0)
             E->output.heating = 1;
         else

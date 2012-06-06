@@ -50,6 +50,7 @@ class Tracer(CitcomComponent):
         inv = self.inventory
         inv.z_interface = map(float, inv.z_interface)
         inv.buoyancy_ratio = map(float, inv.buoyancy_ratio)
+        inv.initial_content = map(float, inv.initial_content)
 
         from CitcomSLib import Tracer_set_properties
         Tracer_set_properties(self.all_variables, self.inventory, stream)
@@ -109,6 +110,7 @@ class Tracer(CitcomComponent):
         # ibuoy_type=1 (ratio method)
         buoy_type = inv.int("buoy_type", default=1)
         buoyancy_ratio = inv.list("buoyancy_ratio", default=[1.0])
+        initial_content = inv.list("initial_content", default=[1.0])
         zdep_buoyancy = inv.int("zdep_buoyancy", default=0)
         density_file = inv.str("density_file", default="density.dat")
         tdep_buoyancy = inv.int("tdep_buoyancy", default=0)
@@ -116,6 +118,8 @@ class Tracer(CitcomComponent):
         start_temp = inv.int("start_temp", default=0)
         end_temp = inv.int("end_temp", default=0)
         ntdeps = inv.int("ntdeps", default=1)
+
+        continents = inv.int("continents", default=0)
         
         # This is not used anymore and is left here for backward compatibility
         reset_initial_composition = inv.bool("reset_initial_composition",

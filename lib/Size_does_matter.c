@@ -27,6 +27,7 @@
  */
 #include <math.h>
 #include <sys/types.h>
+#include "material_properties.h"
 #include "element_definitions.h"
 #include "global_defs.h"
 
@@ -1007,8 +1008,8 @@ void construct_c3x3matrix(E)
 
 void mass_matrix(struct All_variables *E)
 {
-    int m,node,i,nint,e,lev;
-    int n[9], nz;
+    int m,node,i,j,nint,e,lev;
+    int n[9];
     double myatan(),area,centre[4],temp[9],temp2[9],dx1,dx2,dx3;
 
     const int vpts=vpoints[E->mesh.nsd];
@@ -1125,11 +1126,9 @@ void mass_matrix(struct All_variables *E)
         for(e=1;e<=E->lmesh.nel;e++)  {
             for(node=1;node<=enodes[E->mesh.nsd];node++) {
                 temp[node] = 0.0;
-                nz = ((E->ien[m][e].node[node]-1) % E->lmesh.noz) + 1;
+                j = E->ien[m][e].node[node];
                 for(nint=1;nint<=vpts;nint++)
-                    temp[node] += E->refstate.rho[nz]
-                        * E->refstate.heat_capacity[nz]
-                        * E->gDA[m][e].vpt[nint]
+                    temp[node] += E->gDA[m][e].vpt[nint]
                         * g_point[nint].weight[E->mesh.nsd-1]
                         * E->N.vpt[GNVINDEX(node,nint)];
             }

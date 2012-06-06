@@ -132,7 +132,7 @@ class IC(CitcomComponent):
         mantle_temp = pyre.inventory.float("mantle_temp", default=1.0)
 
         # for tic_method=2
-        blob_center = pyre.inventory.list("blob_center", default=[-999., -999., -999.])
+        blob_center = pyre.inventory.list("blob_center", default=[-999., -999., -999.,-999.,-999.,-999.])
         blob_radius = pyre.inventory.list("blob_radius", default=[0.063, 0.063, 0.063])
         blob_dT = pyre.inventory.float("blob_dT", default=0.18)
 

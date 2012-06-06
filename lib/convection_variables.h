@@ -39,7 +39,7 @@ struct CONVECTION { /* information controlling convection problems */
     int load_depth[PERTURB_MAX_LAYERS];
     float perturb_mag[PERTURB_MAX_LAYERS];
 
-  float blob_center[3];
+  float blob_center[6];
   float blob_radius[3];
   float blob_dT;
   int blob_bc_persist;

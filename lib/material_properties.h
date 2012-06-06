@@ -33,3 +33,17 @@ void reference_state(struct All_variables *E);
 
 void density(struct All_variables *E, double *rho);
 
+double get_cp_el(struct All_variables *E, int m, int el);
+double get_alpha_el(struct All_variables *E, int m, int el);
+double get_rho_el(struct All_variables *E, int m, int el);
+double get_g_el(struct All_variables *E, int m, int el);
+double get_vp_el(struct All_variables *E, int m, int el);
+double get_vs_el(struct All_variables *E, int m, int el);
+
+double get_cp_nd(struct All_variables *E, int m, int nn);
+double get_alpha_nd(struct All_variables *E, int m, int nn);
+double get_rho_nd(struct All_variables *E, int m, int nn);
+double get_deltarho_nd(struct All_variables *E, int m, int nn, int j);
+double get_vp_nd(struct All_variables *E, int m, int nn);
+double get_vs_nd(struct All_variables *E, int m, int nn);
+

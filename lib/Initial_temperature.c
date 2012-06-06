@@ -139,7 +139,7 @@ void tic_input(struct All_variables *E)
     
     switch(E->convection.tic_method){
     case 2:			/* blob */
-      if( ! input_float_vector("blob_center", 3, E->convection.blob_center, m)) {
+      if( ! input_float_vector("blob_center", 6, E->convection.blob_center, m)) {
 	assert( E->sphere.caps == 12 || E->sphere.caps == 1 );
 	if(E->sphere.caps == 12) { /* Full version: just quit here */
 	  fprintf(stderr,"Missing input parameter: 'blob_center'.\n");
@@ -333,26 +333,14 @@ static void read_in_temperature_profile(struct All_variables *E)
 
 static void adiabatic_profile(struct All_variables *E)
 {
-    int m, i, j, k, node;
-    int nox, noy, noz;
-    double r1,DeltaT;
-
-    nox = E->lmesh.nox;
-    noy = E->lmesh.noy;
-    noz = E->lmesh.noz;
-    DeltaT = E->control.Atemp * E->data.ref_viscosity * E->data.therm_diff /(E->data.density*E->data.therm_exp*E->data.grav_acc*E->data.radius_km*E->data.radius_km*E->data.radius_km*1000000000);
-
+    int m, node;
+    int nz;
+    double r1;
 
     for(m=1; m<=E->sphere.caps_per_proc; m++)
-        for(i=1; i<=noy; i++)
-            for(j=1; j<=nox;j ++)
-                for(k=1; k<=noz; k++) {
-                    node = k + (j-1)*noz + (i-1)*nox*noz;
-                    r1 = E->sx[m][3][node];
-                    E->T[m][node] = E->refstate.Tadi[k];
-                    //if (r1*6371 > 6271) E->T[m][node] -= (1340.0/2740.0)*erfc((1.0-r1)*6371.0/100.0);
-                    //if (r1*6371 < 6371-2690) E->T[m][node] += (1700.0/2740.0)*erfc((2890.0-(1.0-r1)*6371.0)/200.0);
-                    
+        for(node=1;i<=E->lmesh.nno;i++){
+                    nz = ((node-1) % E->lmesh.noz) + 1;
+                    E->T[m][node] = E->refstate.Tadi[nz]/E->data.ref_temperature - E->control.surface_temp;
                 }
     return;
 }
@@ -422,6 +410,20 @@ static void constant_temperature_profile(struct All_variables *E, double mantle_
     return;
 }
 
+static void add_layer(struct All_variables *E)
+{
+    int m, i;
+    double r1;
+
+    for(m=1; m<=E->sphere.caps_per_proc; m++)
+        for(i=1; i<=E->lmesh.nno; i++){
+            r1 = E->sx[m][3][i];
+            if (r1 <= E->trace.z_interface[1]){
+                E->T[m][i] += 750.0 / E->data.ref_temperature;
+            }}
+    return;
+}
+
 
 static void constant_temperature_profile_random(struct All_variables *E, double mantle_temp)
 {
@@ -485,7 +487,6 @@ static void add_top_tbl(struct All_variables *E, double age_in_myrs, double mant
     dT = (mantle_temp - E->control.TBCtopval);
     tmp = 0.5 / sqrt(age_in_myrs / E->data.scalet);
 
-    fprintf(stderr, "%e %e\n", dT, tmp);
     for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=noy; i++)
             for(j=1; j<=nox;j ++)
@@ -665,9 +666,9 @@ static void add_sudden_spherical_anomaly(struct All_variables *E)
     int i, j ,k , m, node;
     int nox, noy, noz;
 
-    double theta_center, fi_center, r_center,x_center[4],dx[4];
+    float dx[7];
     double amp, r1,rout,rin;
-    float* radius;
+    float *radius,*center;
     const double e_4 = 1e-4;
     double distance;
 
@@ -679,16 +680,16 @@ static void add_sudden_spherical_anomaly(struct All_variables *E)
     rin = E->sphere.ri;
 
 
-    theta_center = E->convection.blob_center[0];
-    fi_center    = E->convection.blob_center[1];
-    r_center     = E->convection.blob_center[2];
+    center       = E->convection.blob_center;
     radius       = E->convection.blob_radius;
     amp          = E->convection.blob_dT;
     
     if(E->parallel.me == 0)
+      {fprintf(stderr,"center=(%e %e %e) radius=(%e %e %e) dT=%e\n",
+	      center[0], center[1], center[2], radius[0], radius[1], radius[2], amp);
       fprintf(stderr,"center=(%e %e %e) radius=(%e %e %e) dT=%e\n",
-	      theta_center, fi_center, r_center, radius[0], radius[1], radius[2], amp);
-    
+	      center[3], center[4], center[5], radius[0], radius[1], radius[2], amp);
+      }
 
     /* compute temperature field according to nodal coordinate */
     for(m=1; m<=E->sphere.caps_per_proc; m++)
@@ -696,11 +697,18 @@ static void add_sudden_spherical_anomaly(struct All_variables *E)
             for(j=1; j<=nox;j ++)
                 for(k=1; k<=noz; k++) {
                     node = k + (j-1)*noz + (i-1)*nox*noz;
-		    dx[1] = E->sx[m][1][node] - theta_center;
-		    dx[2] = E->sx[m][2][node] - fi_center;
-		    dx[3] = E->sx[m][3][node] - r_center;
+		    dx[1] = E->sx[m][1][node] - center[0];
+                    if (dx[1] > 1.5708) dx[1] = 3.1415 - dx[1];
+		    dx[2] = E->sx[m][2][node] - center[1];
+                    if (dx[2] > 3.1415) dx[2] = 2*3.1415 - dx[2];
+		    dx[3] = E->sx[m][3][node] - center[2];
+		    dx[4] = E->sx[m][1][node] - center[3];
+                    if (dx[4] > 1.5708) dx[4] = 3.1415 - dx[4];
+		    dx[5] = E->sx[m][2][node] - center[4];
+                    if (dx[5] > 3.1415) dx[5] = 2*3.1415 - dx[5];
+		    dx[6] = E->sx[m][3][node] - center[5];
 
-                    if ((dx[1]*dx[1]/(radius[0]*radius[0])) + (dx[2]*dx[2]/(radius[1]*radius[1])) + (dx[3]*dx[3]/(radius[2]*radius[2])) < 1){
+                    if (((dx[1]*dx[1]/(radius[0]*radius[0])) + (dx[2]*dx[2]/(radius[1]*radius[1])) + (dx[3]*dx[3]/(radius[2]*radius[2])) < 1) || ((dx[4]*dx[4]/(radius[0]*radius[0])) + (dx[5]*dx[5]/(radius[1]*radius[1])) + (dx[6]*dx[6]/(radius[2]*radius[2])) < 1)){
 		      E->T[m][node] += amp;
 
 		      if(E->convection.blob_bc_persist){
@@ -907,7 +915,7 @@ static void construct_tic_from_input(struct All_variables *E)
     case 102:
 	/* same as 101, but with spherical anomaly, like chemical LLSVP */
 	mantle_temperature = E->control.mantle_temp;
-	constant_temperature_profile_random(E, mantle_temperature);
+	constant_temperature_profile(E, mantle_temperature);
         add_bottom_tbl(E, E->convection.half_space_age, mantle_temperature);
         add_sudden_spherical_anomaly(E);	
 	break;
@@ -923,6 +931,17 @@ static void construct_tic_from_input(struct All_variables *E)
     case 105:
         adiabatic_profile(E);
         add_sudden_spherical_anomaly(E);
+        break;
+
+    case 106:
+
+        mantle_temperature = E->control.mantle_temp;
+        constant_temperature_profile(E, mantle_temperature);
+        add_layer(E);
+        break;
+
+    case 107:
+        constant_temperature_profile(E, 0);
         break;
 
     default:

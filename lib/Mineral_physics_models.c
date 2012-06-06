@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include "global_defs.h"
+#include "material_properties.h"
 
 
 void compute_horiz_avg(struct All_variables*);
@@ -188,32 +189,32 @@ static void modified_Trampert_Vacher_Vlaar_PEPI2001(struct All_variables *E,
 
     /* deviation from the reference */
     dC = 0;
-    for(i=0; i<E->lmesh.nno; i++) {
-        nz = (i % E->lmesh.noz) + 1;
+    for(i=1; i<=E->lmesh.nno; i++) {
+        nz = ((i-1) % E->lmesh.noz) + 1;
 
         d = depthkm[nz];
         d2 = d * d;
-        dT = (E->T[m][i+1] - E->Have.T[nz]) * E->data.ref_temperature;
+        dT = (E->T[m][i] - E->Have.T[nz]) * E->data.ref_temperature;
 
-        drho = -dT * E->refstate.thermal_expansivity[nz] * E->data.therm_exp;
+        drho = -dT * get_alpha_nd(E,m,i) * E->data.therm_exp;
 
         dvp = dT * (dlnvpdt[0] + dlnvpdt[1]*d + dlnvpdt[2]*d2);
         dvs = dT * (dlnvsdt[0] + dlnvsdt[1]*d + dlnvsdt[2]*d2);
 
         if(E->control.tracer && E->composition.on && E->composition.ichemical_buoyancy)
             for(j=0; j<E->composition.ncomp; j++) {
-                dC = E->composition.comp_node[m][j][i+1] - E->Have.C[j][nz];
+                dC = E->composition.comp_node[m][j][i] - E->Have.C[j][nz];
 
                 drho += dC * E->composition.buoyancy_ratio[j]
-                    * E->data.ref_temperature * E->data.therm_exp / E->refstate.rho[nz];
+                    * E->data.ref_temperature * E->data.therm_exp / get_rho_nd(E,m,i);
 
                 dvp += dC * (dlnvpdc[0] + dlnvpdc[1]*d + dlnvpdc[2]*d2);
                 dvs += dC * (dlnvsdc[0] + dlnvsdc[1]*d + dlnvsdc[2]*d2);
             }
 
-        rho[i] = drho; //rhor[nz] * (1 + drho);
-        vp[i] = dvp; //vpr[nz] * (1 + dvp);
-        vs[i] = dvs; //vsr[nz] * (1 + dvs);
+        rho[i-1] = drho; //rhor[nz] * (1 + drho);
+        vp[i-1] = dvp; //vpr[nz] * (1 + dvp);
+        vs[i-1] = dvs; //vsr[nz] * (1 + dvs);
 
         /** debug **
         fprintf(stderr, "node=%d dT=%f K, dC=%f, %e %e %e\n",

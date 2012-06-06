@@ -549,9 +549,11 @@ struct REF_STATE {
     int choice;
     char filename[200];
     char densityfilename[200];
-    double *rho;
-    double *thermal_expansivity;
-    double *heat_capacity;
+    double ***rho;
+    double ***thermal_expansivity;
+    double ***heat_capacity;
+    double ***vp;
+    double ***vs;
     double *thermal_conductivity;
     double *gravity;
     double *Tadi;
@@ -647,11 +649,13 @@ struct Output {
     int seismic;      /* whether to output seismic velocity model */
     int coord_bin;    /* whether to output coordinates in binary format */
     int tracer;       /* whether to output tracer coordinate */
+    int tracer_origin;/* whether to output tracer origin */
     int comp_el;      /* whether to output composition at elements */
     int comp_nd;      /* whether to output composition at nodes */
     int heating;      /* whether to output heating terms at elements */
     int density;      /* whether to output density */
     int svelo;        /* whether to output spherical velocities (debugging) */
+    int material;     /* whether to output material properties (debugging) */
 
   /* flags used by GZDIR */
   struct gzd_struc gzdir;
@@ -673,6 +677,7 @@ struct COMPOSITION {
     int ibuoy_type;
     int zdep_buoyancy;
     int tdep_buoyancy;
+    int continents;
 
     int delta_temp;
     int start_temp;
@@ -681,6 +686,7 @@ struct COMPOSITION {
 
     int ncomp;
     double *buoyancy_ratio;
+    double *initial_content;
 
     double **comp_el[13];
     double **comp_node[13];

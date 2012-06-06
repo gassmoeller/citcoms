@@ -235,11 +235,11 @@ void get_system_viscosity(E,propogate,evisc,visc)
 
     if (E->control.verbose)  {
       fprintf(E->fp_out,"output_evisc \n");
-      for(m=1;m<=E->sphere.caps_per_proc;m++) {
+      /*for(m=1;m<=E->sphere.caps_per_proc;m++) {
         fprintf(E->fp_out,"output_evisc for cap %d\n",E->sphere.capid[m]);
       for(i=1;i<=E->lmesh.nel;i++)
           fprintf(E->fp_out,"%d %d %f %f\n",i,E->mat[m][i],evisc[m][(i-1)*vpts+1],evisc[m][(i-1)*vpts+7]);
-      }
+      }*/
       fflush(E->fp_out);
     }
 
@@ -1027,11 +1027,9 @@ void visc_from_T(E,EEta,propogate)
 
                 for(jj=1;jj<=vpts;jj++) {
                     temp=0.0;
-                    zzz=0.0;
                     for(kk=1;kk<=ends;kk++)   {
                         TT[kk]=max(TT[kk],zero);
                         temp += min(TT[kk],one) * E->N.vpt[GNVINDEX(kk,jj)];
-                        zzz += zz[kk] * E->N.vpt[GNVINDEX(kk,jj)];
                     }
                     iz = (i-1) % E->lmesh.elz + 1;
                     EEta[m][ (i-1)*vpts + jj ] = 0.5*(E->refstate.rad_viscosity[iz]+E->refstate.rad_viscosity[iz+1])*exp(-1.0*0.5*(E->refstate.free_enthalpy[iz]+E->refstate.free_enthalpy[iz+1]) *(temp-E->Have.T[iz])/(0.5*(E->refstate.stress_exp[iz]+E->refstate.stress_exp[iz+1])*8.314*0.5*(E->refstate.Tadi[iz]+E->refstate.Tadi[iz+1])*(temp+E->control.surface_temp)));

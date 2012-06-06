@@ -68,13 +68,18 @@ void composition_input(struct All_variables *E)
 
         E->composition.buoyancy_ratio = (double*) malloc(E->composition.ncomp
                                                          *sizeof(double));
+        E->composition.initial_content = (double*) malloc(E->composition.ncomp
+                                                         *sizeof(double));
 
         /* default values .... */
-        for (i=0; i<E->composition.ncomp; i++)
+        for (i=0; i<E->composition.ncomp; i++){
             E->composition.buoyancy_ratio[i] = 1.0;
+            E->composition.initial_content[i] = 1.0;}
 
         input_double_vector("buoyancy_ratio", E->composition.ncomp,
                             E->composition.buoyancy_ratio,m);
+        input_double_vector("initial_content", E->composition.ncomp,
+                            E->composition.initial_content,m);
 
     }
 
@@ -90,6 +95,8 @@ void composition_input(struct All_variables *E)
         else E->composition.ntdeps = 1;
     }
     else E->composition.tdep_buoyancy = 0;
+
+    input_int("continents",&(E->composition.continents),"1,0,nomax",m);
 
     /* compositional rheology */
     /* what was this about? there is a CDEPV for compositional rheology TWB  */

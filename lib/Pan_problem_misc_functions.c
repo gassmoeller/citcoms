@@ -48,6 +48,7 @@
 #include <sys/types.h>
 #endif
 
+#include "material_properties.h"
 #include "phase_change.h"
 #include "parallel_related.h"
 
@@ -152,7 +153,6 @@ void get_buoyancy(struct All_variables *E, double **buoy)
     int lev = E->mesh.levmax;
     double temp,temp2,rfac,cost2;
     void remove_horiz_ave2(struct All_variables*, double**);
-    //char filename[100];FILE *out;
 
     nxny = E->lmesh.nox*E->lmesh.noy;
     /* Rayleigh number */
@@ -161,56 +161,9 @@ void get_buoyancy(struct All_variables *E, double **buoy)
     /* thermal buoyancy */
     for(m=1;m<=E->sphere.caps_per_proc;m++)
       for(i=1;i<=E->lmesh.nno;i++) {
-	nz = ((i-1) % E->lmesh.noz) + 1;
-        /* We don't need to substract adiabatic T profile from T here,
-         * since the horizontal average of buoy will be removed.
-         */
-        buoy[m][i] =  temp * E->refstate.rho[nz]
-	  * E->refstate.thermal_expansivity[nz] * E->T[m][i];
-      }
-    /* chemical buoyancy */
-    if(E->control.tracer &&
-       (E->composition.ichemical_buoyancy)) {
-    //fprintf(stderr, "zdep_buoyancy == %d\n",E->composition.zdep_buoyancy);
-    //fprintf(stderr, "tdep_buoyancy == %d\n",E->composition.tdep_buoyancy);
-      if((E->composition.zdep_buoyancy == 0) && (E->composition.tdep_buoyancy == 0)){
-      for(j=0;j<E->composition.ncomp;j++) {
-	/* TODO: how to scale chemical buoyancy wrt reference density? */
-	temp2 = E->composition.buoyancy_ratio[j] * temp;
-            for(m=1;m<=E->sphere.caps_per_proc;m++)
-	      for(i=1;i<=E->lmesh.nno;i++){
-		buoy[m][i] -= temp2 * E->composition.comp_node[m][j][i];
-            }
-      }
-    }
-    else if((E->composition.zdep_buoyancy == 1) && (E->composition.tdep_buoyancy == 0)){
-      for(j=0;j<E->composition.ncomp;j++) {
-	temp2 = E->composition.buoyancy_ratio[j] * temp;
-            for(m=1;m<=E->sphere.caps_per_proc;m++)
-	      for(i=1;i<=E->lmesh.nno;i++){
-                nz = ((i-1) % E->lmesh.noz) + 1;
-                nT = 1;
-		buoy[m][i] -= temp2 * E->refstate.delta_rho[j+1][nz][nT] * E->composition.comp_node[m][j][i];
-            }
-      }}
-    else if((E->composition.zdep_buoyancy == 1) && (E->composition.tdep_buoyancy == 1)){
-      for(j=0;j<E->composition.ncomp;j++) {
-	temp2 = E->composition.buoyancy_ratio[j] * temp;
-            for(m=1;m<=E->sphere.caps_per_proc;m++)
-	      for(i=1;i<=E->lmesh.nno;i++){
-                nz = ((i-1) % E->lmesh.noz) + 1;
-                if(E->control.disptn_number == 0){
-                    nT = ((int)((E->T[m][i] + E->control.surface_temp - E->control.adiabaticT0) * E->data.ref_temperature - E->composition.start_temp + E->refstate.Tadi[nz]) / E->composition.delta_temp + 1);
-                }else{
-                    nT = ((int)((E->T[m][i] + E->control.surface_temp) * E->data.ref_temperature - E->composition.start_temp) / E->composition.delta_temp + 1);}
-                    if (nT < 1) nT = 1;
-                    if (nT > E->composition.ntdeps) nT = E->composition.ntdeps;
+          buoy[m][i] = -1.0 * temp * get_rho_nd(E,m,i) / (E->data.therm_exp * E->data.ref_temperature);
 
-                //fprintf(stderr,"nz is %d, nT is %d, delta_rho is %f\n",nz,nT,E->refstate.delta_rho[j+1][nz][nT]);
-		buoy[m][i] -= temp2 * E->refstate.delta_rho[j+1][nz][nT] * E->composition.comp_node[m][j][i];
-            }
     }
-}}
 
 #ifdef USE_GGRD
     /* surface layer Rayleigh modification? */
@@ -267,6 +220,138 @@ void get_buoyancy(struct All_variables *E, double **buoy)
     return;
 }
 
+
+/*
+void get_buoyancy_backup(struct All_variables *E, double **buoy)
+{
+    int i,j,m,n,nz,nxny,nT;
+    int lev = E->mesh.levmax;
+    double temp,temp2,rfac,cost2;
+    void remove_horiz_ave2(struct All_variables*, double**);
+    //char filename[100];FILE *out;
+
+    nxny = E->lmesh.nox*E->lmesh.noy;
+    /* Rayleigh number */
+/*    temp = E->control.Atemp;
+
+    /* thermal buoyancy */
+/*    for(m=1;m<=E->sphere.caps_per_proc;m++)
+      for(i=1;i<=E->lmesh.nno;i++) {
+	nz = ((i-1) % E->lmesh.noz) + 1;
+        /* We don't need to substract adiabatic T profile from T here,
+         * since the horizontal average of buoy will be removed.
+         */
+/*        if (E->composition.tdep_buoyancy == 1){
+            if(E->control.disptn_number == 0){
+                nT = ((int)((E->T[m][i] + E->control.surface_temp - E->control.adiabaticT0) * E->data.ref_temperature - E->composition.start_temp + E->refstate.Tadi[nz]) / E->composition.delta_temp + 1);
+            }else{
+                nT = ((int)((E->T[m][i] + E->control.surface_temp) * E->data.ref_temperature - E->composition.start_temp) / E->composition.delta_temp + 1);}
+                if (nT < 1) nT = 1;
+                if (nT > E->composition.ntdeps) nT = E->composition.ntdeps;
+        buoy[m][i] =  temp * E->refstate.rho[nz][nT]
+	  * E->refstate.thermal_expansivity[nz][nT] * E->T[m][i];
+        } else {
+         
+        buoy[m][i] =  temp * E->refstate.rho[nz]
+	  * E->refstate.thermal_expansivity[nz] * E->T[m][i];
+      }}
+    /* chemical buoyancy */
+/*    if(E->control.tracer &&
+       (E->composition.ichemical_buoyancy)) {
+      if((E->composition.zdep_buoyancy == 0) && (E->composition.tdep_buoyancy == 0)){
+      for(j=0;j<E->composition.ncomp;j++) {
+	/* TODO: how to scale chemical buoyancy wrt reference density? */
+/*	temp2 = E->composition.buoyancy_ratio[j] * temp;
+            for(m=1;m<=E->sphere.caps_per_proc;m++)
+	      for(i=1;i<=E->lmesh.nno;i++){
+		buoy[m][i] -= temp2 * E->composition.comp_node[m][j][i];
+            }
+      }
+    }
+    else if((E->composition.zdep_buoyancy == 1) && (E->composition.tdep_buoyancy == 0)){
+      for(j=0;j<E->composition.ncomp;j++) {
+	temp2 = E->composition.buoyancy_ratio[j] * temp;
+            for(m=1;m<=E->sphere.caps_per_proc;m++)
+	      for(i=1;i<=E->lmesh.nno;i++){
+                nz = ((i-1) % E->lmesh.noz) + 1;
+                nT = 1;
+		buoy[m][i] -= temp2 * E->refstate.delta_rho[j+1][nz][nT] * E->composition.comp_node[m][j][i];
+            }
+      }}
+    else if((E->composition.zdep_buoyancy == 1) && (E->composition.tdep_buoyancy == 1)){
+      for(j=0;j<E->composition.ncomp;j++) {
+	temp2 = E->composition.buoyancy_ratio[j] * temp;
+            for(m=1;m<=E->sphere.caps_per_proc;m++)
+	      for(i=1;i<=E->lmesh.nno;i++){
+                nz = ((i-1) % E->lmesh.noz) + 1;
+                if(E->control.disptn_number == 0){
+                    nT = ((int)((E->T[m][i] + E->control.surface_temp - E->control.adiabaticT0) * E->data.ref_temperature - E->composition.start_temp + E->refstate.Tadi[nz]) / E->composition.delta_temp + 1);
+                }else{
+                    nT = ((int)((E->T[m][i] + E->control.surface_temp) * E->data.ref_temperature - E->composition.start_temp) / E->composition.delta_temp + 1);}
+                    if (nT < 1) nT = 1;
+                    if (nT > E->composition.ntdeps) nT = E->composition.ntdeps;
+
+                //fprintf(stderr,"nz is %d, nT is %d, delta_rho is %f\n",nz,nT,E->refstate.delta_rho[j+1][nz][nT]);
+		buoy[m][i] -= temp2 * E->refstate.delta_rho[j+1][nz][nT] * E->composition.comp_node[m][j][i];
+            }
+    }
+}}
+
+#ifdef USE_GGRD
+    /* surface layer Rayleigh modification? */
+/*    if(E->control.ggrd.ray_control)
+      ggrd_adjust_tbl_rayleigh(E,buoy);
+#endif
+    /* phase change buoyancy */
+/*    phase_change_apply_410(E, buoy);
+    phase_change_apply_670(E, buoy);
+    phase_change_apply_cmb(E, buoy);
+
+    /* 
+       convert density to buoyancy 
+    */
+/*#ifdef ALLOW_ELLIPTICAL
+    if(E->data.use_rotation_g){
+      /* 
+
+      rotational correction, the if should not add significant
+      computational burden
+
+      */
+      /* g= g_e (1+(5/2m-f) cos^2(theta)) , not theta_g */
+/*      rfac = E->data.ge*(5./2.*E->data.rotm-E->data.ellipticity);
+      /*  */
+/*      for(m=1;m<=E->sphere.caps_per_proc;m++)
+	for(j=0;j < nxny;j++) {
+	  for(i=1;i<=E->lmesh.noz;i++)
+	    n = j*E->lmesh.noz + i; /* this could be improved by only
+				       computing the cos as a function
+				       of lat, but leave for now  */
+/*	    cost2 = cos(E->sx[m][1][n]);cost2 = cost2*cost2;	    /* cos^2(theta) */
+	    /* correct gravity for rotation */
+/*	    buoy[m][n] *= E->refstate.gravity[i] * (E->data.ge+rfac*cost2);
+	  }
+    }else{
+#endif
+      /* default */
+      /* no latitude dependency of gravity */
+/*      for(m=1;m<=E->sphere.caps_per_proc;m++)
+	for(j=0;j < nxny;j++) {
+	  for(i=1;i<=E->lmesh.noz;i++){
+	    n = j*E->lmesh.noz + i;
+	    buoy[m][n] *= E->refstate.gravity[i];
+	  }
+	}
+#ifdef ALLOW_ELLIPTICAL
+    }
+#endif    
+    
+
+    remove_horiz_ave2(E,buoy);
+    
+    return;
+}
+*/
 
 /*
  * Scan input str to get a double vector *values. The vector length is from

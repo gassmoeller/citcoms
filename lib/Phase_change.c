@@ -32,6 +32,7 @@
 
 #include "parsing.h"
 #include "phase_change.h"
+#include "material_properties.h"
 
 static void phase_change_apply(struct All_variables *E, double **buoy,
 			       float **B, float **B_b,
@@ -169,12 +170,13 @@ static void calc_phase_change(struct All_variables *E,
      * phase. B is between 0 and 1. */
     for(i=1;i<=E->lmesh.nno;i++)  {
         nz = ((i-1) % E->lmesh.noz) + 1;
+
         dz = (E->sphere.ro-E->sx[m][3][i]) - depth;
         /*XXX: dz*rho[nz]*g[nz] is only a approximation for the reduced
          * pressure, a more accurate formula is:
          *   integral(rho(z)*g(z)*dz) from depth_ph to current depth   */
-        e_pressure = dz * E->refstate.rho[nz] * E->refstate.gravity[nz]
-            - clapeyron * (E->T[m][i] - transT);
+        e_pressure = dz * ((float)get_rho_nd(E,m,i)) * E->refstate.gravity[nz]
+             - clapeyron * (E->T[m][i] - transT);
 
         B[m][i] = pt5 * (one + tanh(inv_width * e_pressure));
     }

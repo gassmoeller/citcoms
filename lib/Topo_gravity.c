@@ -27,6 +27,7 @@
  */
 #include <stdio.h>
 #include <math.h>
+#include "material_properties.h"
 #include "element_definitions.h"
 #include "global_defs.h"
 
@@ -576,15 +577,16 @@ static void expand_topo_sph_harm(struct All_variables *E,
 
     float scaling, stress_scaling, topo_scaling1,topo_scaling2;
     float den_contrast1, den_contrast2, grav1, grav2;
-    int i, j;
+    int i, j, k;
+    int m = 1;
 
     stress_scaling = E->data.ref_viscosity*E->data.therm_diff/
         (E->data.radius_km*E->data.radius_km*1e6);
 
     /* density contrast across surface, need to dimensionalize reference density */
-    den_contrast1 = E->data.density*E->refstate.rho[E->lmesh.noz] - E->data.density_above;
+    den_contrast1 = E->data.density * ((float)get_rho_nd(E,m,E->lmesh.noz)) - E->data.density_above;
     /* density contrast across CMB, need to dimensionalize reference density */
-    den_contrast2 = E->data.density_below - E->data.density*E->refstate.rho[1];
+    den_contrast2 = -E->data.density * ((float)get_rho_nd(E,m,1)) + E->data.density_below;
 
     /* gravity at surface */
     grav1 = E->refstate.gravity[E->lmesh.noz] * E->data.grav_acc;
@@ -646,11 +648,12 @@ static void geoid_from_topography(struct All_variables *E,
 
     float con1,con2,scaling,den_contrast1,den_contrast2;
     int i,j,k,ll,mm,s;
+    int m = 1;
 
     /* density contrast across surface, need to dimensionalize reference density */
-    den_contrast1 = E->data.density*E->refstate.rho[E->lmesh.noz] - E->data.density_above;
+    den_contrast1 = E->data.density*((float)get_rho_nd(E,m,E->lmesh.noz)) - E->data.density_above;
     /* density contrast across CMB, need to dimensionalize reference density */
-    den_contrast2 = E->data.density_below - E->data.density*E->refstate.rho[1];
+    den_contrast2 = -E->data.density*((float)get_rho_nd(E,m,1)) + E->data.density_below;
 
 
     /* reset arrays */
@@ -722,13 +725,14 @@ static void geoid_from_topography_self_g(struct All_variables *E,
     long double con4, ri;
     long double a1,b1,c1_0,c1_1,a2,b2,c2_0,c2_1,a11,a12,a21,a22,f1_0,f2_0,f1_1,f2_1,denom;
     int i,j,k,ll,mm,s;
+    int m = 1;
 
     ri = E->sphere.ri;
 
     /* density contrast across surface, need to dimensionalize reference density */
-    den_contrast1 = E->data.density*E->refstate.rho[E->lmesh.noz] - E->data.density_above;
+    den_contrast1 = E->data.density*get_rho_nd(E,m,E->lmesh.noz) - E->data.density_above;
     /* density contrast across CMB, need to dimensionalize reference density */
-    den_contrast2 = E->data.density_below - E->data.density*E->refstate.rho[1];
+    den_contrast2 = -E->data.density*get_rho_nd(E,m,1) + E->data.density_below;
 
     /* gravity at surface */
     grav1 = E->refstate.gravity[E->lmesh.noz] * E->data.grav_acc;

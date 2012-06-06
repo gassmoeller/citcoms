@@ -264,6 +264,12 @@ void tracer_advection(struct All_variables *E)
     double CPU_time0();
     double begin_time = CPU_time0();
 
+
+    if (E->output.tracer_origin && (E->monitor.solution_cycles  == 2)){//6858 = 5Ma)) {  // 6614 = 15Ma  // 6130 = 30Ma  // 5335 = 50Ma
+      // 50 Ma vor 7000
+      set_tracer_origin(E);
+    }
+  
     /* advect tracers */
     predict_tracers(E);
     correct_tracers(E);
@@ -1265,7 +1271,7 @@ static void init_tracer_flavors(struct All_variables *E)
     int j, kk, number_of_tracers;
     int i;
     double flavor;
-    double the,phi,rad,dx[3];
+    double the,phi,rad,dx[6];
     float* radius;
         int el = 0;
         int jj = 0;
@@ -1302,18 +1308,34 @@ static void init_tracer_flavors(struct All_variables *E)
       for (j=1;j<=E->sphere.caps_per_proc;j++) {
 
 	number_of_tracers = E->trace.ntracers[j];
+
 	for (kk=1;kk<=number_of_tracers;kk++) {
+          flavor = 0;
+          rad = E->trace.basicq[j][2][kk];
 	  dx[0] = E->trace.basicq[j][0][kk] - E->convection.blob_center[0];
+          if (dx[0] > 1.5708) dx[0] = 3.1415 - dx[0];
 	  dx[1] = E->trace.basicq[j][1][kk] - E->convection.blob_center[1];
+          if (dx[1] > 3.1415) dx[1] = 2*3.1415 - dx[1];
 	  dx[2] = E->trace.basicq[j][2][kk] - E->convection.blob_center[2];
+	  dx[3] = E->trace.basicq[j][0][kk] - E->convection.blob_center[3];
+	  dx[4] = E->trace.basicq[j][1][kk] - E->convection.blob_center[4];
+          if (dx[4] > 1.5708) dx[4] = 3.1415 - dx[4];
+	  dx[5] = E->trace.basicq[j][2][kk] - E->convection.blob_center[5];
+          if (dx[4] > 3.1415) dx[4] = 2*3.1415 - dx[4];
           radius = E->convection.blob_radius;
 
           flavor = 0;
-          for (i=1; i<E->trace.nflavors; i++) {
-             if ((dx[0]*dx[0]/(radius[0]*radius[0])) + (dx[1]*dx[1]/(radius[1]*radius[1])) + (dx[2]*dx[2]/(radius[2]*radius[2])) < 1) { 
-                          flavor = i;
-                          break;
-             }         
+          if ((dx[0]*dx[0]/(radius[0]*radius[0])) + (dx[1]*dx[1]/(radius[1]*radius[1])) + (dx[2]*dx[2]/(radius[2]*radius[2])) < 1) { 
+              int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[1] + 1e-4));
+              flavor = min(a,1)*2;
+          }         
+          if ((dx[3]*dx[3]/(radius[0]*radius[0])) + (dx[4]*dx[4]/(radius[1]*radius[1])) + (dx[5]*dx[5]/(radius[2]*radius[2])) < 1) { 
+              int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[1] + 1e-4));
+              flavor = min(a,1)*2;
+          }
+          if (rad > E->trace.z_interface[0]){
+              int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[0] + 1e-4));
+              flavor = min(a,1);
           }
           E->trace.extraq[j][0][kk] = flavor;
 	}
@@ -1324,30 +1346,23 @@ static void init_tracer_flavors(struct All_variables *E)
 
         for (j=1;j<=E->sphere.caps_per_proc;j++) {
 
-        number_of_tracers = E->trace.ntracers[j];
-        for (kk=1;kk<=number_of_tracers;kk++) {
-          rad = E->trace.basicq[j][2][kk];
+            number_of_tracers = E->trace.ntracers[j];
+            for (kk=1;kk<=number_of_tracers;kk++) {
+                rad = E->trace.basicq[j][2][kk];
 
-          flavor = 0;
-             /* if (rad > 0.992){
-                  flavor = 1;}*/
-              if (rad > 0.9985 || rad < 0.575) {
-                  flavor = 1;}
-
-          el = E->trace.ielement[j][kk];
-          if ((E->parallel.me == 1) && (kk==1)){
-          fprintf(stderr,"Element number of the %dth tracer: %d\n",kk,el);
-          fprintf(stderr,"Node number of one: %d\n",E->ien[j][el].node[1]);
-          }
-          cont = 0;
-          for(jj=1;jj<=4;jj++){
-                    cont += E->refstate.cont_position[((E->ien[j][el].node[2*jj]-1)/E->lmesh.noz)%(E->lmesh.nox) + 1][((E->ien[j][el].node[2*jj]-1)/(E->lmesh.noz*E->lmesh.nox))+1];
+                flavor = 0;
+                /*if (rad < 0.575){
+                flavor = 1;}*/
+                if (rad > E->trace.z_interface[0]){
+                    int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[0] + 1e-4));
+                    flavor = min(a,1);
+                }else if(rad < E->trace.z_interface[1]){
+                    int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[1] + 1e-4));
+                    flavor = min(a,1)*2;
                 }
-          if((rad > 0.95) && (cont != 0)) flavor = 2;
-
-          E->trace.extraq[j][0][kk] = flavor;
-              }
+                E->trace.extraq[j][0][kk] = flavor;
           }
+      }
       break;
 
 
@@ -1369,6 +1384,23 @@ static void init_tracer_flavors(struct All_variables *E)
       break;
     }
 
+    if (E->composition.continents){
+        for (j=1;j<=E->sphere.caps_per_proc;j++) {
+
+            number_of_tracers = E->trace.ntracers[j];
+            for (kk=1;kk<=number_of_tracers;kk++) {
+                rad = E->trace.basicq[j][2][kk];
+                if(rad > 0.9843){
+                    el = E->trace.ielement[j][kk];
+                    cont = 0;
+                    for(jj=1;jj<=4;jj++){
+                        cont += E->refstate.cont_position[((E->ien[j][el].node[2*jj]-1)/E->lmesh.noz)%(E->lmesh.nox) + 1][((E->ien[j][el].node[2*jj]-1)/(E->lmesh.noz*E->lmesh.nox))+1];
+                    }
+                    if(cont != 0) E->trace.extraq[j][0][kk] = E->composition.ncomp;  // cont litho
+                }
+            }
+        }
+    }
     return;
 }
 
@@ -1868,13 +1900,24 @@ void chemical_changes(struct All_variables *E)
 {
     int j,kk;
 
+    for (j=1;j<=E->sphere.caps_per_proc;j++) 
+      for (kk=1;kk<=E->trace.ntracers[j];kk++) 
+        if ((E->trace.basicq[j][2][kk] > 0.9985) && (E->trace.extraq[j][0][kk] == 0)) 
+          E->trace.extraq[j][0][kk] = 1;
+
+}
+
+
+void set_tracer_origin(struct All_variables *E)
+{
+    int j,kk;
+
     for (j=1;j<=E->sphere.caps_per_proc;j++) {
         for (kk=1;kk<=E->trace.ntracers[j];kk++) {
-
-         /*   if (E->trace.basicq[j][2][kk] > 0.992 && E->trace.extraq[j][0][kk] == 0) E->trace.extraq[j][0][kk] = 1;        */
-
-            if (E->trace.basicq[j][2][kk] > 0.9985) E->trace.extraq[j][0][kk] = 1;
-
-}
+             E->trace.extraq[j][1][kk] = E->trace.basicq[j][0][kk];
+             E->trace.extraq[j][2][kk] = E->trace.basicq[j][1][kk];
+             E->trace.extraq[j][3][kk] = E->trace.basicq[j][2][kk];
+        }
     }
 }
+

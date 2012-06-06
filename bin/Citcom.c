@@ -177,10 +177,10 @@ int main(argc,argv)
   /* information about simulation time and wall clock time */
   output_time(E, E->monitor.solution_cycles);
 
-  if(!E->control.restart)	/* if we have not restarted, print new
-				   checkpoint, else leave as is to
-				   allow reusing directories */
-    output_checkpoint(E);
+//  if(!E->control.restart)	/* if we have not restarted, print new
+//				   checkpoint, else leave as is to
+//				   allow reusing directories */
+//    output_checkpoint(E);
 
 
  

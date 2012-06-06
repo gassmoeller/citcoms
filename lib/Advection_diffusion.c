@@ -35,6 +35,7 @@
 #include "global_defs.h"
 #include <math.h>
 #include "advection_diffusion.h"
+#include "material_properties.h"
 #include "parsing.h"
 
 static void set_diffusion_timestep(struct All_variables *E);
@@ -442,7 +443,7 @@ static void pg_solver(struct All_variables *E,
     for (m=1;m<=E->sphere.caps_per_proc;m++)
       for(i=1;i<=E->lmesh.nno;i++) {
         if(!(E->node[m][i] & (TBX | TBY | TBZ))){
-	  DTdot[m][i] *= E->TMass[m][i];         /* lumped mass matrix */
+	  DTdot[m][i] *= E->TMass[m][i] / (get_rho_nd(E,m,i)*get_cp_nd(E,m,i));         /* lumped mass matrix */
 	}	else
 	  DTdot[m][i] = 0.0;         /* lumped mass matrix */
       }
@@ -606,13 +607,13 @@ static void element_residual(struct All_variables *E, int el,
 
       /* Q = Q0 for C = 0, Q = Q0ER for C = 1, and linearly in
 	 between  */
-      Q *= (1.0 - E->composition.comp_el[m][0][el]);
-      Q += E->composition.comp_el[m][0][el] * E->control.Q0ER;
+      for(j=0;j<E->composition.ncomp;j++){
+        Q += E->composition.comp_el[m][0][el] * (E->control.Q0ER-E->control.Q0);
+      }
     }
 
-    nz = ((el-1) % E->lmesh.elz) + 1;
-    rho = 0.5 * (E->refstate.rho[nz] + E->refstate.rho[nz+1]);
-    cp = 0.5 * (E->refstate.heat_capacity[nz] + E->refstate.heat_capacity[nz+1]);
+    rho = get_rho_el(E,m,el);
+    cp = get_cp_el(E,m,el);
 
     if(E->control.disptn_number == 0)
         heating = rho * Q;
@@ -708,18 +709,16 @@ static void filter(struct All_variables *E)
 
     lev=E->mesh.levmax;
 
-    rhocp = (double *)malloc((E->lmesh.noz+1)*sizeof(double));
-    for(i=1;i<=E->lmesh.noz;i++)
-        rhocp[i] = E->refstate.rho[i] * E->refstate.heat_capacity[i];
+    rhocp = (double *)malloc((E->lmesh.nno+1)*sizeof(double));
 
     for(m=1;m<=E->sphere.caps_per_proc;m++)
         for(i=1;i<=E->lmesh.nno;i++)  {
-            nz = ((i-1) % E->lmesh.noz) + 1;
+            rhocp[i] = get_rho_nd(E,m,i)*get_cp_nd(E,m,i);
 
             /* compute sum(rho*cp*T) before filtering, skipping nodes
                that's shared by another processor */
             if(!(E->NODE[lev][m][i] & SKIP))
-                Tsum0 += E->T[m][i]*rhocp[nz];
+                Tsum0 += E->T[m][i]*rhocp[i];
 
             /* remove overshoot */
             if(E->T[m][i]<Tmin)  Tmin=E->T[m][i];
@@ -735,7 +734,6 @@ static void filter(struct All_variables *E)
 
     for(m=1;m<=E->sphere.caps_per_proc;m++)
         for(i=1;i<=E->lmesh.nno;i++)  {
-            nz = ((i-1) % E->lmesh.noz) + 1;
 
             /* remvoe undershoot */
             if(E->T[m][i]<=fabs(2*Tmin0-Tmin1))   E->T[m][i]=Tmin0;
@@ -743,9 +741,9 @@ static void filter(struct All_variables *E)
 
             /* sum(rho*cp*T) after filtering */
             if (!(E->NODE[lev][m][i] & SKIP))  {
-                Tsum1 += E->T[m][i]*rhocp[nz];
+                Tsum1 += E->T[m][i]*rhocp[i];
                 if(E->T[m][i]!=Tmin0 && E->T[m][i]!=Tmax0) {
-                    sum_rhocp += rhocp[nz];
+                    sum_rhocp += rhocp[i];
                 }
 
             }
@@ -802,19 +800,12 @@ static void process_visc_heating(struct All_variables *E, int m,
 static void process_adi_heating(struct All_variables *E, int m,
                                 double *heating)
 {
-    int e, ez, i, j;
-    double matprop, temp1, temp2;
+    int e, i, j;
+    double temp1, temp2;
     const int ends = ENODES3D;
 
     temp2 = E->control.disptn_number / ends;
     for(e=1; e<=E->lmesh.nel; e++) {
-        ez = (e - 1) % E->lmesh.elz + 1;
-        matprop = 0.125
-            * (E->refstate.thermal_expansivity[ez] +
-               E->refstate.thermal_expansivity[ez + 1])
-            * (E->refstate.rho[ez] + E->refstate.rho[ez + 1])
-            * (E->refstate.gravity[ez] + E->refstate.gravity[ez + 1]);
-
         temp1 = 0.0;
         for(i=1; i<=ends; i++) {
             j = E->ien[m][e].node[i];
@@ -822,7 +813,7 @@ static void process_adi_heating(struct All_variables *E, int m,
                 * (E->T[m][j] + E->control.surface_temp);
         }
 
-        heating[e] = matprop * temp1 * temp2;
+        heating[e] = get_rho_el(E,m,e) * get_alpha_el(E,m,e) * get_g_el(E,m,e) * temp1 * temp2;
     }
 
     return;
@@ -834,21 +825,14 @@ static void latent_heating(struct All_variables *E, int m,
                            float **B, float Ra, float clapeyron,
                            float depth, float transT, float inv_width)
 {
-    double temp, temp0, temp1, temp2, temp3, matprop;
-    int e, ez, i, j;
+    double temp, temp0, temp1, temp2, temp3;
+    int e, i, j;
     const int ends = ENODES3D;
 
     temp0 = 2.0 * inv_width * clapeyron * E->control.disptn_number * Ra / E->control.Atemp / ends;
     temp1 = temp0 * clapeyron;
 
     for(e=1; e<=E->lmesh.nel; e++) {
-        ez = (e - 1) % E->lmesh.elz + 1;
-        matprop = 0.125
-            * (E->refstate.thermal_expansivity[ez] +
-               E->refstate.thermal_expansivity[ez + 1])
-            * (E->refstate.rho[ez] + E->refstate.rho[ez + 1])
-            * (E->refstate.gravity[ez] + E->refstate.gravity[ez + 1]);
-
         temp2 = 0;
         temp3 = 0;
         for(i=1; i<=ends; i++) {
@@ -860,7 +844,7 @@ static void latent_heating(struct All_variables *E, int m,
         }
 
         /* correction on the adiabatic cooling term */
-        heating_adi[e] += matprop * temp2 * temp0;
+        heating_adi[e] += get_rho_el(E,m,e) * get_alpha_el(E,m,e) * get_g_el(E,m,e) * temp2 * temp0;
 
         /* correction on the DT/Dt term */
         heating_latent[e] += temp3 * temp1;

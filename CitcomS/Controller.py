@@ -70,8 +70,8 @@ class Controller(Component):
 
         # no need to write checkpoint files if restarting from
         # old checkpoint
-        if not self.solver.inventory.ic.inventory.restart:
-            self.checkpoint()
+#        if not self.solver.inventory.ic.inventory.restart:
+#            self.checkpoint()
 
         return
 

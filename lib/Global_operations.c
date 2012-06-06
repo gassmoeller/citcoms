@@ -31,6 +31,8 @@
 #include <sys/types.h>
 #include "element_definitions.h"
 #include "global_defs.h"
+#include "material_properties.h"
+
 #ifdef ALLOW_ELLIPTICAL
 double theta_g(double , struct All_variables *);
 #endif
@@ -909,9 +911,8 @@ void remove_rigid_rot(struct All_variables *E)
         moment_of_inertia = tmp = 0;
         for (i=1;i<=E->lmesh.elz;i++)
             tmp += (8.0*M_PI/15.0)*
-                0.5*(E->refstate.rho[i] + E->refstate.rho[i+1])*
+                get_rho_el(E,m,i)*
                 (pow(E->sx[1][3][i+1],5.0) - pow(E->sx[1][3][i],5.0));
-
         MPI_Allreduce(&tmp, &moment_of_inertia, 1, MPI_DOUBLE,
                       MPI_SUM, E->parallel.vertical_comm);
     } else {
@@ -955,8 +956,7 @@ void remove_rigid_rot(struct All_variables *E)
         wy =  r*vx[1];
 
         if(E->control.remove_angular_momentum) {
-            int nz = (e-1) % E->lmesh.elz + 1;
-            rho = 0.5 * (E->refstate.rho[nz] + E->refstate.rho[nz+1]);
+            rho = get_rho_el(E,m,e);
         } else {
             rho = 1;
         }
