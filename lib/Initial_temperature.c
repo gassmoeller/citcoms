@@ -338,7 +338,7 @@ static void adiabatic_profile(struct All_variables *E)
     double r1;
 
     for(m=1; m<=E->sphere.caps_per_proc; m++)
-        for(node=1;i<=E->lmesh.nno;i++){
+        for(node=1;node<=E->lmesh.nno;node++){
                     nz = ((node-1) % E->lmesh.noz) + 1;
                     E->T[m][node] = E->refstate.Tadi[nz]/E->data.ref_temperature - E->control.surface_temp;
                 }
