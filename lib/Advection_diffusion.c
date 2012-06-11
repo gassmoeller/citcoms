@@ -608,7 +608,7 @@ static void element_residual(struct All_variables *E, int el,
       /* Q = Q0 for C = 0, Q = Q0ER for C = 1, and linearly in
 	 between  */
       for(j=0;j<E->composition.ncomp;j++){
-        Q += E->composition.comp_el[m][0][el] * (E->control.Q0ER-E->control.Q0);
+        Q += E->composition.comp_el[m][j][el] * (E->control.Q0ER-E->control.Q0);
       }
     }
 
