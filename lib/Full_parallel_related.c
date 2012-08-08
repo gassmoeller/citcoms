@@ -149,13 +149,13 @@ oordinate and F-B
     for (j=1;j<=E->sphere.caps_per_proc;j++) {
       fprintf(E->fp_out,"capid[%d]=%d \n",j,E->sphere.capid[j]);
     }
-    for (m=0;m<E->sphere.caps;m++)
+    /*for (m=0;m<E->sphere.caps;m++)
       for (j=0;j<E->parallel.nprocy;j++)
 	for (i=0;i<E->parallel.nprocx;i++)
 	  for (k=0;k<E->parallel.nprocz;k++)
 	    fprintf(E->fp_out,"loc2proc_map[cap=%d][x=%d][y=%d][z=%d] = %d\n",
 		    m,i,j,k,E->parallel.loc2proc_map[m][i][j][k]);
-
+*/
     fflush(E->fp_out);
   }
 
@@ -472,7 +472,7 @@ if (E->control.verbose) {
  for(lev=E->mesh.gridmax;lev>=E->mesh.gridmin;lev--)
    for (m=1;m<=E->sphere.caps_per_proc;m++)      {
     fprintf(E->fp_out,"lev=%d  me=%d capid=%d m=%d \n",lev,E->parallel.me,E->sphere.capid[m],m);
-    for (ii=1;ii<=6;ii++)
+    /*for (ii=1;ii<=6;ii++)
       for (i=1;i<=E->parallel.NUM_NNO[lev][m].bound[ii];i++)
         fprintf(E->fp_out,"ii=%d   %d %d \n",ii,i,E->parallel.NODE[lev][m][i].bound[ii]);
 
@@ -481,7 +481,7 @@ if (E->control.verbose) {
       if((E->NODE[lev][m][node] & SKIP)) {
         lnode++;
         fprintf(E->fp_out,"skip %d %d \n",lnode,node);
-        }
+        }*/
     }
  fflush(E->fp_out);
   }
@@ -715,7 +715,7 @@ void full_parallel_communication_routs_v(E)
 
 
 
-  if(E->control.verbose) {
+/*  if(E->control.verbose) {
     for(lev=E->mesh.gridmax;lev>=E->mesh.gridmin;lev--) {
       fprintf(E->fp_out,"output_communication route surface for lev=%d \n",lev);
       for (m=1;m<=E->sphere.caps_per_proc;m++)  {
@@ -746,7 +746,7 @@ void full_parallel_communication_routs_v(E)
       }
     }
     fflush(E->fp_out);
-  }
+  }*/
 
   return;
   }

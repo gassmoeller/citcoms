@@ -113,16 +113,7 @@ void tracer_input(struct All_variables *E)
 				   Advection_diffusion */
 	myerror(E,"need to switch on tracers for tracer_enriched");
 
-      input_float("Q0_enriched",&(E->control.Q0ER),"0.0",m);
-      snprintf(message,100,"using compositionally enriched heating: C = 0: %g C = 1: %g (only one composition!)",
-	       E->control.Q0,E->control.Q0ER);
-      report(E,message);
-      //
-      // this check doesn't work at this point in the code, and we didn't want to put it into every call to
-      // Advection diffusion
-      //
-      //if(E->composition.ncomp != 1)
-      //myerror(E,"enriched tracers cannot deal with more than one composition yet");
+      input_float_vector("Q0_enriched",E->composition.ncomp,E->control.Q0ER,m);
 
     }
     if(E->control.tracer) {
@@ -612,8 +603,21 @@ static void find_tracers(struct All_variables *E)
 
             E->trace.ielement[j][it]=iel;
 
-            if (iel<0) {
+            if (iel == -99) {
+                /* tracer is inside other processors */
                 put_away_later(E,j,it);
+                eject_tracer(E,j,it);
+                it--;
+            } else if (iel == -1) {
+                /* tracer is inside this processor,
+                 * but cannot find its element.
+                 * Throw away the tracer. */
+
+                fprintf(E->trace.fpt,"Eject unknown tracer. Fix did not work.");
+                fflush(E->trace.fpt);
+
+                if (E->trace.itracer_warnings) exit(10);
+
                 eject_tracer(E,j,it);
                 it--;
             }
@@ -834,7 +838,7 @@ static void generate_random_tracers(struct All_variables *E,
         random1=drand48();
         random2=drand48();
         random3=drand48();
-#else
+#else  /* never called */
         random1=(1.0*rand())/(1.0*RAND_MAX);
         random2=(1.0*rand())/(1.0*RAND_MAX);
         random3=(1.0*rand())/(1.0*RAND_MAX);

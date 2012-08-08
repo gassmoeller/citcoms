@@ -2325,11 +2325,8 @@ static int icheck_bounds(struct All_variables *E,
     double cross3[4];
     double cross4[4];
     double rad1,rad2,rad3,rad4;
-    double theta, phi;
+    double rad;
     double tiny, eps;
-    double x,y,z;
-
-    double myatan();
 
     /* make vectors from node to node */
 
@@ -2367,7 +2364,7 @@ static int icheck_bounds(struct All_variables *E,
     /*  Hopefully, this doesn't happen often, may be expensive                  */
 
     tiny=1e-15;
-    eps=1e-6;
+    eps=1e-3;
 
     if (number_of_tries>3)
         {
@@ -2382,30 +2379,36 @@ static int icheck_bounds(struct All_variables *E,
             exit(10);
         }
 
+    /*  If point is too close to boundary, move by 1e-3 * element_length */
+    /*  orthogonal to boundary. Direction: Inside of the element. */
+
     if (fabs(rad1)<=tiny||fabs(rad2)<=tiny||fabs(rad3)<=tiny||fabs(rad4)<=tiny)
         {
-            x=test_point[1];
-            y=test_point[2];
-            z=test_point[3];
-            theta=myatan(sqrt(x*x+y*y),z);
-            phi=myatan(y,x);
-
-            if (theta<=M_PI/2.0)
-                {
-                    theta=theta+eps;
-                }
-            else
-                {
-                    theta=theta-eps;
-                }
-            phi=phi+eps;
-            x=sin(theta)*cos(phi);
-            y=sin(theta)*sin(phi);
-            z=cos(theta);
-            test_point[1]=x;
-            test_point[2]=y;
-            test_point[3]=z;
-
+            if (fabs(rad1) <= tiny){
+                test_point[1] += v12[1] * eps; 
+                test_point[2] += v12[2] * eps; 
+                test_point[3] += v12[3] * eps; 
+            }
+            if (fabs(rad2) <= tiny){
+                test_point[1] += v23[1] * eps; 
+                test_point[2] += v23[2] * eps; 
+                test_point[3] += v23[3] * eps; 
+            }
+            if (fabs(rad3) <= tiny){
+                test_point[1] += v34[1] * eps; 
+                test_point[2] += v34[2] * eps; 
+                test_point[3] += v34[3] * eps; 
+            }
+            if (fabs(rad4) <= tiny){
+                test_point[1] += v41[1] * eps; 
+                test_point[2] += v41[2] * eps; 
+                test_point[3] += v41[3] * eps; 
+            }
+            rad = sqrt(test_point[1]*test_point[1]+test_point[2]*test_point[2]+test_point[3]*test_point[3]);
+            test_point[1] /= rad;
+            test_point[2] /= rad;
+            test_point[3] /= rad;
+               
             number_of_tries++;
             goto try_again;
 
@@ -2561,6 +2564,7 @@ static void fix_theta_phi(double *theta, double *phi)
 /*                                                               */
 /* This function returns the the real element for a given point. */
 /* Returns -99 if not in this cap.                               */
+/* Returns -1 if in this cap but cannot find the element.        */
 /* iprevious_element, if known, is the last known element. If    */
 /* it is not known, input a negative number.                     */
 
@@ -2750,7 +2754,7 @@ int full_iget_element(struct All_variables *E,
     fprintf(E->trace.fpt,"x,y,z,theta,phi,iregel %.15e %.15e %.15e %.15e %.15e %d\n",
             x,y,z,theta,phi,iregel);
     fflush(E->trace.fpt);
-    exit(10);
+    return -1;
 
  foundit:
 

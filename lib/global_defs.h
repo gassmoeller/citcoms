@@ -203,6 +203,9 @@ struct BOUND  {
 struct PASS  {
     int pass[27];	};
 
+struct VAL   {
+    double value; int index; };
+
 struct Parallel {
     MPI_Comm world;
     MPI_Comm horizontal_comm;
@@ -497,7 +500,7 @@ struct CONTROL {
     float TBCbotval;
 
     float Q0;
-    float Q0ER;
+    float* Q0ER;
 
     int precondition;
     int keep_going;
@@ -557,6 +560,7 @@ struct REF_STATE {
     double *thermal_conductivity;
     double *gravity;
     double *Tadi;
+    double *Tm;
     double *free_enthalpy;
     double *rad_viscosity;
     double *stress_exp;
@@ -656,6 +660,8 @@ struct Output {
     int density;      /* whether to output density */
     int svelo;        /* whether to output spherical velocities (debugging) */
     int material;     /* whether to output material properties (debugging) */
+    int deltat;     /* whether to output Temperature - adiabaticT */
+    int melttemp;     /* whether to output Temperature - solidus*/
 
   /* flags used by GZDIR */
   struct gzd_struc gzdir;
@@ -679,6 +685,7 @@ struct COMPOSITION {
     int tdep_buoyancy;
     int continents;
 
+    int pressure_oversampling;
     int delta_temp;
     int start_temp;
     int end_temp;

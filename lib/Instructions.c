@@ -1556,6 +1556,10 @@ static void output_parse_optional(struct  All_variables *E)
             E->output.comp_nd = 1;
         else if(strcmp(prev, "material")==0)
             E->output.material = 1;
+        else if(strcmp(prev, "deltat")==0)
+            E->output.deltat = 1;
+        else if(strcmp(prev, "melttemp")==0)
+            E->output.melttemp = 1;
         else if(strcmp(prev, "heating")==0)
             E->output.heating = 1;
         else

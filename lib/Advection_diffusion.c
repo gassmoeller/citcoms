@@ -200,6 +200,8 @@ void PG_timestep_solve(struct All_variables *E)
 {
 
   double Tmaxd();
+  struct VAL Tmaxloc();
+  struct VAL T_interior2;
   void temperatures_conform_bcs();
   void lith_age_conform_tbc();
   void assimilate_lith_conform_bcs();
@@ -252,19 +254,26 @@ void PG_timestep_solve(struct All_variables *E)
 	temperatures_conform_bcs(E);
       }
 
+
       if(E->advection.monitor_max_T) {
           /* get the max temperature for new T */
-          E->monitor.T_interior = Tmaxd(E,E->T);
+          //E->monitor.T_interior = Tmaxd(E,E->T);
+          T_interior2 = Tmaxloc(E,E->T);
+          E->monitor.T_interior = T_interior2.value;
 
           /* if the max temperature changes too much, restore the old
            * temperature field, calling the temperature solver using
            * half of the timestep size */
           if (E->monitor.T_interior/T_interior1 > E->monitor.T_maxvaried) {
-              if(E->parallel.me==0) {
+              //if(E->parallel.me==0) {
+              if(T_interior2.index > 0) {   // if jump is in this cpu domain
                   fprintf(stderr, "max T varied from %e to %e\n",
                           T_interior1, E->monitor.T_interior);
-                  fprintf(E->fp, "max T varied from %e to %e\n",
-                          T_interior1, E->monitor.T_interior);
+                  fprintf(stderr, "max T varied from %e to %e in Position x:%f y:%f z:%f\n", T_interior1, T_interior2.value, E->x[1][1][T_interior2.index], E->x[1][2][T_interior2.index],E->x[1][3][T_interior2.index]);
+                  fprintf(stderr, "I am number:%d showing nodenum:%d T:%f maxnode:%d \n",
+                          E->parallel.me, T_interior2.index, E->T[1][T_interior2.index],E->lmesh.nno);
+                  fflush(stderr);
+                  fprintf(stderr, "Material properties: Rho:%f Alpha:%f CP:%f radheat:%f\n", get_rho_nd(E,1,T_interior2.index),get_alpha_nd(E,1,T_interior2.index),get_cp_nd(E,1,T_interior2.index),get_radheat_nd(E,1,T_interior2.index));
               }
               for(m=1;m<=E->sphere.caps_per_proc;m++)
                   for (i=1;i<=E->lmesh.nno;i++)   {
@@ -308,7 +317,6 @@ void PG_timestep_solve(struct All_variables *E)
       lith_age_conform_tbc(E);
       assimilate_lith_conform_bcs(E);
   }
-
 
   return;
 }
@@ -598,28 +606,24 @@ static void element_residual(struct All_variables *E, int el,
 	  Q += Q0->Q[i] * exp(-Q0->lambda[i] * (E->monitor.elapsed_time+Q0->t_offset));
 */
 
-    /* heat production */
-    Q = E->control.Q0;
-
-    /* should we add a compositional contribution? */
-    if(E->control.tracer_enriched){
-      /* XXX: change Q and Q0 to be a vector of ncomp elements */
-
-      /* Q = Q0 for C = 0, Q = Q0ER for C = 1, and linearly in
-	 between  */
-      for(j=0;j<E->composition.ncomp;j++){
-        Q += E->composition.comp_el[m][j][el] * (E->control.Q0ER-E->control.Q0);
-      }
-    }
-
     rho = get_rho_el(E,m,el);
     cp = get_cp_el(E,m,el);
 
+    /* heat production */
+    Q = E->control.Q0 * rho;
+
+    /* should we add a compositional contribution? */
+    if(E->control.tracer_enriched){
+
+      /* Q = Q0*C[0] + sum_j (Q0ER[j]*C[j]) */
+        Q = get_radheat_el(E,m,el);
+    }
+
     if(E->control.disptn_number == 0)
-        heating = rho * Q;
+        heating = Q;
     else
         /* E->heating_latent is actually the inverse of latent heating */
-        heating = (rho * Q - E->heating_adi[m][el] + E->heating_visc[m][el])
+        heating = (Q - E->heating_adi[m][el] + E->heating_visc[m][el])
             * E->heating_latent[m][el];
 
     /* construct residual from this information */
@@ -785,7 +789,8 @@ static void process_visc_heating(struct All_variables *E, int m,
 
     for(e=1; e<=E->lmesh.nel; e++) {
         visc = 0.0;
-        for(i = 1; i <= vpts; i++)
+        if (E->sx[m][3][E->ien[m][e].node[8]] < 0.9490)
+          for(i = 1; i <= vpts; i++)
             visc += E->EVi[m][(e-1)*vpts + i];
 
         heating[e] = temp * visc * strain_sqr[e];

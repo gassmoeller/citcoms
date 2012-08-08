@@ -1008,7 +1008,7 @@ void construct_c3x3matrix(E)
 
 void mass_matrix(struct All_variables *E)
 {
-    int m,node,i,j,nint,e,lev;
+    int m,node,i,nint,e,lev;
     int n[9];
     double myatan(),area,centre[4],temp[9],temp2[9],dx1,dx2,dx3;
 
@@ -1126,7 +1126,6 @@ void mass_matrix(struct All_variables *E)
         for(e=1;e<=E->lmesh.nel;e++)  {
             for(node=1;node<=enodes[E->mesh.nsd];node++) {
                 temp[node] = 0.0;
-                j = E->ien[m][e].node[node];
                 for(nint=1;nint<=vpts;nint++)
                     temp[node] += E->gDA[m][e].vpt[nint]
                         * g_point[nint].weight[E->mesh.nsd-1]
@@ -1162,7 +1161,7 @@ void mass_matrix(struct All_variables *E)
         fprintf(E->fp_out, "rank=%d my_volume=%e total_volume=%e\n",
                 E->parallel.me, E->lmesh.volume, E->mesh.volume);
 
-        for(lev=E->mesh.levmin;lev<=E->mesh.levmax;lev++)  {
+        /*for(lev=E->mesh.levmin;lev<=E->mesh.levmax;lev++)  {
             fprintf(E->fp_out,"output_mass lev=%d\n",lev);
             for (m=1;m<=E->sphere.caps_per_proc;m++)   {
                 fprintf(E->fp_out,"m=%d %d \n",E->sphere.capid[m],m);
@@ -1177,7 +1176,7 @@ void mass_matrix(struct All_variables *E)
             fprintf(E->fp_out,"m=%d %d \n",E->sphere.capid[m],m);
             for (node=1;node<=E->lmesh.nno;node++)
                 fprintf(E->fp_out,"TMass[%d]= %g \n",node,E->TMass[m][node]);
-        }
+        }*/
         fflush(E->fp_out);
     }
 

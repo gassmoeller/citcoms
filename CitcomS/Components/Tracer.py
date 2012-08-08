@@ -51,6 +51,7 @@ class Tracer(CitcomComponent):
         inv.z_interface = map(float, inv.z_interface)
         inv.buoyancy_ratio = map(float, inv.buoyancy_ratio)
         inv.initial_content = map(float, inv.initial_content)
+        inv.Q0_enriched = map(float, inv.Q0_enriched)
 
         from CitcomSLib import Tracer_set_properties
         Tracer_set_properties(self.all_variables, self.inventory, stream)
@@ -95,7 +96,7 @@ class Tracer(CitcomComponent):
 
         # Enriched internal heat production
         tracer_enriched = inv.bool("tracer_enriched", default=False)
-        Q0_enriched = inv.float("Q0_enriched", default=0.0)
+        Q0_enriched = inv.list("Q0_enriched", default=[0.0])
 
         # Regular grid parameters
         regular_grid_deltheta = inv.float("regular_grid_deltheta", default=1.0)
@@ -112,6 +113,7 @@ class Tracer(CitcomComponent):
         buoyancy_ratio = inv.list("buoyancy_ratio", default=[1.0])
         initial_content = inv.list("initial_content", default=[1.0])
         zdep_buoyancy = inv.int("zdep_buoyancy", default=0)
+        pressure_oversampling = inv.int("pressure_oversampling", default=1)
         density_file = inv.str("density_file", default="density.dat")
         tdep_buoyancy = inv.int("tdep_buoyancy", default=0)
         delta_temp = inv.int("delta_temp", default=0)

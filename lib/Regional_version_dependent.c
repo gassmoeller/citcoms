@@ -143,7 +143,7 @@ void regional_node_locations(E)
      }
 
 
-  if (E->control.verbose) {
+  /*if (E->control.verbose) {
   for (lev=E->mesh.levmin;lev<=E->mesh.levmax;lev++) {
     fprintf(E->fp_out,"output_coordinates before rotation %d \n",lev);
     for (j=1;j<=E->sphere.caps_per_proc;j++)  {
@@ -154,7 +154,7 @@ void regional_node_locations(E)
       }
     }
     fflush(E->fp_out);
-  }
+  }*/
 
   compute_angle_surf_area (E);   /* used for interpolation */
 #ifdef ALLOW_ELLIPTICAL
@@ -203,7 +203,7 @@ void regional_node_locations(E)
 */
 
 
-  if (E->control.verbose) {
+  /*if (E->control.verbose) {
   for (lev=E->mesh.levmin;lev<=E->mesh.levmax;lev++)   {
     fprintf(E->fp_out,"output_coordinates after rotation %d \n",lev);
     for (j=1;j<=E->sphere.caps_per_proc;j++)
@@ -212,7 +212,7 @@ void regional_node_locations(E)
              fprintf(E->fp_out,"%d %d %g %g %g\n",j,i,E->SX[lev][j][1][i],E->SX[lev][j][2][i],E->SX[lev][j][3][i]);
       }
     fflush(E->fp_out);
-  }
+  }*/
    free((void *)rr);
    free((void *)RR);
 

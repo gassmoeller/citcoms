@@ -98,6 +98,16 @@ void composition_input(struct All_variables *E)
 
     input_int("continents",&(E->composition.continents),"1,0,nomax",m);
 
+    if(E->control.tracer_enriched){
+        E->control.Q0ER = (float*) malloc(E->composition.ncomp
+                                          *sizeof(float));
+        /* default values .... */
+        for (i=0; i<E->composition.ncomp; i++){
+            E->control.Q0ER[i] = 0.0;}
+
+    } else E->control.Q0ER = (float*) malloc(sizeof(float));
+
+
     /* compositional rheology */
     /* what was this about? there is a CDEPV for compositional rheology TWB  */
 

@@ -121,14 +121,14 @@ void construct_surface( struct All_variables *E)
 
   }     /* end for cap j */
 
-  if(E->control.verbose) {
+  /*if(E->control.verbose) {
     for (j=1;j<=E->sphere.caps_per_proc;j++) {
       for(e=1;e<=E->lmesh.snel;e++) {
         fprintf(E->fp_out, "sien sel=%d node=%d %d %d %d\n",
 		e, E->sien[j][e].node[1], E->sien[j][e].node[2], E->sien[j][e].node[3], E->sien[j][e].node[4]);
       }
     }
-  }
+  }*/
 }
 
 
@@ -315,12 +315,12 @@ void construct_node_maps(E)
 
        E->mesh.matrix_size[lev] = matrix;
 
-       if(E->control.verbose) {
+       /*if(E->control.verbose) {
            fprintf(E->fp_out, "output Node_map lev=%d m=%d\n", lev, m);
            fprintf(E->fp_out, "neq=%d nno=%d max_eqn=%d matrix=%d\n", neq, nno, max_eqn, matrix);
            for(i=0;i<matrix;i++)
                fprintf(E->fp_out, "%d %d\n", i, E->Node_map[lev][m][i]);
-       }
+       }*/
 
     }         /* end for level and m */
 

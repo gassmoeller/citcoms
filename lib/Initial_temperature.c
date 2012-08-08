@@ -213,8 +213,8 @@ void convection_initial_temperature(struct All_variables *E)
   /* Note: it is the callee's responsibility to conform tbc. */
   /* like a call to temperatures_conform_bcs(E); */
 
-  if (E->control.verbose)
-    debug_tic(E);
+  /*if (E->control.verbose)
+    debug_tic(E);*/
 
   return;
 }
@@ -419,7 +419,7 @@ static void add_layer(struct All_variables *E)
         for(i=1; i<=E->lmesh.nno; i++){
             r1 = E->sx[m][3][i];
             if (r1 <= E->trace.z_interface[1]){
-                E->T[m][i] += 750.0 / E->data.ref_temperature;
+                E->T[m][i] += 850.0 / E->data.ref_temperature;
             }}
     return;
 }
@@ -658,6 +658,73 @@ static void add_perturbations_at_all_layers(struct All_variables *E)
         } /* end if */
     } /* end for p */
 
+    return;
+}
+
+static void add_sudden_cylindrical_anomaly(struct All_variables *E)
+{
+    int i, j ,k , m, node;
+    int nox, noy, noz;
+
+    float dx[7];
+    double amp, r1,rout,rin;
+    float *radius,*center;
+    float cartcenter[2][4];
+    const double e_4 = 1e-4;
+    double distance,rad;
+
+    noy = E->lmesh.noy;
+    nox = E->lmesh.nox;
+    noz = E->lmesh.noz;
+
+    rout = E->sphere.ro;
+    rin = E->sphere.ri;
+
+
+    center       = E->convection.blob_center;
+    radius       = E->convection.blob_radius;
+    amp          = E->convection.blob_dT;
+
+    rtp2xyz(center[2],center[0],center[1],cartcenter[0]);
+    rtp2xyz(center[5],center[3],center[4],cartcenter[1]);
+    
+    if(E->parallel.me == 0)
+      {fprintf(stderr,"center=(%e %e %e) radius=(%e %e %e) dT=%e\n",
+	      center[0], center[1], center[2], radius[0], radius[1], radius[2], amp);
+      fprintf(stderr,"center=(%e %e %e) radius=(%e %e %e) dT=%e\n",
+	      center[3], center[4], center[5], radius[0], radius[1], radius[2], amp);
+      }
+
+    /* compute temperature field according to nodal coordinate */
+    for(m=1; m<=E->sphere.caps_per_proc; m++)
+        for(i=1; i<=noy; i++)
+            for(j=1; j<=nox;j ++)
+                for(k=1; k<=noz; k++) {
+                    node = k + (j-1)*noz + (i-1)*nox*noz;
+                    rad = sqrt(E->x[m][1][node]*E->x[m][1][node]+E->x[m][2][node]*E->x[m][2][node] + E->x[m][3][node]*E->x[m][3][node]);
+		    dx[1] = E->x[m][1][node]/rad - cartcenter[0][0]/center[2];
+		    dx[2] = E->x[m][2][node]/rad - cartcenter[0][1]/center[2];
+		    dx[3] = E->x[m][3][node]/rad - cartcenter[0][2]/center[2];
+		    dx[4] = E->x[m][1][node]/rad - cartcenter[1][0]/center[5];
+		    dx[5] = E->x[m][2][node]/rad - cartcenter[1][1]/center[5];
+		    dx[6] = E->x[m][3][node]/rad - cartcenter[1][2]/center[5];
+
+                    if ((fabs(E->sx[m][3][node] - center[2]) < radius[2]) || (fabs(E->sx[m][3][node] - center[5]) < radius[2])){
+                    if (((dx[1]*dx[1]/(radius[0]*radius[0])) + (dx[2]*dx[2]/(radius[1]*radius[1])) < 1) || ((dx[4]*dx[4]/(radius[0]*radius[0])) + (dx[5]*dx[5]/(radius[1]*radius[1])) < 1)){
+		      E->T[m][node] += amp;
+
+		      if(E->convection.blob_bc_persist){
+			r1 = E->sx[m][3][node];
+			if((fabs(r1 - rout) < e_4) || (fabs(r1 - rin) < e_4)){
+			  /* at bottom or top of box, assign as TBC */
+			  E->sphere.cap[m].TB[1][node]=E->T[m][node];
+			  E->sphere.cap[m].TB[2][node]=E->T[m][node];
+			  E->sphere.cap[m].TB[3][node]=E->T[m][node];
+			}
+		      }
+		    }
+                }
+             }
     return;
 }
 
@@ -917,7 +984,7 @@ static void construct_tic_from_input(struct All_variables *E)
 	mantle_temperature = E->control.mantle_temp;
 	constant_temperature_profile(E, mantle_temperature);
         add_bottom_tbl(E, E->convection.half_space_age, mantle_temperature);
-        add_sudden_spherical_anomaly(E);	
+        add_sudden_cylindrical_anomaly(E);	
 	break;
     case 103:
         /* own temperature profile with results from bunge and steinberger */
@@ -931,6 +998,7 @@ static void construct_tic_from_input(struct All_variables *E)
     case 105:
         adiabatic_profile(E);
         add_sudden_spherical_anomaly(E);
+        add_layer(E);
         break;
 
     case 106:
@@ -942,6 +1010,10 @@ static void construct_tic_from_input(struct All_variables *E)
 
     case 107:
         constant_temperature_profile(E, 0);
+        break;
+
+    case 108:
+        adiabatic_profile(E);
         break;
 
     default:

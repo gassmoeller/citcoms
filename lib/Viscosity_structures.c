@@ -1151,11 +1151,11 @@ void visc_from_P(E,EEta) /* "plasticity" implementation
 	  eedot[e] = 1.0;
 	if(m == E->sphere.caps_per_proc)
 	  E->viscosity.pdepv_visited = 1;
-	if((E->parallel.me == 0)&&(E->control.verbose)){
+	/*if((E->parallel.me == 0)&&(E->control.verbose)){
 	  for(e=0;e < E->viscosity.num_mat;e++)
 	    fprintf(stderr,"num mat: %i a: %g b: %g y: %g\n",
 		    e,E->viscosity.pdepv_a[e],E->viscosity.pdepv_b[e],E->viscosity.pdepv_y[e]);
-	}
+	}*/
       }
 
       for(e=1;e <= nel;e++)   {	/* loop through all elements */

@@ -132,6 +132,52 @@ static void vtk_output_temp(struct All_variables *E, FILE *fp)
     return;
 }
 
+static void vtk_output_melttemp(struct All_variables *E, FILE *fp)
+{
+    int i,nz;
+    int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
+    float* floatmelttemp = malloc(nodes*sizeof(float));
+
+    fprintf(fp, "        <DataArray type=\"Float32\" Name=\"melt excess temperature\" format=\"%s\">\n", E->output.vtk_format);
+
+    for(i=0;i < nodes;i++){
+        nz = i % E->lmesh.noz;
+        floatmelttemp[i] =  ((float) *(E->T[1]+i+1) + E->control.surface_temp) * E->data.ref_temperature - E->refstate.Tm[nz*E->composition.pressure_oversampling + 1];
+    }
+
+    if (strcmp(E->output.vtk_format,"binary") == 0) {
+        write_binary_array(nodes,floatmelttemp,fp);
+    } else {
+        write_ascii_array(nodes,1,floatmelttemp,fp);
+    }
+    fputs("        </DataArray>\n", fp);
+    free(floatmelttemp);
+    return;
+}
+
+static void vtk_output_deltat(struct All_variables *E, FILE *fp)
+{
+    int i,nz;
+    int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
+    float* deltatemp = malloc(nodes*sizeof(float));
+
+    fprintf(fp, "        <DataArray type=\"Float32\" Name=\"DeltaT [K]\" format=\"%s\">\n", E->output.vtk_format);
+
+    for(i=0;i <= nodes;i++){ 
+        nz = i % E->lmesh.noz + 1;
+        deltatemp[i] =  (float) (*(E->T[1]+i+1)+E->control.surface_temp)*E->data.ref_temperature-E->refstate.Tadi[nz];
+    }
+        
+
+    if (strcmp(E->output.vtk_format,"binary") == 0) {
+        write_binary_array(nodes,deltatemp,fp);
+    } else {
+        write_ascii_array(nodes,1,deltatemp,fp);
+    }
+    fputs("        </DataArray>\n", fp);
+    free(deltatemp);
+    return;
+}
 
 static void vtk_output_velo(struct All_variables *E, FILE *fp)
 {
@@ -178,6 +224,7 @@ static void vtk_output_material(struct All_variables *E, FILE *fp)
     float* floatalpha = malloc(nodes*sizeof(float));
     float* floatrho = malloc(nodes*sizeof(float));
     float* floatcp = malloc(nodes*sizeof(float));
+    float* floatradheat = malloc(nodes*sizeof(float));
 
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"rho\" format=\"%s\">\n", E->output.vtk_format);
 
@@ -220,9 +267,23 @@ static void vtk_output_material(struct All_variables *E, FILE *fp)
         write_ascii_array(nodes,1,floatcp,fp);
     fputs("        </DataArray>\n", fp);
 
+    fprintf(fp, "        <DataArray type=\"Float32\" Name=\"radiogenic heating\" format=\"%s\">\n", E->output.vtk_format);
+
+    for(m=1; m<=E->sphere.caps_per_proc; m++)
+        for(i=1; i<=E->lmesh.nno; i++) {
+            floatradheat[((m-1)*E->sphere.caps_per_proc)+i-1] = (float) get_radheat_nd(E,m,i);
+    }
+
+    if (strcmp(E->output.vtk_format, "binary") == 0) 
+        write_binary_array(nodes,floatradheat,fp);
+    else 
+        write_ascii_array(nodes,1,floatradheat,fp);
+    fputs("        </DataArray>\n", fp);
+
     free(floatalpha);
     free(floatrho);
     free(floatcp);
+    free(floatradheat);
     return;
 }
 
@@ -726,6 +787,15 @@ void write_pvts(struct All_variables *E, int cycles)
         fprintf(fp,"      <DataArray type=\"Float32\" Name=\"rho\" format=\"%s\"/>\n", E->output.vtk_format); 
         fprintf(fp,"      <DataArray type=\"Float32\" Name=\"alpha\" format=\"%s\"/>\n", E->output.vtk_format); 
         fprintf(fp,"      <DataArray type=\"Float32\" Name=\"cp\" format=\"%s\"/>\n", E->output.vtk_format); 
+        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"radiogenic heating\" format=\"%s\"/>\n", E->output.vtk_format); 
+    }
+
+    if (E->output.deltat){
+        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"deltaT [K]\" format=\"%s\"/>\n", E->output.vtk_format); 
+    }
+
+    if (E->output.melttemp){
+        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"melt excess temperature [K]\" format=\"%s\"/>\n", E->output.vtk_format); 
     }
 
     fputs("    </PPointData>\n \n"
@@ -1301,6 +1371,12 @@ void vtk_output(struct All_variables *E, int cycles)
 
     if (E->output.material){
     vtk_output_material(E, fp);}
+
+    if (E->output.deltat){
+    vtk_output_deltat(E,fp);}
+
+    if (E->output.melttemp){
+    vtk_output_melttemp(E,fp);}
     
     vtk_point_data_trailer(E, fp);
 

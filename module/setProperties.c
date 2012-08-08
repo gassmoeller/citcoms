@@ -637,16 +637,6 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
 
     getIntProperty(properties, "tracer", E->control.tracer, fp);
 
-    getIntProperty(properties, "tracer_enriched", E->control.tracer_enriched, fp);
-    if(E->control.tracer_enriched) {
-        if(!E->control.tracer)
-            myerror(E,"need to switch on tracers for tracer_enriched");
-
-        getFloatProperty(properties, "Q0_enriched", E->control.Q0ER, fp);
-        snprintf(message,100,"using compositionally enriched heating: C = 0: %g C = 1: %g (only one composition!)",
-                 E->control.Q0,E->control.Q0ER);
-        report(E,message);
-    }
 
     getIntProperty(properties, "tracer_ic_method",
                    E->trace.ic_method, fp);
@@ -668,6 +658,19 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
     }
 
     getIntProperty(properties, "tracer_flavors", E->trace.nflavors, fp);
+
+    getIntProperty(properties, "tracer_enriched", E->control.tracer_enriched, fp);
+    if(E->control.tracer_enriched) {
+        if(!E->control.tracer)
+            myerror(E,"need to switch on tracers for tracer_enriched");
+
+        E->control.Q0ER = (float*) malloc((E->trace.nflavors-1)
+                                          *sizeof(float));
+        getFloatVectorProperty(properties, "Q0_enriched", E->control.Q0ER,E->trace.nflavors-1,fp);
+        snprintf(message,100,"using compositionally enriched heating: C = 0: %g C = 1: %g and so on",
+                 E->control.Q0,E->control.Q0ER);
+        report(E,message);
+    }
 
     getIntProperty(properties, "ic_method_for_flavors", E->trace.ic_method_for_flavors, fp);
 
@@ -731,6 +734,7 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
         if(E->composition.zdep_buoyancy==1){
             getStringProperty(properties, "density_file", E->refstate.densityfilename, fp);
             getIntProperty(properties, "tdep_buoyancy", E->composition.tdep_buoyancy, fp);
+            getIntProperty(properties, "pressure_oversampling", E->composition.pressure_oversampling, fp);
 
             if(E->composition.tdep_buoyancy==1){
                 getIntProperty(properties, "delta_temp", E->composition.delta_temp, fp);

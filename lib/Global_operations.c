@@ -724,6 +724,15 @@ double global_dmax(E,a)
   return (temp);
   }
 
+struct VAL global_dmaxloc(E,a)
+   struct All_variables *E;
+   struct VAL a;
+{
+  struct VAL temp;
+  MPI_Allreduce(&a, &temp,1,MPI_DOUBLE_INT,MPI_MAXLOC,E->parallel.world);
+  return (temp);
+  }
+
 
 float global_fmax(E,a)
    struct All_variables *E;
@@ -747,6 +756,29 @@ double Tmaxd(E,T)
       temp = max(T[m][i],temp);
 
   temp1 = global_dmax(E,temp);
+  return (temp1);
+  }
+
+struct VAL Tmaxloc(E,T)
+  struct All_variables *E;
+  double **T;
+{
+  struct VAL global_dmaxloc(),temp,temp1;
+  int i,m,nmax;
+
+  temp.value = -10.0;
+  temp.index = 0;
+  for (m=1;m<=E->sphere.caps_per_proc;m++)
+    for(i=1;i<=E->lmesh.nno;i++)
+      if (T[m][i] > temp.value){
+          temp.value = T[m][i];
+          nmax = i;
+      }
+  temp.index = E->parallel.me;
+  temp1 = global_dmaxloc(E,temp);
+  if (temp1.index == E->parallel.me)
+    temp1.index = nmax;
+  else temp1.index = -10;
   return (temp1);
   }
 
@@ -911,7 +943,7 @@ void remove_rigid_rot(struct All_variables *E)
         moment_of_inertia = tmp = 0;
         for (i=1;i<=E->lmesh.elz;i++)
             tmp += (8.0*M_PI/15.0)*
-                get_rho_el(E,m,i)*
+                get_rho_el(E,1,i)*
                 (pow(E->sx[1][3][i+1],5.0) - pow(E->sx[1][3][i],5.0));
         MPI_Allreduce(&tmp, &moment_of_inertia, 1, MPI_DOUBLE,
                       MPI_SUM, E->parallel.vertical_comm);
