@@ -560,6 +560,7 @@ struct REF_STATE {
     double *thermal_conductivity;
     double *gravity;
     double *Tadi;
+    double *Tini;
     double *Tm;
     double *free_enthalpy;
     double *rad_viscosity;

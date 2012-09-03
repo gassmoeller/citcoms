@@ -308,24 +308,17 @@ static void linear_temperature_profile(struct All_variables *E)
 static void read_in_temperature_profile(struct All_variables *E)
 {
     int m, i, j, k, node;
-    int nox, noy, noz;
-    double r1,DeltaT;
-
-    nox = E->lmesh.nox;
-    noy = E->lmesh.noy;
-    noz = E->lmesh.noz;
-    DeltaT = E->control.Atemp * E->data.ref_viscosity * E->data.therm_diff /(E->data.density*E->data.therm_exp*E->data.grav_acc*E->data.radius_km*E->data.radius_km*E->data.radius_km*1000000000);
-
+    double r1;
 
     for(m=1; m<=E->sphere.caps_per_proc; m++)
-        for(i=1; i<=noy; i++)
-            for(j=1; j<=nox;j ++)
-                for(k=1; k<=noz; k++) {
-                    node = k + (j-1)*noz + (i-1)*nox*noz;
+        for(i=1; i<=E->lmesh.noy; i++)
+            for(j=1; j<=E->lmesh.nox;j ++)
+                for(k=1; k<=E->lmesh.noz; k++) {
+                    node = k + (j-1)*E->lmesh.noz + (i-1)*E->lmesh.nox*E->lmesh.noz;
                     r1 = E->sx[m][3][node];
-                    E->T[m][node] = (E->refstate.Tadi[k]-273.0)/DeltaT;
-                    if (r1*6371 > 6271) E->T[m][node] -= (1340.0/4000.0)*erfc((1.0-r1)*6371.0/100.0);
-                    if (r1*6371 < 6371-2690) E->T[m][node] += (1700.0/4000.0)*erfc((2890.0-(1.0-r1)*6371.0)/200.0);
+                    E->T[m][node] = (double) E->refstate.Tini[k];
+                    //if (r1*6371 > 6271) E->T[m][node] -= (1340.0/4000.0)*erfc((1.0-r1)*6371.0/100.0);
+                    //if (r1*6371 < 6371-2690) E->T[m][node] += (1700.0/4000.0)*erfc((2890.0-(1.0-r1)*6371.0)/200.0);
                     
                 }
     return;
@@ -419,7 +412,7 @@ static void add_layer(struct All_variables *E)
         for(i=1; i<=E->lmesh.nno; i++){
             r1 = E->sx[m][3][i];
             if (r1 <= E->trace.z_interface[1]){
-                E->T[m][i] += 850.0 / E->data.ref_temperature;
+                E->T[m][i] += E->convection.blob_dT;
             }}
     return;
 }
@@ -1014,6 +1007,18 @@ static void construct_tic_from_input(struct All_variables *E)
 
     case 108:
         adiabatic_profile(E);
+        break;
+
+    case 109:
+        /* Read in depth-dependent temperature profile from refstate */
+        read_in_temperature_profile(E);
+        add_layer(E);
+        break;
+
+    case 110:
+        /* Read in depth-dependent temperature profile from refstate */
+        read_in_temperature_profile(E);
+        add_sudden_cylindrical_anomaly(E);	
         break;
 
     default:

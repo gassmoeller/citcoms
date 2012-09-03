@@ -161,11 +161,13 @@ static void vtk_output_deltat(struct All_variables *E, FILE *fp)
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
     float* deltatemp = malloc(nodes*sizeof(float));
 
+    compute_horiz_avg(E);
+
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"DeltaT [K]\" format=\"%s\">\n", E->output.vtk_format);
 
     for(i=0;i <= nodes;i++){ 
         nz = i % E->lmesh.noz + 1;
-        deltatemp[i] =  (float) (*(E->T[1]+i+1)+E->control.surface_temp)*E->data.ref_temperature-E->refstate.Tadi[nz];
+        deltatemp[i] = (float) (*(E->T[1]+i+1)-E->Have.T[nz]) * E->data.ref_temperature;
     }
         
 

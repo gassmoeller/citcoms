@@ -89,6 +89,9 @@ void mat_prop_allocate(struct All_variables *E)
     /* reference profile of temperature */
     E->refstate.Tadi = (double *) malloc((noz+1)*sizeof(double));
 
+    /* reference profile of temperature */
+    E->refstate.Tini = (double *) malloc((noz+1)*sizeof(double));
+
     /* reference profile of gravity */
     E->refstate.Tm = (double *) malloc((noz+1)*sizeof(double));
 
@@ -268,17 +271,18 @@ static void read_perplexfile(struct All_variables *E)
         fgets(buffer, 255, fp);
         if (i%E->composition.pressure_oversampling == 0) {
         j++;
-        if(sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
+        if(sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
                   &(not_used1),
                   &(E->refstate.gravity[j]),
                   &(not_used2),
                   &(not_used3),
                   &(E->refstate.Tadi[j]),
+                  &(E->refstate.Tini[j]),
                   &(E->refstate.Tm[i]),
                   &(E->refstate.free_enthalpy[j]),
                   &(E->refstate.rad_viscosity[j]),
                   &(E->refstate.stress_exp[j]),
-                  &(E->refstate.thermal_conductivity[j])) != 10) {
+                  &(E->refstate.thermal_conductivity[j])) != 11) {
             fprintf(stderr,"Error while reading file '%s'\n", E->refstate.filename);
             exit(8);
         }
@@ -289,9 +293,9 @@ static void read_perplexfile(struct All_variables *E)
     if (E->parallel.me < E->parallel.nprocz){
         snprintf(refstate_file, 255, "%s.refstate.%d.csv", E->control.data_file, E->parallel.me);
         fp = output_open(refstate_file, "w");
-        fprintf(fp,"Gravity AdiabaticTemperature SolidusTemp Activation_Enthalpy ViscosityPrefactor StressExponent ThermalDiffusivity\n");
+        fprintf(fp,"Gravity AdiabaticTemperature InitialTemp SolidusTemp Activation_Enthalpy ViscosityPrefactor StressExponent ThermalDiffusivity\n");
         for (i=1;i <= E->lmesh.noz;i++){
-            fprintf(fp,"%f %f %f %f %f %f %f\n", E->refstate.gravity[i]*E->data.grav_acc,E->refstate.Tadi[i],E->refstate.Tm[i],E->refstate.free_enthalpy[i],E->refstate.rad_viscosity[i],E->refstate.stress_exp[i],E->refstate.thermal_conductivity[i]*E->data.therm_diff);
+            fprintf(fp,"%f %f %f %f %f %f %f\n", E->refstate.gravity[i]*E->data.grav_acc,E->refstate.Tadi[i],E->refstate.Tini[i],E->refstate.Tm[i],E->refstate.free_enthalpy[i],E->refstate.rad_viscosity[i],E->refstate.stress_exp[i],E->refstate.thermal_conductivity[i]*E->data.therm_diff);
         }
         fclose(fp);
     }
@@ -448,6 +452,21 @@ double get_g_el(struct All_variables *E, int m, int el)
 
 double get_cp_el(struct All_variables *E, int m, int el)
 {
+    int nn,a;
+    const int ends=enodes[E->mesh.nsd];
+    const int lev=E->mesh.levmax;
+    double cp = 0;
+    
+    for(a=1;a<=ends;a++){
+        nn = E->IEN[lev][m][el].node[a];
+        cp += get_cp_nd(E,m,nn);
+    }
+    cp /= ends;
+    return cp;
+}
+
+/*double get_cp_el(struct All_variables *E, int m, int el)
+{
     int i,nz,nzmin,nzmax,nT,j;
     int nn,a;
     const int ends=enodes[E->mesh.nsd];
@@ -475,7 +494,7 @@ double get_cp_el(struct All_variables *E, int m, int el)
     cp /= (nzmax-nzmin+1);
 
     return cp;
-}
+}*/
 
 double get_cp_nd(struct All_variables *E, int m, int nn)
 {
@@ -502,14 +521,23 @@ double get_cp_nd(struct All_variables *E, int m, int nn)
 
 double get_rho_el(struct All_variables *E, int m, int el)
 {
-    int i,nz,nzmin,nzmax,nT,j;
+//    int i,nz,nzmin,nzmax,nT,j;
     int nn,a;
     const int ends=enodes[E->mesh.nsd];
     const int lev=E->mesh.levmax;
     double rho = 0;
-    double meantemp = 0.0;
+//    double meantemp = 0.0;
+
+    for(a=1;a<=ends;a++){
+        nn = E->IEN[lev][m][el].node[a];
+        rho += get_rho_nd(E,m,nn);
+    }
+    rho /= ends;
+    return rho;
+}
+
     
-    for(a=1;a<=ends;a++)
+/*    for(a=1;a<=ends;a++)
         meantemp += E->T[m][E->IEN[lev][m][el].node[a]];
     meantemp /= ends;
 
@@ -529,7 +557,7 @@ double get_rho_el(struct All_variables *E, int m, int el)
     rho /= (nzmax-nzmin+1);
 
     return rho;
-}
+}*/
 
 double get_rho_nd(struct All_variables *E, int m, int nn)
 {
@@ -568,13 +596,22 @@ double get_rho_nd(struct All_variables *E, int m, int nn)
 double get_alpha_el(struct All_variables *E, int m, int el)
 {
     int nn,a;
-    int i,nz,nzmax,nzmin,nT,j;
+//    int i,nz,nzmax,nzmin,nT,j;
     const int ends=enodes[E->mesh.nsd];
     const int lev=E->mesh.levmax;
     double alpha = 0;
-    double meantemp = 0;
+//    double meantemp = 0;
  
-    for(a=1;a<=ends;a++)
+
+    for(a=1;a<=ends;a++){
+        nn = E->IEN[lev][m][el].node[a];
+        alpha += get_alpha_nd(E,m,nn);
+    }
+    alpha /= ends;
+    return alpha;
+}
+
+/*    for(a=1;a<=ends;a++)
       meantemp += E->T[m][E->IEN[lev][m][el].node[a]];
     meantemp /= ends;
 
@@ -597,7 +634,7 @@ double get_alpha_el(struct All_variables *E, int m, int el)
     alpha /= (nzmax-nzmin+1);
 
     return alpha;
-}
+}*/
 
 double get_alpha_nd(struct All_variables *E, int m, int nn)
 {
