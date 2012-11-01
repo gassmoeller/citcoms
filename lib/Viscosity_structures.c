@@ -1013,6 +1013,7 @@ void visc_from_T(E,EEta,propogate)
 		break;
     case 104:
 	// Bernhards Viscosity profile with consistent Temperature Dependency
+	// relative to horizontal average
 
             compute_horiz_avg(E);
 
@@ -1033,6 +1034,33 @@ void visc_from_T(E,EEta,propogate)
                     }
                     iz = (i-1) % E->lmesh.elz + 1;
                     EEta[m][ (i-1)*vpts + jj ] = 0.5*(E->refstate.rad_viscosity[iz]+E->refstate.rad_viscosity[iz+1])*exp(-1.0*0.5*(E->refstate.free_enthalpy[iz]+E->refstate.free_enthalpy[iz+1]) *(temp-E->Have.T[iz])/(0.5*(E->refstate.stress_exp[iz]+E->refstate.stress_exp[iz+1])*8.314*0.5*(E->refstate.Tadi[iz]+E->refstate.Tadi[iz+1])*(temp+E->control.surface_temp)));
+                    
+		}}
+		break;
+
+    case 105:
+	// Bernhards Viscosity profile with consistent Temperature Dependency
+	// relative to adiabatic temperature
+
+            compute_horiz_avg(E);
+
+        for(m=1;m<=E->sphere.caps_per_proc;m++)
+            for(i=1;i<=nel;i++)   {
+                l = E->mat[m][i] - 1;
+
+                for(kk=1;kk<=ends;kk++) {
+                    TT[kk] = E->T[m][E->ien[m][i].node[kk]];
+                    zz[kk] = (1.-E->sx[m][3][E->ien[m][i].node[kk]]);
+                }
+
+                for(jj=1;jj<=vpts;jj++) {
+                    temp=0.0;
+                    for(kk=1;kk<=ends;kk++)   {
+                        TT[kk]=max(TT[kk],zero);
+                        temp += min(TT[kk],one) * E->N.vpt[GNVINDEX(kk,jj)];
+                    }
+                    iz = (i-1) % E->lmesh.elz + 1;
+                    EEta[m][ (i-1)*vpts + jj ] = 0.5*(E->refstate.rad_viscosity[iz]+E->refstate.rad_viscosity[iz+1])*exp(-1.0*0.5*(E->refstate.free_enthalpy[iz]+E->refstate.free_enthalpy[iz+1]) *(temp-0.5*(E->refstate.Tadi[iz]+E->refstate.Tadi[iz+1])/E->data.ref_temperature + E->control.surface_temp)/(0.5*(E->refstate.stress_exp[iz]+E->refstate.stress_exp[iz+1])*8.314*0.5*(E->refstate.Tadi[iz]+E->refstate.Tadi[iz+1])*(temp+E->control.surface_temp)));
                     
 		}}
 		break;

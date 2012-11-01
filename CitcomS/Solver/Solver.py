@@ -240,9 +240,24 @@ class Solver(Component):
 
     def save(self, monitoringFrequency):
         step = self.step
+        dt = self.dt
+        t = self.t
+
+        #output_timing = 0.5 Ma
+        output_timing = 3.887396e-7
+        #start_timing = 322 Ma for CMB-T1000
+        start_timing = 2.503483e-4
+        #start_timing = 750 Ma for CMB-T1000-long
+        #start_timing = 5.831094e-4
 
         # output spacing is 'monitoringFrequency'
-        if not (step % monitoringFrequency):
+#        if not (step % monitoringFrequency):
+#            output(self.all_variables, step)
+
+        if (step == 0):
+            output(self.all_variables, step)
+
+        if ((dt > output_timing) or ((t-dt) % output_timing > t % output_timing)) and (t >= start_timing):
             output(self.all_variables, step)
 
         output_time(self.all_variables, step)

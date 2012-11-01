@@ -413,6 +413,7 @@ static void add_layer(struct All_variables *E)
             r1 = E->sx[m][3][i];
             if (r1 <= E->trace.z_interface[1]){
                 E->T[m][i] += E->convection.blob_dT;
+                E->T[m][i] = max(1.0,E->T[m][i]);
             }}
     return;
 }
@@ -513,6 +514,32 @@ static void add_bottom_tbl(struct All_variables *E, double age_in_myrs, double m
                     node = k + (j-1)*noz + (i-1)*nox*noz;
                     r1 = E->sx[m][3][node];
                     E->T[m][node] += dT * erfc(tmp * (r1 - E->sphere.ri));
+                }
+
+    return;
+}
+
+static void add_quasi_bottom_tbl(struct All_variables *E, double age_in_myrs, double mantle_temp)
+{
+    int m, i, j, k, node;
+    int nox, noy, noz;
+    double r1, dT, tmp;
+
+    nox = E->lmesh.nox;
+    noy = E->lmesh.noy;
+    noz = E->lmesh.noz;
+
+    dT = E->convection.blob_dT;
+    tmp = 0.5 / sqrt(age_in_myrs / E->data.scalet);
+
+    for(m=1; m<=E->sphere.caps_per_proc; m++)
+        for(i=1; i<=noy; i++)
+            for(j=1; j<=nox;j ++)
+                for(k=1; k<=noz; k++) {
+                    node = k + (j-1)*noz + (i-1)*nox*noz;
+                    r1 = E->sx[m][3][node];
+                    if (r1 >= E->trace.z_interface[1])
+                        E->T[m][node] += dT * erfc(tmp * (r1 - E->trace.z_interface[1]));
                 }
 
     return;
@@ -1011,8 +1038,10 @@ static void construct_tic_from_input(struct All_variables *E)
 
     case 109:
         /* Read in depth-dependent temperature profile from refstate */
-        read_in_temperature_profile(E);
+        //read_in_temperature_profile(E);
+        adiabatic_profile(E);
         add_layer(E);
+        add_quasi_bottom_tbl(E, E->convection.half_space_age, mantle_temperature);
         break;
 
     case 110:
