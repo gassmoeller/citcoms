@@ -152,7 +152,7 @@ class Controller(Component):
 
 
     def save(self):
-        self.solver.save(self.inventory.monitoringFrequency)
+        self.solver.save(self.inventory.monitoringFrequency,self.inventory.outputStartTime,self.inventory.outputTimeStep)
         return
 
 
@@ -166,5 +166,7 @@ class Controller(Component):
 
         import pyre.inventory
 
+        outputStartTime = pyre.inventory.float("outputStartTime", default=0.0)
+        outputTimeStep  = pyre.inventory.float("outputTimeStep", default=7.774792e-7)
         monitoringFrequency = pyre.inventory.int("monitoringFrequency", default=100)
         checkpointFrequency = pyre.inventory.int("checkpointFrequency", default=100)
