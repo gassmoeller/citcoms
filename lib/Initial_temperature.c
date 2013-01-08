@@ -1026,6 +1026,7 @@ static void construct_tic_from_input(struct All_variables *E)
         mantle_temperature = E->control.mantle_temp;
         constant_temperature_profile(E, mantle_temperature);
         add_layer(E);
+        add_quasi_bottom_tbl(E, E->convection.half_space_age, mantle_temperature);
         break;
 
     case 107:
