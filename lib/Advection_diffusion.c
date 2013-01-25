@@ -176,9 +176,9 @@ void std_timestep(struct All_variables *E)
 	  uc2 += E->N.ppt[GNPINDEX(i,1)]*VV[2][i];
 	  uc3 += E->N.ppt[GNPINDEX(i,1)]*VV[3][i];
         }
-	uc = fabs(uc1)/E->eco[m][el].size[1] + fabs(uc2)/E->eco[m][el].size[2] + fabs(uc3)/E->eco[m][el].size[3];
+	uc = max(max(fabs(uc1)/E->eco[m][el].size[1],fabs(uc2)/E->eco[m][el].size[2]),fabs(uc3)/E->eco[m][el].size[3]);
 
-	step = (0.5/uc);
+	step = (0.5/(3*uc));
 	adv_timestep = min(adv_timestep,step);
       }
 
