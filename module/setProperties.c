@@ -312,6 +312,8 @@ PyObject * pyCitcom_Output_set_properties(PyObject *self, PyObject *args)
     getStringProperty(properties, "output_format", E->output.format, fp);
     getStringProperty(properties, "output_optional", E->output.optional, fp);
     getStringProperty(properties, "vtk_format", E->output.vtk_format, fp);
+    getFloatProperty(properties, "tracer_file_time", E->output.tracer_file_time, fp);
+
     getIntProperty(properties, "steps", E->output.steps, fp);
 
     getIntProperty(properties, "gzdir_vtkio", E->output.gzdir.vtk_io, fp);
@@ -646,7 +648,7 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
                        E->trace.itperel, fp);
     }
     else if (E->trace.ic_method==1) {
-        getStringProperty(properties, "tracer_file",
+        getIntProperty(properties, "tracer_file",
                           E->trace.tracer_file, fp);
     }
     else if (E->trace.ic_method==2) {

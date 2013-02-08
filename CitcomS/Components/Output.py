@@ -55,6 +55,7 @@ class Output(CitcomComponent):
                                                       "hdf5"]))
         output_optional = inv.str("output_optional",
                                   default="surf,botm,tracer")
+        tracer_file_time = inv.float("tracer_file_time", default=0.0)
 
         vtk_format = inv.str("vtk_format", default="ascii",
                              validator=inv.choice(["binary", "ascii"]))

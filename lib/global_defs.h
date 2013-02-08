@@ -654,8 +654,9 @@ struct Output {
     int seismic;      /* whether to output seismic velocity model */
     int coord_bin;    /* whether to output coordinates in binary format */
     int tracer;       /* whether to output number of tracers per element */
-    int tracer_file;  /* whether to output tracer details */
+    int write_tracer_file;  /* whether to output tracer details */
     int tracer_file_written; /* whether tracer details are already written */
+    float tracer_file_time;
     int comp_el;      /* whether to output composition at elements */
     int comp_nd;      /* whether to output composition at nodes */
     int heating;      /* whether to output heating terms at elements */

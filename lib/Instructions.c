@@ -1487,7 +1487,7 @@ static void output_parse_optional(struct  All_variables *E)
     E->output.seismic = 0;
     E->output.coord_bin = 0;
     E->output.tracer = 0;
-    E->output.tracer_file = 0;
+    E->output.write_tracer_file = 0;
     E->output.comp_el = 0;
     E->output.comp_nd = 0;
     E->output.heating = 0;
@@ -1547,7 +1547,7 @@ static void output_parse_optional(struct  All_variables *E)
             }
         }
         else if(strcmp(prev, "tracer_file")==0)
-            E->output.tracer_file = 1;
+            E->output.write_tracer_file = 1;
         else if(strcmp(prev, "tracer")==0)
             E->output.tracer = 1;
         else if(strcmp(prev, "comp_el")==0)
@@ -1727,7 +1727,9 @@ void output_init(struct  All_variables *E)
     }
 #endif
 
+
     output_parse_optional(E);
+
 }
 
 

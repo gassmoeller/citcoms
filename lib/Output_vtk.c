@@ -1429,7 +1429,10 @@ void vtk_output(struct All_variables *E, int cycles)
     /* if processor is second write pvd for real time in vtk */
     if (E->parallel.me == 1%procs_per_cap) write_pvd(E, cycles);
 
-    if ((E->output.tracer_file) && (cycles == 5)) write_tracer_file(E, cycles);
+    if ((E->output.write_tracer_file) && (E->monitor.elapsed_time >= E->output.tracer_file_time) && (E->output.tracer_file_written != 1)){
+    	write_tracer_file(E, cycles);
+    	E->output.tracer_file_written = 1;
+    }
 
     return;
 }

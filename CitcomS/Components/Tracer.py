@@ -122,6 +122,10 @@ class Tracer(CitcomComponent):
         ntdeps = inv.int("ntdeps", default=1)
 
         continents = inv.int("continents", default=0)
+        tracer_origin = inv.int("tracer_origin", default=0)
+        tracer_origin_set_time = inv.float("tracer_origin_set_time", default=0.0)
+        chemical_changes = inv.int("chemical_changes", default=0)
+        hotspot_tracks = int.int("hotspot_tracks", default=0)
         
         # This is not used anymore and is left here for backward compatibility
         reset_initial_composition = inv.bool("reset_initial_composition",
