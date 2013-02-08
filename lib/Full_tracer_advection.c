@@ -169,8 +169,10 @@ void full_tracer_setup(struct All_variables *E)
     E->trace.number_of_extra_quantities = 0;
     if (E->trace.nflavors > 0)
         E->trace.number_of_extra_quantities += 1;
-    if (E->output.tracer_origin)
+    if (E->trace.tracer_origin)
         E->trace.number_of_extra_quantities += 3;
+    if (E->trace.hotspot_tracks)
+        E->trace.number_of_extra_quantities += 1;
 
     E->trace.number_of_tracer_quantities =
         E->trace.number_of_basic_quantities +

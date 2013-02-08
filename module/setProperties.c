@@ -659,6 +659,11 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
 
     getIntProperty(properties, "tracer_flavors", E->trace.nflavors, fp);
 
+    getIntProperty(properties, "tracer_origin", E->trace.tracer_origin, fp);
+    getFloatProperty(properties, "tracer_origin_set_time", E->trace.tracer_origin_set_time, fp);
+    getIntProperty(properties, "hotspot_tracks", E->trace.hotspot_tracks, fp);
+
+
     getIntProperty(properties, "tracer_enriched", E->control.tracer_enriched, fp);
     if(E->control.tracer_enriched) {
         if(!E->control.tracer)
@@ -710,6 +715,9 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
 
     getIntProperty(properties, "itracer_warnings", E->trace.itracer_warnings, fp);
 
+    getIntProperty(properties, "chemical_changes",
+                   E->composition.chemical_changes, fp);
+
     getIntProperty(properties, "chemical_buoyancy",
                    E->composition.ichemical_buoyancy, fp);
 
@@ -729,6 +737,8 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
         getDoubleVectorProperty(properties, "buoyancy_ratio", E->composition.buoyancy_ratio, E->composition.ncomp, fp);
         getDoubleVectorProperty(properties, "initial_content", E->composition.initial_content, E->composition.ncomp, fp);
         getIntProperty(properties, "continents", E->composition.continents, fp);
+        getIntProperty(properties, "hotspot_tracks", E->trace.hotspot_tracks, fp);
+
         getIntProperty(properties, "zdep_buoyancy", E->composition.zdep_buoyancy, fp);
 
         if(E->composition.zdep_buoyancy==1){

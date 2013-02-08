@@ -653,8 +653,9 @@ struct Output {
     int horiz_avg;    /* whether to output horizontal averaged profile */
     int seismic;      /* whether to output seismic velocity model */
     int coord_bin;    /* whether to output coordinates in binary format */
-    int tracer;       /* whether to output tracer coordinate */
-    int tracer_origin;/* whether to output tracer origin */
+    int tracer;       /* whether to output number of tracers per element */
+    int tracer_file;  /* whether to output tracer details */
+    int tracer_file_written; /* whether tracer details are already written */
     int comp_el;      /* whether to output composition at elements */
     int comp_nd;      /* whether to output composition at nodes */
     int heating;      /* whether to output heating terms at elements */
@@ -685,6 +686,7 @@ struct COMPOSITION {
     int zdep_buoyancy;
     int tdep_buoyancy;
     int continents;
+    int chemical_changes;
 
     int pressure_oversampling;
     int delta_temp;

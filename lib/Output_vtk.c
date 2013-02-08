@@ -865,6 +865,7 @@ void write_pvd(struct All_variables *E, int cycles)
     }
 }
 
+/* TODO: Remove deprecated functions
 static void vtk_tracer_lat(struct All_variables *E, FILE *fp)
 {
     int i, j;
@@ -959,6 +960,30 @@ static void vtk_tracer_comp(struct All_variables *E, FILE *fp)
     fputs("        </DataArray>\n", fp);
     free(floatcompo);
     return;
+}*/
+
+static void vtk_tracer_extraq(struct All_variables *E, int idx_extraq, FILE *fp)
+{
+    int i, j;
+    int tracers = 0;
+    float* floatextraq = malloc (E->trace.ntracers[1]*sizeof(float)); // caps_per_proc != 1
+
+    fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Tracer Quantity %d\" format=\"%s\">\n", idx_extraq, E->output.vtk_format);
+
+    for(j=1; j<=E->sphere.caps_per_proc; j++) {
+        for(i=1; i<=E->trace.ntracers[j]; i++) {
+            floatextraq[tracers+i-1] = (float) (E->trace.extraq[j][idx_extraq][i]);
+        }
+        tracers += E->trace.ntracers[j];
+    }
+
+    if (strcmp(E->output.vtk_format, "binary") == 0)
+        write_binary_array(tracers,floatextraq,fp);
+    else
+        write_ascii_array(tracers,1,floatextraq,fp);
+    fputs("        </DataArray>\n", fp);
+    free(floatextraq);
+    return;
 }
 
 
@@ -1008,10 +1033,9 @@ void write_tracer_file(struct All_variables *E, int cycles)
             "    <Piece NumberOfPoints=\"%d\" NumberOfVerts=\"%d\" NumberOfLines=\"0\" NumberOfStrips=\"0\" NumberOfPolys=\"0\">\n"
             "      <PointData Scalars=\"Composition\">\n", E->trace.ntracers[1],E->trace.ntracers[1]);
 
-    vtk_tracer_comp(E,ft);
-    vtk_tracer_lat(E,ft);
-    vtk_tracer_lon(E,ft);
-    vtk_tracer_rad(E,ft);
+    for (i = 0; i<E->trace.number_of_extra_quantities;i++)
+    	vtk_tracer_extraq(E,i,ft);
+
     vtk_point_data_trailer(E,ft);
 
     /* write element-based field */
@@ -1405,7 +1429,7 @@ void vtk_output(struct All_variables *E, int cycles)
     /* if processor is second write pvd for real time in vtk */
     if (E->parallel.me == 1%procs_per_cap) write_pvd(E, cycles);
 
-    if ((E->output.tracer_origin) && (cycles == 5)) write_tracer_file(E, cycles);
+    if ((E->output.tracer_file) && (cycles == 5)) write_tracer_file(E, cycles);
 
     return;
 }

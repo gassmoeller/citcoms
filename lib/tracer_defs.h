@@ -66,6 +66,14 @@ struct TRACE{
     int nflavors;
     int **ntracer_flavor[13];
 
+    /* whether to watch tracer movement */
+    int tracer_origin;
+    int tracer_origin_set;
+    float tracer_origin_set_time;
+
+    /* whether to track hot material at the surface */
+    int hotspot_tracks;
+
     int ic_method_for_flavors;
     double *z_interface;
 

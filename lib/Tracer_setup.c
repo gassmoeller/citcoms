@@ -92,8 +92,6 @@ void sphere_to_cart(struct All_variables *,
                     double *, double *, double *);
 int icheck_processor_shell(struct All_variables *,
                            int , double );
-static void chemical_changes(struct All_variables *E);
-
 
 void tracer_input(struct All_variables *E)
 {
@@ -198,10 +196,19 @@ void tracer_input(struct All_variables *E)
         /* Warning level */
         input_boolean("itracer_warnings",&(E->trace.itracer_warnings),"on",m);
 
+        input_int("tracer_origin",
+ 		  &(E->trace.tracer_origin),"0,0,nomax",m);
+        E->trace.tracer_origin_set = 0;
+        input_float("tracer_origin_set_time",&(E->trace.tracer_origin_set_time),"0,0,nomax",m);
+
+        input_int("hotspot_tracks",&(E->trace.hotspot_tracks),"0,0,nomax",m);
+
+
+        /* whether to track hot material at the surface */
+        int hotspot_tracks;
 
         if(E->parallel.nprocxy == 12)
             full_tracer_input(E);
-
 
         composition_input(E);
 
@@ -256,15 +263,16 @@ void tracer_advection(struct All_variables *E)
     double begin_time = CPU_time0();
 
 
-    if (E->output.tracer_origin && (E->monitor.solution_cycles  == 2)){//6858 = 5Ma)) {  // 6614 = 15Ma  // 6130 = 30Ma  // 5335 = 50Ma
-      // 50 Ma vor 7000
+    if (E->trace.tracer_origin && (E->monitor.elapsed_time  >= E->trace.tracer_origin_set_time)
+    		&& (E->trace.tracer_origin_set != 1)){
+      E->trace.tracer_origin_set = 1;
       set_tracer_origin(E);
     }
   
     /* advect tracers */
     predict_tracers(E);
     correct_tracers(E);
-    if (E->trace.ic_method_for_flavors == 3) chemical_changes(E);
+    if (E->trace.hotspot_tracks == 1) mark_hotspot_tracks(E);
     /* check that the number of tracers is conserved */
     check_sum(E);
 
@@ -1900,17 +1908,24 @@ int icheck_that_processor_shell(struct All_variables *E,
     return 0;
 }
 
-void chemical_changes(struct All_variables *E)
+void mark_hotspot_tracks(struct All_variables *E)
 {
-    int j,kk;
+    int j,jj,kk,el_idx;
+    double element_temperature;
 
-    for (j=1;j<=E->sphere.caps_per_proc;j++) 
-      for (kk=1;kk<=E->trace.ntracers[j];kk++) 
-        if ((E->trace.basicq[j][2][kk] > 0.9985) && (E->trace.extraq[j][0][kk] == 0)) 
-          E->trace.extraq[j][0][kk] = 1;
-
+    for (j=1;j<=E->sphere.caps_per_proc;j++)
+      for (kk=1;kk<=E->trace.ntracers[j];kk++)
+        if ((E->trace.basicq[j][2][kk] > 0.9985) && (E->trace.extraq[j][0][kk] == 0))
+        {
+        	el_idx = E->trace.ielement[j][kk];
+    		element_temperature = 0.0;
+			for(jj=1;jj<=8;jj++)
+				element_temperature += E->T[j][E->ien[j][el_idx].node[jj]];
+			element_temperature /= 8.0;
+			if (element_temperature >= E->control.mantle_temp + 150.0 / E->data.ref_temperature)
+					E->trace.extraq[j][1][kk] = E->monitor.elapsed_time;
+        }
 }
-
 
 void set_tracer_origin(struct All_variables *E)
 {
