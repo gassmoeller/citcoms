@@ -730,10 +730,13 @@ void read_initial_settings(struct All_variables *E)
   if(E->composition.tdep_buoyancy == 1){
       input_float("start_temp",&(E->composition.start_temp),"1,0,nomax",m);
       input_float("end_temp",&(E->composition.end_temp),"1,0,nomax",m);
-      input_int("ntdeps",&(E->composition.ntdeps),"1,100,nomax",m);
+      input_int("ntdeps",&(E->composition.ntdeps),"1,1000,nomax",m);
+      E->composition.delta_temp = (E->composition.end_temp - E->composition.start_temp) / E->composition.ntdeps;
   }
-  else E->composition.ntdeps = 100;
-  E->composition.delta_temp = (E->composition.end_temp - E->composition.start_temp) / E->composition.ntdeps;
+  else {
+       E->composition.ntdeps = 1000;
+       E->composition.delta_temp = E->data.ref_temperature / E->composition.ntdeps;
+  }
 
   tracer_input(E);
 

@@ -118,7 +118,7 @@ class Tracer(CitcomComponent):
         tdep_buoyancy = inv.int("tdep_buoyancy", default=0)
         start_temp = inv.float("start_temp", default=0)
         end_temp = inv.float("end_temp", default=0)
-        ntdeps = inv.int("ntdeps", default=100)
+        ntdeps = inv.int("ntdeps", default=1000)
 
         continents = inv.int("continents", default=0)
         tracer_origin = inv.int("tracer_origin", default=0)
