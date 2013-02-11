@@ -726,15 +726,14 @@ void read_initial_settings(struct All_variables *E)
   tic_input(E);
 
   input_int("pressure_oversampling",&(E->composition.pressure_oversampling),"1,1,nomax",m);
+  input_int("tdep_buoyancy",&(E->composition.tdep_buoyancy),"1,0,nomax",m);
   if(E->composition.tdep_buoyancy == 1){
-      input_float("delta_temp",&(E->composition.delta_temp),"1,0,nomax",m);
       input_float("start_temp",&(E->composition.start_temp),"1,0,nomax",m);
       input_float("end_temp",&(E->composition.end_temp),"1,0,nomax",m);
-      input_int("ntdeps",&(E->composition.ntdeps),"1,1,nomax",m);
+      input_int("ntdeps",&(E->composition.ntdeps),"1,100,nomax",m);
   }
   else E->composition.ntdeps = 100;
-  if (E->composition.delta_temp == 0)
-	  E->composition.delta_temp = E->data.ref_temperature / (float) E->composition.ntdeps;
+  E->composition.delta_temp = (E->composition.end_temp - E->composition.start_temp) / E->composition.ntdeps;
 
   tracer_input(E);
 

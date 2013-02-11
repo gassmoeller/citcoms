@@ -116,10 +116,10 @@ class Tracer(CitcomComponent):
         pressure_oversampling = inv.int("pressure_oversampling", default=1)
         density_file = inv.str("density_file", default="density.dat")
         tdep_buoyancy = inv.int("tdep_buoyancy", default=0)
-        delta_temp = inv.float("delta_temp", default=0.0)
         start_temp = inv.float("start_temp", default=0)
         end_temp = inv.float("end_temp", default=0)
         ntdeps = inv.int("ntdeps", default=100)
+        delta_temp = (end_temp-start_temp) / ntdeps
 
         continents = inv.int("continents", default=0)
         tracer_origin = inv.int("tracer_origin", default=0)
