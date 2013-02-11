@@ -393,7 +393,8 @@ static void adams_williamson_eos(struct All_variables *E)
         for(k=1;k<=E->composition.ntdeps;k++){
 	    E->refstate.thermal_expansivity[i][k][1] = 1;
 	    E->refstate.heat_capacity[i][k][1] = 1;
-	    E->refstate.rho[i][k][1] = exp(beta*z);
+        E->refstate.rho[i][k][1] = exp(beta*z)* (1.0-E->data.therm_exp* (k-1)*E->composition.delta_temp);
+
           for(j=2;j<=E->composition.ncomp+1;j++){
 	    E->refstate.thermal_expansivity[i][k][j] = 1;
 	    E->refstate.heat_capacity[i][k][j] = 1;
