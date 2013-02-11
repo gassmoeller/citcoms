@@ -668,10 +668,11 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
     getIntProperty(properties, "tdep_buoyancy", E->composition.tdep_buoyancy, fp);
     getIntProperty(properties, "pressure_oversampling", E->composition.pressure_oversampling, fp);
     if(E->composition.tdep_buoyancy==1){
-         getFloatProperty(properties, "delta_temp", E->composition.delta_temp, fp);
          getFloatProperty(properties, "start_temp", E->composition.start_temp, fp);
          getFloatProperty(properties, "end_temp", E->composition.end_temp, fp);
          getFloatProperty(properties, "ntdeps", E->composition.ntdeps, fp);
+         E->composition.delta_temp = (E->composition.end_temp - E->composition.start_temp)
+                                        / E->composition.ntdeps;
     } else {
          E->composition.ntdeps = 100;
     }

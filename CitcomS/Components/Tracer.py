@@ -119,7 +119,6 @@ class Tracer(CitcomComponent):
         start_temp = inv.float("start_temp", default=0)
         end_temp = inv.float("end_temp", default=0)
         ntdeps = inv.int("ntdeps", default=100)
-        delta_temp = (end_temp-start_temp) / ntdeps
 
         continents = inv.int("continents", default=0)
         tracer_origin = inv.int("tracer_origin", default=0)
