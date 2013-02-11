@@ -690,9 +690,9 @@ struct COMPOSITION {
     int chemical_changes;
 
     int pressure_oversampling;
-    int delta_temp;
-    int start_temp;
-    int end_temp;
+    float delta_temp;
+    float start_temp;
+    float end_temp;
     int ntdeps;
 
     int ncomp;

@@ -665,6 +665,16 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
     getFloatProperty(properties, "tracer_origin_set_time", E->trace.tracer_origin_set_time, fp);
     getIntProperty(properties, "hotspot_tracks", E->trace.hotspot_tracks, fp);
 
+    getIntProperty(properties, "tdep_buoyancy", E->composition.tdep_buoyancy, fp);
+    getIntProperty(properties, "pressure_oversampling", E->composition.pressure_oversampling, fp);
+    if(E->composition.tdep_buoyancy==1){
+         getFloatProperty(properties, "delta_temp", E->composition.delta_temp, fp);
+         getFloatProperty(properties, "start_temp", E->composition.start_temp, fp);
+         getFloatProperty(properties, "end_temp", E->composition.end_temp, fp);
+         getFloatProperty(properties, "ntdeps", E->composition.ntdeps, fp);
+    } else {
+         E->composition.ntdeps = 100;
+    }
 
     getIntProperty(properties, "tracer_enriched", E->control.tracer_enriched, fp);
     if(E->control.tracer_enriched) {
@@ -745,19 +755,6 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
 
         if(E->composition.zdep_buoyancy==1){
             getStringProperty(properties, "density_file", E->refstate.densityfilename, fp);
-            getIntProperty(properties, "tdep_buoyancy", E->composition.tdep_buoyancy, fp);
-            getIntProperty(properties, "pressure_oversampling", E->composition.pressure_oversampling, fp);
-
-            if(E->composition.tdep_buoyancy==1){
-                getIntProperty(properties, "delta_temp", E->composition.delta_temp, fp);
-                getIntProperty(properties, "start_temp", E->composition.start_temp, fp);
-                getIntProperty(properties, "end_temp", E->composition.end_temp, fp);
-                getIntProperty(properties, "ntdeps", E->composition.ntdeps, fp);
-            } else {
-                E->composition.ntdeps = 1;
-            }
-        } else {
-                E->composition.tdep_buoyancy = 0;
         }
     }
 

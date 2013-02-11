@@ -1,5 +1,5 @@
 # specify output files
-datadir="/scratch"
+datadir="/office/scratch"
 datafile="regtest"
 
 output_format=ascii
@@ -27,8 +27,8 @@ tracer_file=""
 
 # processors, mesh grid information
 nproc_surf=1
-nprocx=2
-nprocy=2
+nprocx=1
+nprocy=1
 nprocz=1
 nodex=17
 nodey=17

@@ -500,6 +500,7 @@ double get_cp_nd(struct All_variables *E, int m, int nn)
 {
     int i,nz,nzmin,nzmax,nT,j;
     double cp;
+    assert(E->composition.delta_temp > 0);
 
     nz = ((nn-1) % E->lmesh.noz) + 1;
     nT = ((int)((E->T[m][nn] + E->control.surface_temp) * E->data.ref_temperature - E->composition.start_temp + (1-fmax(0,E->control.disptn_number)/fmax(1e-7,E->control.disptn_number))*(E->refstate.Tadi[nz]-E->control.adiabaticT0*E->data.ref_temperature)) / E->composition.delta_temp + 1);
@@ -745,6 +746,8 @@ double get_radheat_nd(struct All_variables *E, int m, int nn)
 {
     int nz,nT,j;
     double refTemp,radheat,deltaT,weight;
+
+    assert(E->composition.delta_temp > 0);
 
     nz = ((nn-1) % E->lmesh.noz) + 1;
     refTemp = ((E->T[m][nn] + E->control.surface_temp) * E->data.ref_temperature - E->composition.start_temp + (1-fmax(0,E->control.disptn_number)/fmax(1e-7,E->control.disptn_number))*(E->refstate.Tadi[nz]-E->control.adiabaticT0*E->data.ref_temperature));
