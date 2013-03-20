@@ -36,6 +36,8 @@
 #include "material_properties.h"
 #include "parallel_related.h"
 
+#define EPS 1e-8
+
 static void read_refstate(struct All_variables *E);
 static void read_perplexfile(struct All_variables *E);
 static void read_densityfile(struct All_variables *E);
@@ -535,22 +537,7 @@ const double get_property_el(struct All_variables *E, double*** property, const 
 	return prop;
 }
 
-double get_cp_el(struct All_variables *E, int m, int el)
-{
-    int nn,a;
-    const int ends=enodes[E->mesh.nsd];
-    const int lev=E->mesh.levmax;
-    double cp = 0;
-    
-    for(a=1;a<=ends;a++){
-        nn = E->IEN[lev][m][el].node[a];
-        cp += get_cp_nd(E,m,nn);
-    }
-    cp /= ends;
-    return cp;
-}
-
-double get_cp_nd(struct All_variables *E, int m, int nn)
+double get_cp_nd_old(struct All_variables *E, int m, int nn)
 {
     int i,nz,nzmin,nzmax,nT,j;
     double cp;
@@ -574,19 +561,19 @@ double get_cp_nd(struct All_variables *E, int m, int nn)
     return cp;
 }
 
-double get_rho_el_old(struct All_variables *E, int m, int el)
+double get_cp_el_old(struct All_variables *E, int m, int el)
 {
     int nn,a;
     const int ends=enodes[E->mesh.nsd];
     const int lev=E->mesh.levmax;
-    double rho = 0;
+    double cp = 0;
 
     for(a=1;a<=ends;a++){
         nn = E->IEN[lev][m][el].node[a];
-        rho += get_rho_nd(E,m,nn);
+        cp += get_cp_nd_old(E,m,nn);
     }
-    rho /= ends;
-    return rho;
+    cp /= ends;
+    return cp;
 }
 
 double get_rho_nd_old(struct All_variables *E, int m, int nn)
@@ -623,37 +610,52 @@ double get_rho_nd_old(struct All_variables *E, int m, int nn)
     return rho;
 }
 
-
-
-double get_alpha_el_old(struct All_variables *E, int m, int el)
+double get_rho_el_old(struct All_variables *E, int m, int el)
 {
     int nn,a;
     const int ends=enodes[E->mesh.nsd];
     const int lev=E->mesh.levmax;
-    double alpha = 0;
- 
+    double rho = 0;
+
     for(a=1;a<=ends;a++){
         nn = E->IEN[lev][m][el].node[a];
-        alpha += get_alpha_nd(E,m,nn);
+        rho += get_rho_nd_old(E,m,nn);
     }
-    alpha /= ends;
-    return alpha;
+    rho /= ends;
+    return rho;
 }
 
-double get_alpha_el(struct All_variables *E, int m, int el)
+double get_cp_el(struct All_variables *E, int m, int el)
 {
 	const int temperature_accurate = 0;
-	double alpha = get_property_el(E,E->refstate.thermal_expansivity,m,el,temperature_accurate);
-	double alpha_old = get_alpha_el_old(E,m,el);
-	if (alpha - alpha_old < 1e-7)
+	const double cp = get_property_el(E,E->refstate.heat_capacity,m,el,temperature_accurate);
+	const double cp_old = get_cp_el_old(E,m,el);
+	if (cp - cp_old < EPS)
 	{
-		if (el == 5) fprintf (stderr, "Old and new function do create equal alpha element ... using new\n");
-		return alpha;
+		if (el == 5) fprintf (stderr, "Old and new function do create equal cp element ... using new\n");
+		return cp;
 	}
 	else
 	{
-		if (el == 5) fprintf(stderr, "Old and new function do not create equal alpha element ... using old\n");
-        return alpha_old;
+		if (el == 5) fprintf(stderr, "Old and new function do not create equal cp element ... using old\n");
+        return cp_old;
+	}
+}
+
+double get_cp_nd(struct All_variables *E, int m, int nn)
+{
+	const int temperature_accurate = 0;
+	double cp = get_property_nd(E,E->refstate.heat_capacity,m,nn,temperature_accurate);
+	double cp_old = get_cp_nd_old(E,m,nn);
+	if (cp - cp_old < EPS)
+	{
+		if (nn == 5) fprintf (stderr, "Old and new function do create equal cp element ... using new\n");
+		return cp;
+	}
+	else
+	{
+		if (nn == 5) fprintf(stderr, "Old and new function do not create equal cp element ... using old\n");
+        return cp_old;
 	}
 }
 
@@ -682,12 +684,27 @@ double get_alpha_nd_old(struct All_variables *E, int m, int nn)
     return alpha;
 }
 
+double get_alpha_el_old(struct All_variables *E, int m, int el)
+{
+    int nn,a;
+    const int ends=enodes[E->mesh.nsd];
+    const int lev=E->mesh.levmax;
+    double alpha = 0;
+
+    for(a=1;a<=ends;a++){
+        nn = E->IEN[lev][m][el].node[a];
+        alpha += get_alpha_nd_old(E,m,nn);
+    }
+    alpha /= ends;
+    return alpha;
+}
+
 double get_alpha_nd(struct All_variables *E, int m, int nn)
 {
 	const int temperature_accurate = 0;
-	double alpha = get_property_nd(E,E->refstate.rho,m,nn,temperature_accurate);
-	double alpha_old = get_rho_nd_old(E,m,nn);
-	if (alpha - alpha_old < 1e-7)
+	double alpha = get_property_nd(E,E->refstate.thermal_expansivity,m,nn,temperature_accurate);
+	double alpha_old = get_alpha_nd_old(E,m,nn);
+	if (alpha - alpha_old < EPS)
 	{
 		if (nn == 5) fprintf (stderr, "Old and new function do create equal alpha element ... using new\n");
 		return alpha;
@@ -699,12 +716,29 @@ double get_alpha_nd(struct All_variables *E, int m, int nn)
 	}
 }
 
+double get_alpha_el(struct All_variables *E, int m, int el)
+{
+	const int temperature_accurate = 0;
+	const double alpha = get_property_el(E,E->refstate.thermal_expansivity,m,el,temperature_accurate);
+	const double alpha_old = get_alpha_el_old(E,m,el);
+	if (alpha - alpha_old < EPS)
+	{
+		if (el == 5) fprintf (stderr, "Old and new function do create equal alpha element ... using new\n");
+		return alpha;
+	}
+	else
+	{
+		if (el == 5) fprintf(stderr, "Old and new function do not create equal alpha element ... using old\n");
+        return alpha_old;
+	}
+}
+
 double get_rho_el(struct All_variables *E, int m, int el)
 {
 	const int temperature_accurate = 1;
 	double rho = get_property_el(E,E->refstate.rho,m,el,temperature_accurate);
 	double rho_old = get_rho_el_old(E,m,el);
-	if (rho - rho_old < 1e-7)
+	if (rho - rho_old < EPS)
 	{
 		if (el == 5) fprintf (stderr, "Old and new function do create equal rho element ... using new\n");
 		return rho;
@@ -721,7 +755,7 @@ double get_rho_nd(struct All_variables *E, int m, int nn)
 	const int temperature_accurate = 1;
 	double rho = get_property_nd(E,E->refstate.rho,m,nn,temperature_accurate);
 	double rho_old = get_rho_nd_old(E,m,nn);
-	if (rho - rho_old < 1e-7)
+	if (rho - rho_old < EPS)
 	{
 		if (nn == 5) fprintf (stderr, "Old and new function do create equal rho element ... using new\n");
 		return rho;
@@ -735,23 +769,7 @@ double get_rho_nd(struct All_variables *E, int m, int nn)
 
 
 
-
-double get_vs_el(struct All_variables *E, int m, int el)
-{
-    int nn,a;
-    const int ends=enodes[E->mesh.nsd];
-    const int lev=E->mesh.levmax;
-    double vs = 0;
-    
-    for(a=1;a<=ends;a++){
-        nn = E->IEN[lev][m][el].node[a];
-        vs += get_vs_nd(E,m,nn);
-    }
-    vs /= ends;
-    return vs;
-}
-
-double get_vs_nd(struct All_variables *E, int m, int nn)
+double get_vs_nd_old(struct All_variables *E, int m, int nn)
 {
     int nz,nT,j;
     double vs;
@@ -769,22 +787,58 @@ double get_vs_nd(struct All_variables *E, int m, int nn)
     return vs;
 }
 
-double get_vp_el(struct All_variables *E, int m, int el)
+double get_vs_el_old(struct All_variables *E, int m, int el)
 {
     int nn,a;
     const int ends=enodes[E->mesh.nsd];
     const int lev=E->mesh.levmax;
-    double vp = 0;
-    
+    double vs = 0;
+
     for(a=1;a<=ends;a++){
         nn = E->IEN[lev][m][el].node[a];
-        vp += get_vp_nd(E,m,nn);
+        vs += get_vs_nd_old(E,m,nn);
     }
-    vp /= ends;
-    return vp;
+    vs /= ends;
+    return vs;
 }
 
-double get_vp_nd(struct All_variables *E, int m, int nn)
+double get_vs_el(struct All_variables *E, int m, int el)
+{
+	const int temperature_accurate = 0;
+	double vs = get_property_el(E,E->refstate.vs,m,el,temperature_accurate);
+	double vs_old = get_vs_el_old(E,m,el);
+	if (vs - vs_old < EPS)
+	{
+		if (el == 5) fprintf (stderr, "Old and new function do create equal vs element ... using new: %f instead of old: %f\n",vs,vs_old);
+		return vs;
+	}
+	else
+	{
+		if (el == 5) fprintf(stderr, "Old and new function do not create equal vs element ... using old\n");
+        return vs_old;
+	}
+}
+
+double get_vs_nd(struct All_variables *E, int m, int nn)
+{
+	const int temperature_accurate = 0;
+	double vs = get_property_nd(E,E->refstate.vs,m,nn,temperature_accurate);
+	double vs_old = get_vs_nd_old(E,m,nn);
+	if (vs - vs_old < EPS)
+	{
+		if (nn == 5) fprintf (stderr, "Old and new function do create equal vs element ... using new: %f instead of old: %f\n",vs,vs_old);
+		return vs;
+	}
+	else
+	{
+		if (nn == 5) fprintf(stderr, "Old and new function do not create equal vs element ... using old\n");
+        return vs_old;
+	}
+}
+
+
+
+double get_vp_nd_old(struct All_variables *E, int m, int nn)
 {
     int nz,nT,j;
     double vp;
@@ -800,6 +854,55 @@ double get_vp_nd(struct All_variables *E, int m, int nn)
     }
 
     return vp;
+}
+
+double get_vp_el_old(struct All_variables *E, int m, int el)
+{
+    int nn,a;
+    const int ends=enodes[E->mesh.nsd];
+    const int lev=E->mesh.levmax;
+    double vp = 0;
+
+    for(a=1;a<=ends;a++){
+        nn = E->IEN[lev][m][el].node[a];
+        vp += get_vp_nd_old(E,m,nn);
+    }
+    vp /= ends;
+    return vp;
+}
+
+double get_vp_el(struct All_variables *E, int m, int el)
+{
+	const int temperature_accurate = 0;
+	double vp = get_property_el(E,E->refstate.vp,m,el,temperature_accurate);
+	double vp_old = get_vp_el_old(E,m,el);
+	if (vp - vp_old < EPS)
+	{
+		if (el == 5) fprintf (stderr, "Old and new function do create equal vp element ... using new: %f instead of old: %f\n",vp,vp_old);
+		return vp;
+	}
+	else
+	{
+		if (el == 5) fprintf(stderr, "Old and new function do not create equal vp element ... using old: %f instead of new: %f\n",vp_old,vp);
+        return vp_old;
+	}
+}
+
+double get_vp_nd(struct All_variables *E, int m, int nn)
+{
+	const int temperature_accurate = 0;
+	double vp = get_property_nd(E,E->refstate.vp,m,nn,temperature_accurate);
+	double vp_old = get_rho_nd_old(E,m,nn);
+	if (vp - vp_old < EPS)
+	{
+		if (nn == 5) fprintf (stderr, "Old and new function do create equal vp element ... using new: %f instead of old: %f\n",vp,vp_old);
+		return vp;
+	}
+	else
+	{
+		if (nn == 5) fprintf(stderr, "Old and new function do not create equal vp element ... using old: %f instead of new: %f\n",vp_old,vp);
+        return vp_old;
+	}
 }
 
 
