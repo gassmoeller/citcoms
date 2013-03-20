@@ -452,7 +452,7 @@ double get_g_el(struct All_variables *E, int m, int el)
     return g;
 }
 
-const double get_refTemp(const struct All_variables *E, const int m, const int nn, const int nz)
+const double get_refTemp(struct All_variables *E, const int m, const int nn, const int nz)
 {
 	const double compressible_factor = fmax(0, E->control.disptn_number)
 			/ fmax(1e-7, E->control.disptn_number);
@@ -470,6 +470,8 @@ const double get_refTemp(const struct All_variables *E, const int m, const int n
 
 const int idxTemp(const double refTemp, const float delta_temp, const int ntempsteps)
 {
+    assert(delta_temp > 0);
+    assert(ntempsteps > 0);
 	const int nT = (int) (refTemp / delta_temp + 1);
 	const int bounded_nT = max(min(nT,ntempsteps-1),1);
 
@@ -480,13 +482,13 @@ const int idxNz (const int nn, const int noz) {
 	return ((nn-1) % noz) + 1;
 }
 
-const double get_property_nd(const struct All_variables *E, double*** property, const int m, const int nn)
+const double get_property_nd(struct All_variables *E, double*** property, const int m, const int nn, const int temperature_accurate)
 {
 
     int i,j;
 
     double prop = 0.0;
-	double deltaT,weight;
+	double deltaT;
 
     const int nz = idxNz(nn, E->lmesh.noz);
     const int nzmin = max(E->composition.pressure_oversampling*(nz-1) + 1 - E->composition.pressure_oversampling/2,1);
@@ -494,16 +496,20 @@ const double get_property_nd(const struct All_variables *E, double*** property, 
 
     const double refTemp = get_refTemp(E,m,nn,nz);
     const int nT = idxTemp(refTemp,E->composition.delta_temp,E->composition.ntdeps);
-    weight = fmax(fmin(refTemp / E->composition.delta_temp - (nT-1),1),0);
 
+    const double weight = temperature_accurate == 1 ? fmax(fmin(refTemp / E->composition.delta_temp - (nT-1),1),0) : 0.0;
 
     for (i=nzmin;i<=nzmax;i++){
-    	prop += (1-weight) * property[i][nT][1];
-    	prop += weight * property[i][nT+1][1];
+    	prop = property[i][nT][1];
+    	if (temperature_accurate == 1)
+    	{
+    		prop *= (1-weight);
+    		prop += weight * property[i][nT+1][1];
+    	}
 
 		for(j=0;j<E->composition.ncomp;j++){
-			prop +=  (1-weight) * property[i][nT][j+2]*property[m][j][nn];
-			prop +=  weight * property[i][nT+1][j+2]*property[m][j][nn];
+			prop +=  (1-weight) * property[i][nT][j+2]*E->composition.comp_node[m][j][nn];
+			prop +=  weight * property[i][nT+1][j+2]*E->composition.comp_node[m][j][nn];
 		}
     }
     prop /= (nzmax-nzmin+1);
@@ -511,7 +517,7 @@ const double get_property_nd(const struct All_variables *E, double*** property, 
 	return prop;
 }
 
-const double get_property_el(const struct All_variables *E, double*** property, const int m, const int el)
+const double get_property_el(struct All_variables *E, double*** property, const int m, const int el, const int temperature_accurate)
 {
 	int nn,a;
 
@@ -522,7 +528,7 @@ const double get_property_el(const struct All_variables *E, double*** property, 
 
 	for(a=1;a<=ends;a++){
 		nn = E->IEN[lev][m][el].node[a];
-		prop += get_property_nd(E,property,m,nn);
+		prop += get_property_nd(E,property,m,nn,temperature_accurate);
 	}
 
 	prop /= ends;
@@ -636,16 +642,19 @@ double get_alpha_el_old(struct All_variables *E, int m, int el)
 
 double get_alpha_el(struct All_variables *E, int m, int el)
 {
-	/*double alpha = get_property_el(E,E->refstate.thermal_expansivity,m,el);
-	if (alpha - get_alpha_el_old(E,m,el) < 1e-7)
+	const int temperature_accurate = 0;
+	double alpha = get_property_el(E,E->refstate.thermal_expansivity,m,el,temperature_accurate);
+	double alpha_old = get_alpha_el_old(E,m,el);
+	if (alpha - alpha_old < 1e-7)
+	{
+		if (el == 5) fprintf (stderr, "Old and new function do create equal alpha element ... using new\n");
 		return alpha;
+	}
 	else
 	{
-		fprintf(stderr, "Old and new function do not create equal alphas element");
-        //parallel_process_termination();
-        return 0;
-	}*/
-	return get_alpha_el_old(E,m,el);
+		if (el == 5) fprintf(stderr, "Old and new function do not create equal alpha element ... using old\n");
+        return alpha_old;
+	}
 }
 
 double get_alpha_nd_old(struct All_variables *E, int m, int nn)
@@ -673,46 +682,55 @@ double get_alpha_nd_old(struct All_variables *E, int m, int nn)
     return alpha;
 }
 
-double get_alpha_nd(struct All_variables *E, int m, int el)
+double get_alpha_nd(struct All_variables *E, int m, int nn)
 {
-	/*double alpha = get_property_nd(E,E->refstate.thermal_expansivity,m,el);
-	if (alpha - get_alpha_nd_old(E,m,el) < 1e-7)
+	const int temperature_accurate = 0;
+	double alpha = get_property_nd(E,E->refstate.rho,m,nn,temperature_accurate);
+	double alpha_old = get_rho_nd_old(E,m,nn);
+	if (alpha - alpha_old < 1e-7)
+	{
+		if (nn == 5) fprintf (stderr, "Old and new function do create equal alpha element ... using new\n");
 		return alpha;
+	}
 	else
 	{
-		fprintf(stderr, "Old and new function do not create equal alphas");
-        //parallel_process_termination();
-        return 0;
-	}*/
-	return get_alpha_nd_old(E,m,el);
+		if (nn == 5) fprintf(stderr, "Old and new function do not create equal alpha element ... using old\n");
+        return alpha_old;
+	}
 }
 
 double get_rho_el(struct All_variables *E, int m, int el)
 {
-	/*double rho = get_property_el(E,E->refstate.rho,m,el);
-	if (rho - get_rho_el_old(E,m,el) < 1e-7)
+	const int temperature_accurate = 1;
+	double rho = get_property_el(E,E->refstate.rho,m,el,temperature_accurate);
+	double rho_old = get_rho_el_old(E,m,el);
+	if (rho - rho_old < 1e-7)
+	{
+		if (el == 5) fprintf (stderr, "Old and new function do create equal rho element ... using new\n");
 		return rho;
+	}
 	else
 	{
-		fprintf(stderr, "Old and new function do not create equal rho element");
-        //parallel_process_termination();
-        return 0;
-	}*/
-	return get_rho_el_old(E,m,el);
+		if (el == 5) fprintf(stderr, "Old and new function do not create equal rho element ... using old\n");
+        return rho_old;
+	}
 }
 
-double get_rho_nd(struct All_variables *E, int m, int el)
+double get_rho_nd(struct All_variables *E, int m, int nn)
 {
-	/*double rho = get_property_nd(E,E->refstate.rho,m,el);
-	if (rho - get_rho_nd_old(E,m,el) < 1e-7)
+	const int temperature_accurate = 1;
+	double rho = get_property_nd(E,E->refstate.rho,m,nn,temperature_accurate);
+	double rho_old = get_rho_nd_old(E,m,nn);
+	if (rho - rho_old < 1e-7)
+	{
+		if (nn == 5) fprintf (stderr, "Old and new function do create equal rho element ... using new\n");
 		return rho;
+	}
 	else
 	{
-		fprintf(stderr, "Old and new function do not create equal rhos");
-        //parallel_process_termination();
-        return 0;
-	}*/
-	return get_rho_nd_old(E,m,el);
+		if (nn == 5) fprintf(stderr, "Old and new function do not create equal rho element ... using old\n");
+        return rho_old;
+	}
 }
 
 
