@@ -642,7 +642,7 @@ double get_alpha_el(struct All_variables *E, int m, int el)
 	else
 	{
 		fprintf(stderr, "Old and new function do not create equal alphas element");
-        parallel_process_termination();
+        //parallel_process_termination();
         return 0;
 	}}
 
@@ -679,7 +679,7 @@ double get_alpha_nd(struct All_variables *E, int m, int el)
 	else
 	{
 		fprintf(stderr, "Old and new function do not create equal alphas");
-        parallel_process_termination();
+        //parallel_process_termination();
         return 0;
 	}
 }
@@ -692,7 +692,7 @@ double get_rho_el(struct All_variables *E, int m, int el)
 	else
 	{
 		fprintf(stderr, "Old and new function do not create equal rho element");
-        parallel_process_termination();
+        //parallel_process_termination();
         return 0;
 	}}
 
@@ -704,7 +704,7 @@ double get_rho_nd(struct All_variables *E, int m, int el)
 	else
 	{
 		fprintf(stderr, "Old and new function do not create equal rhos");
-        parallel_process_termination();
+        //parallel_process_termination();
         return 0;
 	}
 }
