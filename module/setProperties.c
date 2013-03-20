@@ -670,7 +670,7 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
     if(E->composition.tdep_buoyancy==1){
          getFloatProperty(properties, "start_temp", E->composition.start_temp, fp);
          getFloatProperty(properties, "end_temp", E->composition.end_temp, fp);
-         getFloatProperty(properties, "ntdeps", E->composition.ntdeps, fp);
+         getIntProperty(properties, "ntdeps", E->composition.ntdeps, fp);
          E->composition.delta_temp = (E->composition.end_temp - E->composition.start_temp)
                                         / E->composition.ntdeps;
     } else {
