@@ -493,13 +493,17 @@ const double get_property_nd(struct All_variables *E, double*** property, const 
 	double deltaT;
 
     const int nz = idxNz(nn, E->lmesh.noz);
+
+    /* Calculating the borders in the case of pressure_oversampling == x > 1 (x times more depth nodes in material table than in model)
+     * In case pressure_oversampling == 1 : nzmin == nzmax == nz
+     */
     const int nzmin = max(E->composition.pressure_oversampling*(nz-1) + 1 - E->composition.pressure_oversampling/2,1);
     const int nzmax = min(E->composition.pressure_oversampling*(nz-1) + 1 + E->composition.pressure_oversampling/2,(E->lmesh.noz-1)*E->composition.pressure_oversampling+1);
 
     const double refTemp = get_refTemp(E,m,nn,nz);
     const int nT = idxTemp(refTemp,E->composition.delta_temp,E->composition.ntdeps);
 
-    const double weight = temperature_accurate == 1 ? fmax(fmin(refTemp / E->composition.delta_temp - (nT-1),1),0) : 0.0;
+    const double weight = (temperature_accurate == 1) ? fmax(fmin(refTemp / E->composition.delta_temp - (nT-1),1),0) : 0.0;
 
     for (i=nzmin;i<=nzmax;i++){
     	prop = property[i][nT][1];
@@ -672,12 +676,13 @@ double get_alpha_nd_old(struct All_variables *E, int m, int nn)
     nzmin = max(E->composition.pressure_oversampling*(nz-1) + 1 - E->composition.pressure_oversampling/2,1);
     nzmax = min(E->composition.pressure_oversampling*(nz-1) + 1 + E->composition.pressure_oversampling/2,(E->lmesh.noz-1)*E->composition.pressure_oversampling+1);
 
-    for (i=nzmin;i<=nzmax;i++){
-    alpha += E->refstate.thermal_expansivity[i][nT][1];
+    for (i=nzmin;i<=nzmax;i++)
+    {
+		alpha += E->refstate.thermal_expansivity[i][nT][1];
 
-    for(j=0;j<E->composition.ncomp;j++){
-        alpha +=  E->refstate.thermal_expansivity[i][nT][j+2]*E->composition.comp_node[m][j][nn];
-    }
+		for(j=0;j<E->composition.ncomp;j++){
+			alpha +=  E->refstate.thermal_expansivity[i][nT][j+2]*E->composition.comp_node[m][j][nn];
+		}
     }
     alpha /= (nzmax-nzmin+1);
 
@@ -809,7 +814,7 @@ double get_vs_el(struct All_variables *E, int m, int el)
 	double vs_old = get_vs_el_old(E,m,el);
 	if (vs - vs_old < EPS)
 	{
-		if (el == 5) fprintf (stderr, "Old and new function do create equal vs element ... using new: %f instead of old: %f\n",vs,vs_old);
+		if (el == 5) fprintf (stderr, "Old and new function do create equal vs element ... using new\n");
 		return vs;
 	}
 	else
@@ -826,7 +831,7 @@ double get_vs_nd(struct All_variables *E, int m, int nn)
 	double vs_old = get_vs_nd_old(E,m,nn);
 	if (vs - vs_old < EPS)
 	{
-		if (nn == 5) fprintf (stderr, "Old and new function do create equal vs element ... using new: %f instead of old: %f\n",vs,vs_old);
+		if (nn == 5) fprintf (stderr, "Old and new function do create equal vs element ... using new\n");
 		return vs;
 	}
 	else
@@ -878,12 +883,12 @@ double get_vp_el(struct All_variables *E, int m, int el)
 	double vp_old = get_vp_el_old(E,m,el);
 	if (vp - vp_old < EPS)
 	{
-		if (el == 5) fprintf (stderr, "Old and new function do create equal vp element ... using new: %f instead of old: %f\n",vp,vp_old);
+		if (el == 5) fprintf (stderr, "Old and new function do create equal vp element ... using new\n");
 		return vp;
 	}
 	else
 	{
-		if (el == 5) fprintf(stderr, "Old and new function do not create equal vp element ... using old: %f instead of new: %f\n",vp_old,vp);
+		if (el == 5) fprintf(stderr, "Old and new function do not create equal vp element ... using old\n");
         return vp_old;
 	}
 }
@@ -892,15 +897,15 @@ double get_vp_nd(struct All_variables *E, int m, int nn)
 {
 	const int temperature_accurate = 0;
 	double vp = get_property_nd(E,E->refstate.vp,m,nn,temperature_accurate);
-	double vp_old = get_rho_nd_old(E,m,nn);
+	double vp_old = get_vp_nd_old(E,m,nn);
 	if (vp - vp_old < EPS)
 	{
-		if (nn == 5) fprintf (stderr, "Old and new function do create equal vp element ... using new: %f instead of old: %f\n",vp,vp_old);
+		if (nn == 5) fprintf (stderr, "Old and new function do create equal vp element ... using new\n");
 		return vp;
 	}
 	else
 	{
-		if (nn == 5) fprintf(stderr, "Old and new function do not create equal vp element ... using old: %f instead of new: %f\n",vp_old,vp);
+		if (nn == 5) fprintf(stderr, "Old and new function do not create equal vp element ... using old\n");
         return vp_old;
 	}
 }
