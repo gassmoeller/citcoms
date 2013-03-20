@@ -636,7 +636,7 @@ double get_alpha_el_old(struct All_variables *E, int m, int el)
 
 double get_alpha_el(struct All_variables *E, int m, int el)
 {
-	double alpha = get_property_el(E,E->refstate.thermal_expansivity,m,el);
+	/*double alpha = get_property_el(E,E->refstate.thermal_expansivity,m,el);
 	if (alpha - get_alpha_el_old(E,m,el) < 1e-7)
 		return alpha;
 	else
@@ -644,7 +644,9 @@ double get_alpha_el(struct All_variables *E, int m, int el)
 		fprintf(stderr, "Old and new function do not create equal alphas element");
         //parallel_process_termination();
         return 0;
-	}}
+	}*/
+	return get_alpha_el_old(E,m,el);
+}
 
 double get_alpha_nd_old(struct All_variables *E, int m, int nn)
 {
@@ -673,7 +675,7 @@ double get_alpha_nd_old(struct All_variables *E, int m, int nn)
 
 double get_alpha_nd(struct All_variables *E, int m, int el)
 {
-	double alpha = get_property_nd(E,E->refstate.thermal_expansivity,m,el);
+	/*double alpha = get_property_nd(E,E->refstate.thermal_expansivity,m,el);
 	if (alpha - get_alpha_nd_old(E,m,el) < 1e-7)
 		return alpha;
 	else
@@ -681,12 +683,13 @@ double get_alpha_nd(struct All_variables *E, int m, int el)
 		fprintf(stderr, "Old and new function do not create equal alphas");
         //parallel_process_termination();
         return 0;
-	}
+	}*/
+	return get_alpha_nd_old(E,m,el);
 }
 
 double get_rho_el(struct All_variables *E, int m, int el)
 {
-	double rho = get_property_el(E,E->refstate.rho,m,el);
+	/*double rho = get_property_el(E,E->refstate.rho,m,el);
 	if (rho - get_rho_el_old(E,m,el) < 1e-7)
 		return rho;
 	else
@@ -694,11 +697,13 @@ double get_rho_el(struct All_variables *E, int m, int el)
 		fprintf(stderr, "Old and new function do not create equal rho element");
         //parallel_process_termination();
         return 0;
-	}}
+	}*/
+	return get_rho_el_old(E,m,el);
+}
 
 double get_rho_nd(struct All_variables *E, int m, int el)
 {
-	double rho = get_property_nd(E,E->refstate.rho,m,el);
+	/*double rho = get_property_nd(E,E->refstate.rho,m,el);
 	if (rho - get_rho_nd_old(E,m,el) < 1e-7)
 		return rho;
 	else
@@ -706,7 +711,8 @@ double get_rho_nd(struct All_variables *E, int m, int el)
 		fprintf(stderr, "Old and new function do not create equal rhos");
         //parallel_process_termination();
         return 0;
-	}
+	}*/
+	return get_rho_nd_old(E,m,el);
 }
 
 
