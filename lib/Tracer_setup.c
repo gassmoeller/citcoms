@@ -92,6 +92,8 @@ void sphere_to_cart(struct All_variables *,
                     double *, double *, double *);
 int icheck_processor_shell(struct All_variables *,
                            int , double );
+static void chemical_changes(struct All_variables *E);
+
 
 void tracer_input(struct All_variables *E)
 {
@@ -273,6 +275,8 @@ void tracer_advection(struct All_variables *E)
     predict_tracers(E);
     correct_tracers(E);
     if (E->trace.hotspot_tracks == 1) mark_hotspot_tracks(E);
+    if (E->composition.chemical_changes == 1) chemical_changes(E);
+
     /* check that the number of tracers is conserved */
     check_sum(E);
 
@@ -1938,5 +1942,16 @@ void set_tracer_origin(struct All_variables *E)
              E->trace.extraq[j][3][kk] = E->trace.basicq[j][2][kk];
         }
     }
+}
+
+void chemical_changes(struct All_variables *E)
+{
+    int j,kk;
+
+    for (j=1;j<=E->sphere.caps_per_proc;j++)
+      for (kk=1;kk<=E->trace.ntracers[j];kk++)
+        if ((E->trace.basicq[j][2][kk] > 0.9985) && (E->trace.extraq[j][0][kk] == 0))
+          E->trace.extraq[j][0][kk] = 1;
+
 }
 

@@ -38,7 +38,6 @@ static void compute_elemental_composition_ratio_method(struct All_variables *E);
 static void init_bulk_composition(struct All_variables *E);
 static void check_initial_composition(struct All_variables *E);
 static void fill_composition_from_neighbors(struct All_variables *E);
-static void chemical_changes(struct All_variables *E);
 
 
 
@@ -190,7 +189,6 @@ void fill_composition(struct All_variables *E)
     /* ratio method */
 
     if (E->composition.ibuoy_type==1) {
-        if (E->composition.chemical_changes == 1) chemical_changes(E);
         compute_elemental_composition_ratio_method(E);
     }
 
@@ -556,15 +554,4 @@ void get_bulk_composition(struct All_variables *E)
     }
 
     return;
-}
-
-void chemical_changes(struct All_variables *E)
-{
-    int j,kk;
-
-    for (j=1;j<=E->sphere.caps_per_proc;j++)
-      for (kk=1;kk<=E->trace.ntracers[j];kk++)
-        if ((E->trace.basicq[j][2][kk] > 0.9985) && (E->trace.extraq[j][0][kk] == 0))
-          E->trace.extraq[j][0][kk] = 1;
-
 }
