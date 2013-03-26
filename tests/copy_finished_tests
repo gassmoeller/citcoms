@@ -1,0 +1,9 @@
+#!/bin/bash
+
+reference_tests=/office/Software/Citcom-Versionen/CitcomS/tests/automated_integration_tests
+
+for testcase in `ls $reference_tests`
+do
+copy_finished_models
+done
+

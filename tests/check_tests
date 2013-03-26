@@ -1,0 +1,39 @@
+#!/bin/bash
+
+reference_results=/office/Software/Citcom-Versionen/CitcomS/tests/automated_integration_tests
+
+recent_results=/office/models/citcom_models/tests
+
+for testcase in `ls $reference_results`
+do
+#echo "Starting test:" $testcase
+status="passed"
+rm $recent_results/$testcase/data/*.diff
+
+for file in `ls $reference_results/$testcase/data/`
+do 
+tracer_log_file=`echo $file| grep 'tracer_log\|log\|time'`
+if [ "$tracer_log_file" == "" ]
+then
+#echo "Checking file:" $file
+difference=`diff $reference_results/$testcase/data/$file $recent_results/$testcase/data/$file`
+fi
+
+if [ "$difference" != "" ]
+then
+status="failed"
+diff_log_file=$recent_results/$testcase/data/$file.diff
+echo "$Diff from `date`" > $diff_log_file
+diff $reference_results/$testcase/data/$file $recent_results/$testcase/data/$file >> $diff_log_file
+fi
+
+difference=""
+done
+
+echo "test $testcase $status"
+#if [ "$status" != "passed" ]
+#then
+#echo "differences are saved in the $testcase data folder's .diff files"
+#fi
+
+done
