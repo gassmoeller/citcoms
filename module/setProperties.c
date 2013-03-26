@@ -672,10 +672,12 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
          getFloatProperty(properties, "end_temp", E->composition.end_temp, fp);
          getIntProperty(properties, "ntdeps", E->composition.ntdeps, fp);
     } else {
+        E->composition.start_temp = 0.0;
         E->composition.end_temp = E->data.ref_temperature;
+        E->composition.ntdeps = 1000;
     }
     E->composition.delta_temp = (E->composition.end_temp - E->composition.start_temp)
-                                   / (float) E->composition.ntdeps;
+                                   / (float) (E->composition.ntdeps-1);
 
     getIntProperty(properties, "tracer_enriched", E->control.tracer_enriched, fp);
     if(E->control.tracer_enriched) {
