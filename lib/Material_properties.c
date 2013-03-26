@@ -454,6 +454,11 @@ double get_g_el(struct All_variables *E, int m, int el)
     return g;
 }
 
+const double get_dimensionalT(const double dimensionlessT, const double dimensionlessT_surf, const double refT)
+{
+	return (dimensionlessT + dimensionlessT_surf) * refT;
+}
+
 const double get_refTemp(const struct All_variables *E, const int m, const int nn, const int nz)
 {
 	//const double compressible_factor = fmax(0, E->control.disptn_number)
@@ -468,11 +473,6 @@ const double get_refTemp(const struct All_variables *E, const int m, const int n
 
     refTemp = fmax(fmin(refTemp,E->composition.end_temp-E->composition.start_temp),0);
     return refTemp;
-}
-
-const double get_dimensionalT(const double dimensionlessT, const double dimensionlessT_surf, const double refT)
-{
-	return (dimensionlessT + dimensionlessT_surf) * refT;
 }
 
 const int idxTemp(const double refTemp, const float delta_temp, const int ntempsteps)
@@ -649,7 +649,7 @@ double get_cp_el(struct All_variables *E, int m, int el)
 	const int temperature_accurate = 0;
 	const double cp = get_property_el(E,E->refstate.heat_capacity,m,el,temperature_accurate);
 	const double cp_old = get_cp_el_old(E,m,el);
-	if (cp - cp_old < EPS)
+	if (fabs(cp - cp_old) < EPS)
 	{
 		if (el == 5) fprintf (stderr, "Old and new function do create equal cp element ... using new\n");
 		return cp;
@@ -666,7 +666,7 @@ double get_cp_nd(struct All_variables *E, int m, int nn)
 	const int temperature_accurate = 0;
 	double cp = get_property_nd(E,E->refstate.heat_capacity,m,nn,temperature_accurate);
 	double cp_old = get_cp_nd_old(E,m,nn);
-	if (cp - cp_old < EPS)
+	if (fabs(cp - cp_old) < EPS)
 	{
 		if (nn == 5) fprintf (stderr, "Old and new function do create equal cp element ... using new\n");
 		return cp;
@@ -724,7 +724,7 @@ double get_alpha_nd(struct All_variables *E, int m, int nn)
 	const int temperature_accurate = 0;
 	double alpha = get_property_nd(E,E->refstate.thermal_expansivity,m,nn,temperature_accurate);
 	double alpha_old = get_alpha_nd_old(E,m,nn);
-	if (alpha - alpha_old < EPS)
+	if (fabs(alpha - alpha_old) < EPS)
 	{
 		if (nn == 5) fprintf (stderr, "Old and new function do create equal alpha element ... using new\n");
 		return alpha;
@@ -741,7 +741,7 @@ double get_alpha_el(struct All_variables *E, int m, int el)
 	const int temperature_accurate = 0;
 	const double alpha = get_property_el(E,E->refstate.thermal_expansivity,m,el,temperature_accurate);
 	const double alpha_old = get_alpha_el_old(E,m,el);
-	if (alpha - alpha_old < EPS)
+	if (fabs(alpha - alpha_old) < EPS)
 	{
 		if (el == 5) fprintf (stderr, "Old and new function do create equal alpha element ... using new\n");
 		return alpha;
@@ -758,7 +758,7 @@ double get_rho_el(struct All_variables *E, int m, int el)
 	const int temperature_accurate = 1;
 	double rho = get_property_el(E,E->refstate.rho,m,el,temperature_accurate);
 	double rho_old = get_rho_el_old(E,m,el);
-	if (rho - rho_old < EPS)
+	if (fabs(rho - rho_old) < EPS)
 	{
 		if (el == 5) fprintf (stderr, "Old and new function do create equal rho element ... using new\n");
 		return rho;
@@ -775,7 +775,7 @@ double get_rho_nd(struct All_variables *E, int m, int nn)
 	const int temperature_accurate = 1;
 	double rho = get_property_nd(E,E->refstate.rho,m,nn,temperature_accurate);
 	double rho_old = get_rho_nd_old(E,m,nn);
-	if (rho - rho_old < EPS)
+	if (fabs(rho - rho_old) < EPS)
 	{
 		if (nn == 5) fprintf (stderr, "Old and new function do create equal rho element ... using new\n");
 		return rho;
@@ -827,7 +827,7 @@ double get_vs_el(struct All_variables *E, int m, int el)
 	const int temperature_accurate = 0;
 	double vs = get_property_el(E,E->refstate.vs,m,el,temperature_accurate);
 	double vs_old = get_vs_el_old(E,m,el);
-	if (vs - vs_old < EPS)
+	if (fabs(vs - vs_old) < EPS)
 	{
 		if (el == 5) fprintf (stderr, "Old and new function do create equal vs element ... using new\n");
 		return vs;
@@ -844,7 +844,7 @@ double get_vs_nd(struct All_variables *E, int m, int nn)
 	const int temperature_accurate = 0;
 	double vs = get_property_nd(E,E->refstate.vs,m,nn,temperature_accurate);
 	double vs_old = get_vs_nd_old(E,m,nn);
-	if (vs - vs_old < EPS)
+	if (fabs(vs - vs_old) < EPS)
 	{
 		if (nn == 5) fprintf (stderr, "Old and new function do create equal vs element ... using new\n");
 		return vs;
@@ -896,7 +896,7 @@ double get_vp_el(struct All_variables *E, int m, int el)
 	const int temperature_accurate = 0;
 	double vp = get_property_el(E,E->refstate.vp,m,el,temperature_accurate);
 	double vp_old = get_vp_el_old(E,m,el);
-	if (vp - vp_old < EPS)
+	if (fabs(vp - vp_old) < EPS)
 	{
 		if (el == 5) fprintf (stderr, "Old and new function do create equal vp element ... using new\n");
 		return vp;
@@ -913,7 +913,7 @@ double get_vp_nd(struct All_variables *E, int m, int nn)
 	const int temperature_accurate = 0;
 	double vp = get_property_nd(E,E->refstate.vp,m,nn,temperature_accurate);
 	double vp_old = get_vp_nd_old(E,m,nn);
-	if (vp - vp_old < EPS)
+	if (fabs(vp - vp_old) < EPS)
 	{
 		if (nn == 5) fprintf (stderr, "Old and new function do create equal vp element ... using new\n");
 		return vp;
@@ -1008,7 +1008,7 @@ double get_radheat_nd(struct All_variables *E, int m, int nn)
 	const int temperature_accurate = 0;
 	double radheat = get_radheat_nd_new(E,m,nn);
 	double radheat_old = get_radheat_nd_old(E,m,nn);
-	if (radheat - radheat_old < EPS)
+	if (fabs(radheat - radheat_old) < EPS)
 	{
 		if (nn == 5) fprintf (stderr, "Old and new function do create equal radheat ... using new\n");
 		return radheat;
