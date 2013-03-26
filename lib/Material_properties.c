@@ -36,7 +36,7 @@
 #include "material_properties.h"
 #include "parallel_related.h"
 
-#define EPS 1e-8
+#define EPS 1e-7
 
 static void read_refstate(struct All_variables *E);
 static void read_perplexfile(struct All_variables *E);
@@ -454,15 +454,15 @@ double get_g_el(struct All_variables *E, int m, int el)
     return g;
 }
 
-const double get_refTemp(struct All_variables *E, const int m, const int nn, const int nz)
+const double get_refTemp(const struct All_variables *E, const int m, const int nn, const int nz)
 {
-	const double compressible_factor = fmax(0, E->control.disptn_number)
-			/ fmax(1e-7, E->control.disptn_number);
+	//const double compressible_factor = fmax(0, E->control.disptn_number)
+	//		/ fmax(1e-7, E->control.disptn_number);
+	const double compressible_factor = (E->control.disptn_number <= EPS) ? 0.0 : 1.0;
 	const double compressible_correction = E->refstate.Tadi[nz]
 			- E->control.adiabaticT0 * E->data.ref_temperature;
 
-    double refTemp = (E->T[m][nn] + E->control.surface_temp)
-    		* E->data.ref_temperature
+    double refTemp = get_dimensionalT(E->T[m][nn],E->control.surface_temp,E->data.ref_temperature)
     		- E->composition.start_temp
     		+ (1-compressible_factor)*compressible_correction;
 
@@ -470,10 +470,17 @@ const double get_refTemp(struct All_variables *E, const int m, const int nn, con
     return refTemp;
 }
 
+const double get_dimensionalT(const double dimensionlessT, const double dimensionlessT_surf, const double refT)
+{
+	return (dimensionlessT + dimensionlessT_surf) * refT;
+}
+
 const int idxTemp(const double refTemp, const float delta_temp, const int ntempsteps)
 {
-    assert(delta_temp > 0);
-    assert(ntempsteps > 0);
+
+	if (delta_temp == 0 || ntempsteps == 0)
+		return -1;
+
 	const int nT = (int) (refTemp / delta_temp + 1);
 	const int bounded_nT = max(min(nT,ntempsteps-1),1);
 
@@ -481,7 +488,14 @@ const int idxTemp(const double refTemp, const float delta_temp, const int ntemps
 }
 
 const int idxNz (const int nn, const int noz) {
-	return ((nn-1) % noz) + 1;
+	if (noz != 0)
+		return ((nn-1) % noz) + 1;
+	else
+	{
+		fprintf(stderr,"Error in passing noz to idxNz(). noz must be larger than 0.");
+		fflush(stderr);
+		return -1;
+	}
 }
 
 const double get_property_nd(struct All_variables *E, double*** property, const int m, const int nn, const int temperature_accurate)
@@ -493,6 +507,7 @@ const double get_property_nd(struct All_variables *E, double*** property, const 
 	double deltaT;
 
     const int nz = idxNz(nn, E->lmesh.noz);
+
 
     /* Calculating the borders in the case of pressure_oversampling == x > 1 (x times more depth nodes in material table than in model)
      * In case pressure_oversampling == 1 : nzmin == nzmax == nz
@@ -927,7 +942,40 @@ double get_radheat_el(struct All_variables *E, int m, int el)
     return radheat;
 }
 
-double get_radheat_nd(struct All_variables *E, int m, int nn)
+
+
+const double get_radheat_nd_new(const struct All_variables *E, const int m,const int nn)
+{
+
+    const int nz = idxNz(nn,E->lmesh.noz);
+    const double refTemp = get_refTemp(E,m,nn,nz);
+    const int nT = idxTemp(refTemp,E->composition.delta_temp,E->composition.ntdeps);
+    const double weight = fmax(fmin(refTemp / E->composition.delta_temp - (nT-1),1),0);
+
+    double radheat = 0.0;
+    double density = 0.0;
+    double proportion_normal_material = 1.0;
+
+    if (E->control.tracer_enriched){
+    	int j;
+        for(j=0;j<E->composition.ncomp;j++){
+        	proportion_normal_material -= E->composition.comp_node[m][j][nn];
+
+        	density = E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT][j+2] + E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT][1];
+            radheat +=  (1-weight) * density * E->composition.comp_node[m][j][nn] * E->control.Q0ER[j];
+
+        	density = E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT+1][j+2] + E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT+1][1];
+            radheat +=  weight * density * E->composition.comp_node[m][j][nn] * E->control.Q0ER[j];
+        }
+    }
+
+    radheat += (1-weight) * E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT][1] * proportion_normal_material * E->control.Q0;
+    radheat += weight * E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT+1][1] * proportion_normal_material * E->control.Q0;
+
+    return radheat;
+}
+
+double get_radheat_nd_old(struct All_variables *E, int m, int nn)
 {
     int nz,nT,j;
     double refTemp,radheat,deltaT,weight;
@@ -953,5 +1001,22 @@ double get_radheat_nd(struct All_variables *E, int m, int nn)
     }
 
     return radheat;
+}
+
+double get_radheat_nd(struct All_variables *E, int m, int nn)
+{
+	const int temperature_accurate = 0;
+	double radheat = get_radheat_nd_new(E,m,nn);
+	double radheat_old = get_radheat_nd_old(E,m,nn);
+	if (radheat - radheat_old < EPS)
+	{
+		if (nn == 5) fprintf (stderr, "Old and new function do create equal radheat ... using new\n");
+		return radheat;
+	}
+	else
+	{
+		if (nn == 5) fprintf(stderr, "Old and new function do not create equal radheat ... using old: %f instead of new: %f\n", radheat_old,radheat);
+        return radheat_old;
+	}
 }
 
