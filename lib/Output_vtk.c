@@ -1075,20 +1075,28 @@ void write_tracer_file(struct All_variables *E, int cycles)
 
 static void write_ascii_array(int nn, int perLine, float *array, FILE *fp)
 {
-    int i;
+    int i,a;
+    int ascii_precision = 6;
+    char format_string[255];
 
     switch (perLine) {
     case 1:
+        a = snprintf(format_string,sizeof(format_string), "%%.%de\n",
+        		ascii_precision);
         for(i=0; i<nn; i++)
-            fprintf(fp, "%.4e\n", array[i]);
+            fprintf(fp, format_string, array[i]);
         break;
     case 3:
+        a = snprintf(format_string,sizeof(format_string), "%%.%de %%.%de %%.%de\n",
+        		ascii_precision,ascii_precision,ascii_precision);
         for(i=0; i < nn/3; i++)
-            fprintf(fp,"%.4e %.4e %.4e\n",array[3*i],array[3*i+1],array[3*i+2]);
+            fprintf(fp,format_string,array[3*i],array[3*i+1],array[3*i+2]);
         break;
     case 6:
+        a = snprintf(format_string,sizeof(format_string), "%%.%de %%.%de %%.%de %%.%de %%.%de %%.%de\n",
+        		ascii_precision,ascii_precision,ascii_precision,ascii_precision,ascii_precision,ascii_precision);
         for(i=0; i < nn/6; i++)
-            fprintf(fp,"%.4e %.4e %.4e %.4e %.4e %.4e\n",
+            fprintf(fp,format_string,
                     array[6*i],array[6*i+1],array[6*i+2],
                     array[6*i+3],array[6*i+4],array[6*i+5]);
         break;
