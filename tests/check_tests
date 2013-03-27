@@ -12,7 +12,7 @@ rm $recent_results/$testcase/data/*.diff
 
 for file in `ls $reference_results/$testcase/data/`
 do 
-tracer_log_file=`echo $file| grep 'tracer_log\|log\|time'`
+tracer_log_file=`echo $file| grep 'tracer_log\|log\|time\|chkpt'`
 if [ "$tracer_log_file" == "" ]
 then
 #echo "Checking file:" $file
