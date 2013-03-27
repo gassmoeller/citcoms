@@ -157,23 +157,20 @@ double get_material_buoyancy(struct All_variables *E, int m, int i)
 	{
 		int j;
 		double buoy;
-		const double temp = E->control.Atemp;
 		const int nz = idxNz(i,E->lmesh.noz);
 		/* We don't need to substract adiabatic T profile from T here,
 		 * * since the horizontal average of buoy will be removed.*/
 		buoy =  E->refstate.rho[nz] * E->refstate.thermal_expansivity[nz] * E->T[m][i];
 
-		    /* chemical buoyancy */
-		    if(E->control.tracer &&
-		       (E->composition.ichemical_buoyancy)) {
-		    	double temp2;
-		      for(j=0;j<E->composition.ncomp;j++) {
-		       /* TODO: how to scale chemical buoyancy wrt reference density? */
-		       temp2 = E->composition.buoyancy_ratio[j] * temp;
-		       buoy -= temp2 * E->composition.comp_node[m][j][i];
-		      }
-		    }
-		      return buoy;
+		/* chemical buoyancy */
+		if(E->control.tracer &&
+				(E->composition.ichemical_buoyancy)) {
+			for(j=0;j<E->composition.ncomp;j++) {
+				/* TODO: how to scale chemical buoyancy wrt reference density? */
+				buoy -= E->composition.buoyancy_ratio[j] * E->composition.comp_node[m][j][i];
+			}
+		}
+		return buoy;
 	}
 }
 
