@@ -44,7 +44,8 @@ static void write_binary_array_double(int nn, double* array, FILE * f);
 static void write_binary_array(int nn, float* array, FILE * f);
 static void write_int_binary_array(int nn, int* array, FILE * f);
 static void write_ascii_array_float(int nn, int perLine, float *array, FILE *fp);
-static void write_ascii_array(int nn, int perLine, double *array, FILE *fp);
+static void write_ascii_array_double(int nn, int perLine, double *array, FILE *fp);
+static void write_ascii_array(int nn, int perLine, int ascii_precision, double *array, FILE *fp);
 
 static void vts_file_header(struct All_variables *E, FILE *fp)
 {
@@ -123,7 +124,7 @@ static void vtk_output_temp(struct All_variables *E, FILE *fp)
     if (strcmp(E->output.vtk_format,"binary") == 0) {
         write_binary_array_double(nodes,E->T[1]+1,fp);
     } else {
-        write_ascii_array(nodes,1,E->T[1]+1,fp);
+        write_ascii_array_double(nodes,1,E->T[1]+1,fp);
     }
     fputs("        </DataArray>\n", fp);
     return;
@@ -145,7 +146,7 @@ static void vtk_output_melttemp(struct All_variables *E, FILE *fp)
     if (strcmp(E->output.vtk_format,"binary") == 0) {
         write_binary_array_double(nodes,melttemp,fp);
     } else {
-        write_ascii_array(nodes,1,melttemp,fp);
+        write_ascii_array_double(nodes,1,melttemp,fp);
     }
     fputs("        </DataArray>\n", fp);
     free(melttemp);
@@ -171,7 +172,7 @@ static void vtk_output_deltat(struct All_variables *E, FILE *fp)
     if (strcmp(E->output.vtk_format,"binary") == 0) {
         write_binary_array_double(nodes,deltatemp,fp);
     } else {
-        write_ascii_array(nodes,1,deltatemp,fp);
+        write_ascii_array_double(nodes,1,deltatemp,fp);
     }
     fputs("        </DataArray>\n", fp);
     free(deltatemp);
@@ -209,7 +210,7 @@ static void vtk_output_velo(struct All_variables *E, FILE *fp)
     if (strcmp(E->output.vtk_format, "binary") == 0) 
         write_binary_array_double(nodes*3,vel,fp);
     else 
-        write_ascii_array(nodes*3,3,vel,fp);
+        write_ascii_array_double(nodes*3,3,vel,fp);
     fputs("        </DataArray>\n", fp);
 
     free(vel);
@@ -235,7 +236,7 @@ static void vtk_output_material(struct All_variables *E, FILE *fp)
     if (strcmp(E->output.vtk_format, "binary") == 0) 
         write_binary_array_double(nodes,rho,fp);
     else 
-        write_ascii_array(nodes,1,rho,fp);
+        write_ascii_array_double(nodes,1,rho,fp);
     fputs("        </DataArray>\n", fp);
 
 
@@ -249,7 +250,7 @@ static void vtk_output_material(struct All_variables *E, FILE *fp)
     if (strcmp(E->output.vtk_format, "binary") == 0) 
         write_binary_array_double(nodes,alpha,fp);
     else 
-        write_ascii_array(nodes,1,alpha,fp);
+        write_ascii_array_double(nodes,1,alpha,fp);
     fputs("        </DataArray>\n", fp);
 
 
@@ -263,7 +264,7 @@ static void vtk_output_material(struct All_variables *E, FILE *fp)
     if (strcmp(E->output.vtk_format, "binary") == 0) 
         write_binary_array_double(nodes,cp,fp);
     else 
-        write_ascii_array(nodes,1,cp,fp);
+        write_ascii_array_double(nodes,1,cp,fp);
     fputs("        </DataArray>\n", fp);
 
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"radiogenic heating\" format=\"%s\">\n", E->output.vtk_format);
@@ -276,7 +277,7 @@ static void vtk_output_material(struct All_variables *E, FILE *fp)
     if (strcmp(E->output.vtk_format, "binary") == 0) 
         write_binary_array_double(nodes,radheat,fp);
     else 
-        write_ascii_array(nodes,1,radheat,fp);
+        write_ascii_array_double(nodes,1,radheat,fp);
     fputs("        </DataArray>\n", fp);
 
     free(alpha);
@@ -305,7 +306,7 @@ static void vtk_output_svelo(struct All_variables *E, FILE *fp)
     if (strcmp(E->output.vtk_format, "binary") == 0) 
         write_binary_array_double(nodes*3,svel,fp);
     else 
-        write_ascii_array(nodes*3,3,svel,fp);
+        write_ascii_array_double(nodes*3,3,svel,fp);
     fputs("        </DataArray>\n", fp);
 
     free(svel);
@@ -396,13 +397,13 @@ void vtk_output_seismic(struct All_variables *E, int cycles, FILE *fp)
         fputs("        </DataArray>\n", fp);
     }else {
         fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Rho\" format=\"%s\">\n", E->output.vtk_format);
-        write_ascii_array(nodes-1,1,output_rho,fp);
+        write_ascii_array_double(nodes-1,1,output_rho,fp);
         fputs("        </DataArray>\n", fp);
         fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vp\" format=\"%s\">\n", E->output.vtk_format);
-        write_ascii_array(nodes-1,1,output_vp,fp);
+        write_ascii_array_double(nodes-1,1,output_vp,fp);
         fputs("        </DataArray>\n", fp);
         fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vs\" format=\"%s\">\n", E->output.vtk_format);
-        write_ascii_array(nodes-1,1,output_vs,fp);
+        write_ascii_array_double(nodes-1,1,output_vs,fp);
         fputs("        </DataArray>\n", fp);
     }
 
@@ -479,7 +480,7 @@ static void vtk_output_dens(struct All_variables *E, FILE *fp)
         if (strcmp(E->output.vtk_format, "binary") == 0) {
             write_binary_array_double(nodes,density,fp);
         } else {
-            write_ascii_array(nodes,1,density,fp);
+            write_ascii_array_double(nodes,1,density,fp);
         }
        
     fputs("        </DataArray>\n", fp);
@@ -537,7 +538,7 @@ static void vtk_output_coord(struct All_variables *E, FILE *fp)
     if (strcmp(E->output.vtk_format, "binary") == 0)
         write_binary_array_double(nodes*3,pos,fp);
     else
-        write_ascii_array(nodes*3,3,pos,fp);    
+        write_ascii_array_double(nodes*3,3,pos,fp);
     fputs("        </DataArray>\n", fp);
     fputs("      </Points>\n", fp);
     free(pos);
@@ -589,7 +590,7 @@ static void vtk_output_comp_nd(struct All_variables *E, FILE *fp)
         if (strcmp(E->output.vtk_format, "binary") == 0)
             write_binary_array_double(nodes,compo,fp);
         else
-            write_ascii_array(nodes,1,compo,fp);
+            write_ascii_array_double(nodes,1,compo,fp);
         fputs("        </DataArray>\n", fp);
     }
     free(compo);
@@ -1007,7 +1008,7 @@ static void vtk_tracer_coord(struct All_variables *E, FILE *ft)
     if (strcmp(E->output.vtk_format, "binary") == 0)
         write_binary_array_double(tracers*3,pos,ft);
     else
-        write_ascii_array(tracers*3,3,pos,ft);
+        write_ascii_array_double(tracers*3,3,pos,ft);
     fputs("        </DataArray>\n", ft);
     fputs("      </Points>\n", ft);
     free(pos);
@@ -1076,15 +1077,19 @@ static void write_ascii_array_float(int nn, int perLine, float *array, FILE *fp)
 
 		for (i=0;i<nn;i++) double_array[i] = (double) array [i];
 
-		write_ascii_array(nn,perLine,double_array,fp);
+		write_ascii_array(nn,perLine,4,double_array,fp);
 		free(double_array);
 }
 
+static void write_ascii_array_double(int nn, int perLine, double *array, FILE *fp)
+{
+	write_ascii_array(nn,perLine,6,array,fp);
+}
 
-static void write_ascii_array(int nn, int perLine, double *array, FILE *fp)
+
+static void write_ascii_array(int nn, int perLine, int ascii_precision, double *array, FILE *fp)
 {
     int i,a;
-    int ascii_precision = 6;
     char format_string[255];
 
     switch (perLine) {
