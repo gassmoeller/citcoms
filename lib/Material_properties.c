@@ -508,7 +508,6 @@ const double get_property_nd(struct All_variables *E, double*** property, const 
 
     const int nz = idxNz(nn, E->lmesh.noz);
 
-
     /* Calculating the borders in the case of pressure_oversampling == x > 1 (x times more depth nodes in material table than in model)
      * In case pressure_oversampling == 1 : nzmin == nzmax == nz
      */
@@ -556,375 +555,85 @@ const double get_property_el(struct All_variables *E, double*** property, const 
 	return prop;
 }
 
-double get_cp_nd_old(struct All_variables *E, int m, int nn)
-{
-    int i,nz,nzmin,nzmax,nT,j;
-    double cp;
-    assert(E->composition.delta_temp > 0);
-
-    nz = ((nn-1) % E->lmesh.noz) + 1;
-    nT = ((int)((E->T[m][nn] + E->control.surface_temp) * E->data.ref_temperature - E->composition.start_temp + (1-fmax(0,E->control.disptn_number)/fmax(1e-7,E->control.disptn_number))*(E->refstate.Tadi[nz]-E->control.adiabaticT0*E->data.ref_temperature)) / E->composition.delta_temp + 1);
-    nT = max(min(nT,E->composition.ntdeps),1);
-
-    cp = 0;
-    nzmin = max(E->composition.pressure_oversampling*(nz-1) + 1-E->composition.pressure_oversampling/2,1);
-    nzmax = min(E->composition.pressure_oversampling*(nz-1) + 1+E->composition.pressure_oversampling/2,(E->lmesh.noz-1)*E->composition.pressure_oversampling+1);
-    for (i=nzmin;i<=nzmax;i++){
-    cp += E->refstate.heat_capacity[i][nT][1];
-    for(j=0;j<E->composition.ncomp;j++){
-        cp +=  E->refstate.heat_capacity[i][nT][j+2]*E->composition.comp_node[m][j][nn];
-    }
-    }
-    cp /= (nzmax-nzmin+1);
-
-    return cp;
-}
-
-double get_cp_el_old(struct All_variables *E, int m, int el)
-{
-    int nn,a;
-    const int ends=enodes[E->mesh.nsd];
-    const int lev=E->mesh.levmax;
-    double cp = 0;
-
-    for(a=1;a<=ends;a++){
-        nn = E->IEN[lev][m][el].node[a];
-        cp += get_cp_nd_old(E,m,nn);
-    }
-    cp /= ends;
-    return cp;
-}
-
-double get_rho_nd_old(struct All_variables *E, int m, int nn)
-{
-    int i,nz,nzmax,nzmin,nT,j;
-    double refTemp,rho,deltaT,weight;
-
-    nz = ((nn-1) % E->lmesh.noz) + 1;
-    refTemp = ((E->T[m][nn] + E->control.surface_temp) * E->data.ref_temperature - E->composition.start_temp + (1-fmax(0,E->control.disptn_number)/fmax(1e-7,E->control.disptn_number))*(E->refstate.Tadi[nz]-E->control.adiabaticT0*E->data.ref_temperature));
-    refTemp = fmax(fmin(refTemp,E->composition.end_temp-E->composition.start_temp),0);
-    nT = (int) (refTemp / E->composition.delta_temp + 1);
-    nT = max(min(nT,E->composition.ntdeps-1),1);
-
-    weight = fmax(fmin(refTemp / E->composition.delta_temp - (nT-1),1),0);
-
-    rho = 0;
-
-    nzmin = max(E->composition.pressure_oversampling*(nz-1) + 1 - E->composition.pressure_oversampling/2,1);
-    nzmax = min(E->composition.pressure_oversampling*(nz-1) + 1 + E->composition.pressure_oversampling/2,(E->lmesh.noz-1)*E->composition.pressure_oversampling+1);
-
-
-    for (i=nzmin;i<=nzmax;i++){
-        rho += (1-weight) * E->refstate.rho[i][nT][1];
-        rho += weight * E->refstate.rho[i][nT+1][1];
-
-        for(j=0;j<E->composition.ncomp;j++){
-            rho +=  (1-weight) * E->refstate.rho[i][nT][j+2]*E->composition.comp_node[m][j][nn];
-            rho +=  weight * E->refstate.rho[i][nT+1][j+2]*E->composition.comp_node[m][j][nn];
-        }
-    }
-
-    rho /= (nzmax-nzmin+1);
-
-    return rho;
-}
-
-double get_rho_el_old(struct All_variables *E, int m, int el)
-{
-    int nn,a;
-    const int ends=enodes[E->mesh.nsd];
-    const int lev=E->mesh.levmax;
-    double rho = 0;
-
-    for(a=1;a<=ends;a++){
-        nn = E->IEN[lev][m][el].node[a];
-        rho += get_rho_nd_old(E,m,nn);
-    }
-    rho /= ends;
-    return rho;
-}
 
 double get_cp_el(struct All_variables *E, int m, int el)
 {
 	const int temperature_accurate = 0;
 	const double cp = get_property_el(E,E->refstate.heat_capacity,m,el,temperature_accurate);
-	const double cp_old = get_cp_el_old(E,m,el);
-	if (fabs(cp - cp_old) < EPS)
-	{
-		if (el == 5) fprintf (stderr, "Old and new function do create equal cp element ... using new\n");
-		return cp;
-	}
-	else
-	{
-		if (el == 5) fprintf(stderr, "Old and new function do not create equal cp element ... using old\n");
-        return cp_old;
-	}
+	return cp;
 }
+
 
 double get_cp_nd(struct All_variables *E, int m, int nn)
 {
 	const int temperature_accurate = 0;
 	double cp = get_property_nd(E,E->refstate.heat_capacity,m,nn,temperature_accurate);
-	double cp_old = get_cp_nd_old(E,m,nn);
-	if (fabs(cp - cp_old) < EPS)
-	{
-		if (nn == 5) fprintf (stderr, "Old and new function do create equal cp element ... using new\n");
-		return cp;
-	}
-	else
-	{
-		if (nn == 5) fprintf(stderr, "Old and new function do not create equal cp element ... using old\n");
-        return cp_old;
-	}
+	return cp;
 }
 
-double get_alpha_nd_old(struct All_variables *E, int m, int nn)
-{
-
-    int i,nz,nzmax,nzmin,nT,j;
-    double alpha = 0.0;
-
-    nz = ((nn-1) % E->lmesh.noz) + 1;
-    nT = ((int)((E->T[m][nn] + E->control.surface_temp) * E->data.ref_temperature - E->composition.start_temp + (1-fmax(0,E->control.disptn_number)/fmax(1e-7,E->control.disptn_number))*(E->refstate.Tadi[nz]-E->control.adiabaticT0*E->data.ref_temperature)) / E->composition.delta_temp + 1);
-    nT = max(min(nT,E->composition.ntdeps),1);
-
-    nzmin = max(E->composition.pressure_oversampling*(nz-1) + 1 - E->composition.pressure_oversampling/2,1);
-    nzmax = min(E->composition.pressure_oversampling*(nz-1) + 1 + E->composition.pressure_oversampling/2,(E->lmesh.noz-1)*E->composition.pressure_oversampling+1);
-
-    for (i=nzmin;i<=nzmax;i++)
-    {
-		alpha += E->refstate.thermal_expansivity[i][nT][1];
-
-		for(j=0;j<E->composition.ncomp;j++){
-			alpha +=  E->refstate.thermal_expansivity[i][nT][j+2]*E->composition.comp_node[m][j][nn];
-		}
-    }
-    alpha /= (nzmax-nzmin+1);
-
-    return alpha;
-}
-
-double get_alpha_el_old(struct All_variables *E, int m, int el)
-{
-    int nn,a;
-    const int ends=enodes[E->mesh.nsd];
-    const int lev=E->mesh.levmax;
-    double alpha = 0;
-
-    for(a=1;a<=ends;a++){
-        nn = E->IEN[lev][m][el].node[a];
-        alpha += get_alpha_nd_old(E,m,nn);
-    }
-    alpha /= ends;
-    return alpha;
-}
 
 double get_alpha_nd(struct All_variables *E, int m, int nn)
 {
 	const int temperature_accurate = 0;
 	double alpha = get_property_nd(E,E->refstate.thermal_expansivity,m,nn,temperature_accurate);
-	double alpha_old = get_alpha_nd_old(E,m,nn);
-	if (fabs(alpha - alpha_old) < EPS)
-	{
-		if (nn == 5) fprintf (stderr, "Old and new function do create equal alpha element ... using new\n");
-		return alpha;
-	}
-	else
-	{
-		if (nn == 5) fprintf(stderr, "Old and new function do not create equal alpha element ... using old\n");
-        return alpha_old;
-	}
+	return alpha;
 }
+
 
 double get_alpha_el(struct All_variables *E, int m, int el)
 {
 	const int temperature_accurate = 0;
 	const double alpha = get_property_el(E,E->refstate.thermal_expansivity,m,el,temperature_accurate);
-	const double alpha_old = get_alpha_el_old(E,m,el);
-	if (fabs(alpha - alpha_old) < EPS)
-	{
-		if (el == 5) fprintf (stderr, "Old and new function do create equal alpha element ... using new\n");
-		return alpha;
-	}
-	else
-	{
-		if (el == 5) fprintf(stderr, "Old and new function do not create equal alpha element ... using old\n");
-        return alpha_old;
-	}
+	return alpha;
 }
+
 
 double get_rho_el(struct All_variables *E, int m, int el)
 {
 	const int temperature_accurate = 1;
 	double rho = get_property_el(E,E->refstate.rho,m,el,temperature_accurate);
-	double rho_old = get_rho_el_old(E,m,el);
-	if (fabs(rho - rho_old) < EPS)
-	{
-		if (el == 5) fprintf (stderr, "Old and new function do create equal rho element ... using new\n");
-		return rho;
-	}
-	else
-	{
-		if (el == 5) fprintf(stderr, "Old and new function do not create equal rho element ... using old\n");
-        return rho_old;
-	}
+	return rho;
 }
+
 
 double get_rho_nd(struct All_variables *E, int m, int nn)
 {
 	const int temperature_accurate = 1;
 	double rho = get_property_nd(E,E->refstate.rho,m,nn,temperature_accurate);
-	double rho_old = get_rho_nd_old(E,m,nn);
-	if (fabs(rho - rho_old) < EPS)
-	{
-		if (nn == 5) fprintf (stderr, "Old and new function do create equal rho element ... using new\n");
-		return rho;
-	}
-	else
-	{
-		if (nn == 5) fprintf(stderr, "Old and new function do not create equal rho element ... using old\n");
-        return rho_old;
-	}
+	return rho;
 }
 
-
-
-double get_vs_nd_old(struct All_variables *E, int m, int nn)
-{
-    int nz,nT,j;
-    double vs;
-
-    nz = ((nn-1) % E->lmesh.noz) + 1;
-    nT = ((int)((E->T[m][nn] + E->control.surface_temp) * E->data.ref_temperature - E->composition.start_temp + (1-fmax(0,E->control.disptn_number)/fmax(1e-7,E->control.disptn_number))*(E->refstate.Tadi[nz]-E->control.adiabaticT0*E->data.ref_temperature)) / E->composition.delta_temp + 1);
-    nT = max(min(nT,E->composition.ntdeps),1);
-
-    vs = E->refstate.vs[(nz-1)*E->composition.pressure_oversampling + 1][nT][1];
-
-    for(j=0;j<E->composition.ncomp;j++){
-        vs +=  E->refstate.vs[(nz-1)*E->composition.pressure_oversampling + 1][nT][j+2]*E->composition.comp_node[m][j][nn];
-    }
-
-    return vs;
-}
-
-double get_vs_el_old(struct All_variables *E, int m, int el)
-{
-    int nn,a;
-    const int ends=enodes[E->mesh.nsd];
-    const int lev=E->mesh.levmax;
-    double vs = 0;
-
-    for(a=1;a<=ends;a++){
-        nn = E->IEN[lev][m][el].node[a];
-        vs += get_vs_nd_old(E,m,nn);
-    }
-    vs /= ends;
-    return vs;
-}
 
 double get_vs_el(struct All_variables *E, int m, int el)
 {
 	const int temperature_accurate = 0;
 	double vs = get_property_el(E,E->refstate.vs,m,el,temperature_accurate);
-	double vs_old = get_vs_el_old(E,m,el);
-	if (fabs(vs - vs_old) < EPS)
-	{
-		if (el == 5) fprintf (stderr, "Old and new function do create equal vs element ... using new\n");
-		return vs;
-	}
-	else
-	{
-		if (el == 5) fprintf(stderr, "Old and new function do not create equal vs element ... using old\n");
-        return vs_old;
-	}
+	return vs;
 }
+
 
 double get_vs_nd(struct All_variables *E, int m, int nn)
 {
 	const int temperature_accurate = 0;
 	double vs = get_property_nd(E,E->refstate.vs,m,nn,temperature_accurate);
-	double vs_old = get_vs_nd_old(E,m,nn);
-	if (fabs(vs - vs_old) < EPS)
-	{
-		if (nn == 5) fprintf (stderr, "Old and new function do create equal vs element ... using new\n");
-		return vs;
-	}
-	else
-	{
-		if (nn == 5) fprintf(stderr, "Old and new function do not create equal vs element ... using old\n");
-        return vs_old;
-	}
+        return vs;
 }
 
-
-
-double get_vp_nd_old(struct All_variables *E, int m, int nn)
-{
-    int nz,nT,j;
-    double vp;
-
-    nz = ((nn-1) % E->lmesh.noz) + 1;
-    nT = ((int)((E->T[m][nn] + E->control.surface_temp) * E->data.ref_temperature - E->composition.start_temp + (1-fmax(0,E->control.disptn_number)/fmax(1e-7,E->control.disptn_number))*(E->refstate.Tadi[nz]-E->control.adiabaticT0*E->data.ref_temperature)) / E->composition.delta_temp + 1);
-    nT = max(min(nT,E->composition.ntdeps),1);
-
-    vp = E->refstate.vp[(nz-1)*E->composition.pressure_oversampling + 1][nT][1];
-
-    for(j=0;j<E->composition.ncomp;j++){
-        vp +=  E->refstate.vp[(nz-1)*E->composition.pressure_oversampling + 1][nT][j+2]*E->composition.comp_node[m][j][nn];
-    }
-
-    return vp;
-}
-
-double get_vp_el_old(struct All_variables *E, int m, int el)
-{
-    int nn,a;
-    const int ends=enodes[E->mesh.nsd];
-    const int lev=E->mesh.levmax;
-    double vp = 0;
-
-    for(a=1;a<=ends;a++){
-        nn = E->IEN[lev][m][el].node[a];
-        vp += get_vp_nd_old(E,m,nn);
-    }
-    vp /= ends;
-    return vp;
-}
 
 double get_vp_el(struct All_variables *E, int m, int el)
 {
 	const int temperature_accurate = 0;
 	double vp = get_property_el(E,E->refstate.vp,m,el,temperature_accurate);
-	double vp_old = get_vp_el_old(E,m,el);
-	if (fabs(vp - vp_old) < EPS)
-	{
-		if (el == 5) fprintf (stderr, "Old and new function do create equal vp element ... using new\n");
-		return vp;
-	}
-	else
-	{
-		if (el == 5) fprintf(stderr, "Old and new function do not create equal vp element ... using old\n");
-        return vp_old;
-	}
+        return vp;
 }
+
 
 double get_vp_nd(struct All_variables *E, int m, int nn)
 {
 	const int temperature_accurate = 0;
 	double vp = get_property_nd(E,E->refstate.vp,m,nn,temperature_accurate);
-	double vp_old = get_vp_nd_old(E,m,nn);
-	if (fabs(vp - vp_old) < EPS)
-	{
-		if (nn == 5) fprintf (stderr, "Old and new function do create equal vp element ... using new\n");
-		return vp;
-	}
-	else
-	{
-		if (nn == 5) fprintf(stderr, "Old and new function do not create equal vp element ... using old\n");
-        return vp_old;
-	}
+	return vp;
 }
-
 
 
 double get_radheat_el(struct All_variables *E, int m, int el)
@@ -941,7 +650,6 @@ double get_radheat_el(struct All_variables *E, int m, int el)
     radheat /= ends;
     return radheat;
 }
-
 
 
 const double get_radheat_nd_new(const struct All_variables *E, const int m,const int nn)
@@ -975,48 +683,10 @@ const double get_radheat_nd_new(const struct All_variables *E, const int m,const
     return radheat;
 }
 
-double get_radheat_nd_old(struct All_variables *E, int m, int nn)
-{
-    int nz,nT,j;
-    double refTemp,radheat,deltaT,weight;
-
-    assert(E->composition.delta_temp > 0);
-
-    nz = ((nn-1) % E->lmesh.noz) + 1;
-    refTemp = ((E->T[m][nn] + E->control.surface_temp) * E->data.ref_temperature - E->composition.start_temp + (1-fmax(0,E->control.disptn_number)/fmax(1e-7,E->control.disptn_number))*(E->refstate.Tadi[nz]-E->control.adiabaticT0*E->data.ref_temperature));
-    refTemp = fmax(fmin(refTemp,E->composition.end_temp-E->composition.start_temp),0);
-    nT = (int) (refTemp / E->composition.delta_temp + 1);
-    nT = max(min(nT,E->composition.ntdeps-1),1);
-
-    weight = fmax(fmin(refTemp / E->composition.delta_temp - (nT-1),1),0);
-
-    radheat = (1-weight) * E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT][1] * E->control.Q0;
-    radheat += weight * E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT+1][1] * E->control.Q0;
-
-    if (E->control.tracer_enriched){
-        for(j=0;j<E->composition.ncomp;j++){
-            radheat +=  (1-weight) * E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT][j+2]*E->composition.comp_node[m][j][nn] * E->control.Q0ER[j];
-            radheat +=  weight * E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT+1][j+2]*E->composition.comp_node[m][j][nn] * E->control.Q0ER[j];
-        }
-    }
-
-    return radheat;
-}
-
 double get_radheat_nd(struct All_variables *E, int m, int nn)
 {
 	const int temperature_accurate = 0;
 	double radheat = get_radheat_nd_new(E,m,nn);
-	double radheat_old = get_radheat_nd_old(E,m,nn);
-	if (fabs(radheat - radheat_old) < EPS)
-	{
-		if (nn == 5) fprintf (stderr, "Old and new function do create equal radheat ... using new\n");
-		return radheat;
-	}
-	else
-	{
-		if (nn == 5) fprintf(stderr, "Old and new function do not create equal radheat ... using old: %f instead of new: %f\n", radheat_old,radheat);
-        return radheat_old;
-	}
+	return radheat;
 }
 
