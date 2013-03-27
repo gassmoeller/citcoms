@@ -552,11 +552,14 @@ struct REF_STATE {
     int choice;
     char filename[200];
     char densityfilename[200];
-    double ***rho;
-    double ***thermal_expansivity;
-    double ***heat_capacity;
-    double ***vp;
-    double ***vs;
+    double ***tab_density;
+    double ***tab_thermal_expansivity;
+    double ***tab_heat_capacity;
+    double ***tab_seismic_vp;
+    double ***tab_seismic_vs;
+    double *rho;
+    double *thermal_expansivity;
+    double *heat_capacity;
     double *thermal_conductivity;
     double *gravity;
     double *Tadi;
@@ -565,7 +568,6 @@ struct REF_STATE {
     double *free_enthalpy;
     double *rad_viscosity;
     double *stress_exp;
-    double ***delta_rho;
     int **cont_position;
 };
 

@@ -146,6 +146,36 @@ void apply_side_sbc(struct All_variables *E)
   }
 }
 
+double get_material_buoyancy(struct All_variables *E, int m, int i)
+{
+
+	if (E->composition.tdep_buoyancy == 1)
+	{
+		return -1.0 * get_rho_nd(E,m,i) / (E->data.therm_exp * E->data.ref_temperature);
+	}
+	else
+	{
+		int j;
+		double buoy;
+		const double temp = E->control.Atemp;
+		const int nz = idxNz(i,E->lmesh.noz);
+		/* We don't need to substract adiabatic T profile from T here,
+		 * * since the horizontal average of buoy will be removed.*/
+		buoy =  E->refstate.rho[nz] * E->refstate.thermal_expansivity[nz] * E->T[m][i];
+
+		    /* chemical buoyancy */
+		    if(E->control.tracer &&
+		       (E->composition.ichemical_buoyancy)) {
+		    	double temp2;
+		      for(j=0;j<E->composition.ncomp;j++) {
+		       /* TODO: how to scale chemical buoyancy wrt reference density? */
+		       temp2 = E->composition.buoyancy_ratio[j] * temp;
+		       buoy -= temp2 * E->composition.comp_node[m][j][i];
+		      }
+		    }
+		      return buoy;
+	}
+}
 
 void get_buoyancy(struct All_variables *E, double **buoy)
 {
@@ -161,7 +191,7 @@ void get_buoyancy(struct All_variables *E, double **buoy)
     /* thermal buoyancy */
     for(m=1;m<=E->sphere.caps_per_proc;m++)
       for(i=1;i<=E->lmesh.nno;i++) {
-          buoy[m][i] = -1.0 * temp * get_rho_nd(E,m,i) / (E->data.therm_exp * E->data.ref_temperature);
+          buoy[m][i] = temp * get_material_buoyancy(E,m,i);
 
     }
 

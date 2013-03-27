@@ -47,43 +47,75 @@ static void new_eos(struct All_variables *E);
 
 int layers_r(struct All_variables *,float);
 
-void mat_prop_allocate(struct All_variables *E)
+
+void allocate_perplex_refstate(struct All_variables *E)
 {
+
+	int noz = E->lmesh.noz;
+	int nno = E->lmesh.nno;
+	int nel = E->lmesh.nel;
+	int i,j;
+
+	/* reference profile of density */
+		E->refstate.tab_density = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
+		for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
+			E->refstate.tab_density[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
+			for (j=1;j<=E->composition.ntdeps;j++){
+				E->refstate.tab_density[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
+			}
+		}
+
+		/* reference profile of coefficient of thermal expansion */
+		E->refstate.tab_thermal_expansivity = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
+		for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
+			E->refstate.tab_thermal_expansivity[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
+			for (j=1;j<=E->composition.ntdeps;j++){
+				E->refstate.tab_thermal_expansivity[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
+			}
+
+		}
+
+		/* reference profile of heat capacity */
+		E->refstate.tab_heat_capacity = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
+		for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
+			E->refstate.tab_heat_capacity[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
+			for (j=1;j<=E->composition.ntdeps;j++){
+				E->refstate.tab_heat_capacity[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
+			}
+		}
+
+		/* reference profile of coefficient of seismic velocity */
+		E->refstate.tab_seismic_vp = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
+		E->refstate.tab_seismic_vs = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
+		for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
+			E->refstate.tab_seismic_vp[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
+			E->refstate.tab_seismic_vs[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
+			for (j=1;j<=E->composition.ntdeps;j++){
+				E->refstate.tab_seismic_vp[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
+				E->refstate.tab_seismic_vs[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
+			}
+
+		}
+}
+
+void allocate_refstate(struct All_variables *E)
+{
+
     int noz = E->lmesh.noz;
     int nno = E->lmesh.nno;
     int nel = E->lmesh.nel;
-    int i,j;
 
     /* reference profile of density */
-    E->refstate.rho = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
-    for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
-        E->refstate.rho[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
-        for (j=1;j<=E->composition.ntdeps;j++){
-            E->refstate.rho[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
-        }
-    }
+    E->refstate.rho = (double *) malloc((noz+1)*sizeof(double));
 
     /* reference profile of gravity */
     E->refstate.gravity = (double *) malloc((noz+1)*sizeof(double));
 
     /* reference profile of coefficient of thermal expansion */
-    E->refstate.thermal_expansivity = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
-    for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
-        E->refstate.thermal_expansivity[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
-        for (j=1;j<=E->composition.ntdeps;j++){
-            E->refstate.thermal_expansivity[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
-        }
-
-    }
+    E->refstate.thermal_expansivity = (double *) malloc((noz+1)*sizeof(double));
 
     /* reference profile of heat capacity */
-    E->refstate.heat_capacity = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
-    for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
-        E->refstate.heat_capacity[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
-        for (j=1;j<=E->composition.ntdeps;j++){
-            E->refstate.heat_capacity[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
-        }
-    }
+    E->refstate.heat_capacity = (double *) malloc((noz+1)*sizeof(double));
 
     /* reference profile of thermal conductivity */
     E->refstate.thermal_conductivity = (double *) malloc((noz+1)*sizeof(double));
@@ -91,60 +123,38 @@ void mat_prop_allocate(struct All_variables *E)
     /* reference profile of temperature */
     E->refstate.Tadi = (double *) malloc((noz+1)*sizeof(double));
 
-    /* reference profile of temperature */
-    E->refstate.Tini = (double *) malloc((noz+1)*sizeof(double));
+	/* reference profile of temperature */
+	E->refstate.Tini = (double *) malloc((noz+1)*sizeof(double));
 
-    /* reference profile of gravity */
-    E->refstate.Tm = (double *) malloc((noz+1)*sizeof(double));
+	/* reference profile of gravity */
+	E->refstate.Tm = (double *) malloc((noz+1)*sizeof(double));
 
-    /* reference profile of free enthalpy */
-    /* only used in viscosity option 104 */
-    E->refstate.free_enthalpy = (double *) malloc((noz+1)*sizeof(double));
+	/* reference profile of free enthalpy */
+	/* only used in viscosity option 104 */
+	E->refstate.free_enthalpy = (double *) malloc((noz+1)*sizeof(double));
 
-    /* reference profile of radial viscosity */
-    /* only used in viscosity option 104 */
-    E->refstate.rad_viscosity = (double *) malloc((noz+1)*sizeof(double));
+	/* reference profile of radial viscosity */
+	/* only used in viscosity option 104 */
+	E->refstate.rad_viscosity = (double *) malloc((noz+1)*sizeof(double));
 
-    /* reference profile of stress dependence of viscosity */
-    /* only used in viscosity option 104 */
-    E->refstate.stress_exp = (double *) malloc((noz+1)*sizeof(double));
+	/* reference profile of stress dependence of viscosity */
+	/* only used in viscosity option 104 */
+	E->refstate.stress_exp = (double *) malloc((noz+1)*sizeof(double));
 
-    /* reference profile of density contrast */
-    /* only used in composition option zdep_buoyancy or tdep_buoyancy*/
-    E->refstate.delta_rho = (double ***) malloc((E->composition.ncomp+2)*sizeof(double **));
+	if (E->composition.continents){
+		E->refstate.cont_position = (int **) malloc((E->lmesh.nox+1)*sizeof(int *));
+		int i;
+		for (i=1;i<=E->lmesh.nox;i++){
+			E->refstate.cont_position[i] = (int *) malloc((E->lmesh.noy+1)*sizeof(int));
+		}
+	}
+}
 
-    if (E->composition.zdep_buoyancy == 1){
-        for(i=1;i<=E->composition.ncomp;i++){
-            E->refstate.delta_rho[i] = (double **) malloc((noz+1)*sizeof(double *));
-            if (E->composition.tdep_buoyancy == 1)
-                for(j=1;j<=noz;j++)
-                    E->refstate.delta_rho[i][j] = (double *) malloc(((E->composition.end_temp-E->composition.start_temp)/E->composition.delta_temp + 2)*sizeof(double));
-            else 
-                for(j=1;j<=noz;j++)
-                    E->refstate.delta_rho[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
-        }
-    }
-
-    if (E->composition.continents){
-        E->refstate.cont_position = (int **) malloc((E->lmesh.nox+1)*sizeof(int *));
-        for (i=1;i<=E->lmesh.nox;i++){
-            E->refstate.cont_position[i] = (int *) malloc((E->lmesh.noy+1)*sizeof(int));
-        }
-    }
-
-   /* reference profile of coefficient of seismic velocity */
-    E->refstate.vp = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
-    E->refstate.vs = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
-    for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
-        E->refstate.vp[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
-        E->refstate.vs[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
-        for (j=1;j<=E->composition.ntdeps;j++){
-            E->refstate.vp[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
-            E->refstate.vs[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
-        }
-
-    }
-
+void mat_prop_allocate(struct All_variables *E)
+{
+	allocate_refstate(E);
+	if (E->composition.tdep_buoyancy == 1)
+		allocate_perplex_refstate(E);
 }
 
 
@@ -195,7 +205,7 @@ void reference_state(struct All_variables *E)
         for(i=1; i<=E->lmesh.noz; i++) {
             fprintf(stderr, "%6d %11f %11f %11lf %5i\n",
                     i+E->lmesh.nzs-1, E->sx[1][3][i], 1-E->sx[1][3][i],
-                    E->refstate.rho[(i-1)*E->composition.pressure_oversampling+1][E->composition.ntdeps/2+1][1],layers_r(E,E->sx[1][3][i]));
+                    E->refstate.rho[idxNz(i,E->lmesh.noz)],layers_r(E,E->sx[1][3][i]));
         }
 
     return;
@@ -328,15 +338,15 @@ static void read_perplexfile(struct All_variables *E)
       for(k=1; k<=E->composition.ntdeps; k++){
           for(i=1; i<=E->composition.ncomp+1; i++){
             fgets(buffer, 255, fp);
-            if(sscanf(buffer, "%lf %lf %lf %lf %lf\n",&(E->refstate.rho[j][k][i]),&(E->refstate.thermal_expansivity[j][k][i]), &(E->refstate.heat_capacity[j][k][i]), &(E->refstate.vp[j][k][i]), &(E->refstate.vs[j][k][i]))!=5){
+            if(sscanf(buffer, "%lf %lf %lf %lf %lf\n",&(E->refstate.tab_density[j][k][i]),&(E->refstate.tab_thermal_expansivity[j][k][i]), &(E->refstate.tab_heat_capacity[j][k][i]), &(E->refstate.tab_seismic_vp[j][k][i]), &(E->refstate.tab_seismic_vs[j][k][i]))!=5){
                 fprintf(stderr,"Error while reading file perplex.dat\n");
                 exit(8);
 	    }
 		if(E->parallel.me == 0 || E->parallel.me == 1) fprintf(stderr, "me: %d noz:%d ntdeps:%d ncomp:%d rho:%f alpha:%f cp:%f\n",
                 E->parallel.me,j,k,i,
-                E->refstate.rho[j][k][i],
-                E->refstate.thermal_expansivity[j][k][i],
-                E->refstate.heat_capacity[j][k][i]);
+                E->refstate.tab_density[j][k][i],
+                E->refstate.tab_thermal_expansivity[j][k][i],
+                E->refstate.tab_heat_capacity[j][k][i]);
 
 }}}
 
@@ -378,33 +388,25 @@ static void read_continent_position(struct All_variables *E)
 
 static void adams_williamson_eos(struct All_variables *E)
 {
-    int i,j,k;
-    double r, z, beta;
+	int i;
+	double r, z, beta;
 
-    beta = E->control.disptn_number * E->control.inv_gruneisen;
+	beta = E->control.disptn_number * E->control.inv_gruneisen;
 
-    for(i=1; i<=E->lmesh.noz; i++) {
-	r = E->sx[1][3][i];
-	z = 1 - r;
-	E->refstate.gravity[i] = 1;
-	E->refstate.thermal_conductivity[i] = 1;
-        E->refstate.free_enthalpy[i] = 1;
-        E->refstate.rad_viscosity[i] = 1;
-        E->refstate.stress_exp[i] = 1;
-	E->refstate.Tadi[i] = (E->control.TBCtopval + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;
-        //E->refstate.Tadi[i] = 1;
-        for(k=1;k<=E->composition.ntdeps;k++){
-	    E->refstate.thermal_expansivity[i][k][1] = 1;
-	    E->refstate.heat_capacity[i][k][1] = 1;
-        E->refstate.rho[i][k][1] = exp(beta*z)* (1.0-E->data.therm_exp* (k-1)*E->composition.delta_temp);
+	for(i=1; i<=E->lmesh.noz; i++) {
+		r = E->sx[1][3][i];
+		z = 1 - r;
+		E->refstate.gravity[i] = 1;
+		E->refstate.thermal_conductivity[i] = 1;
+		E->refstate.free_enthalpy[i] = 1;
+		E->refstate.rad_viscosity[i] = 1;
+		E->refstate.stress_exp[i] = 1;
+		E->refstate.Tadi[i] = (E->control.TBCtopval + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;
+		//E->refstate.Tadi[i] = 1;
+		E->refstate.thermal_expansivity[i] = 1;
+		E->refstate.heat_capacity[i] = 1;
+		E->refstate.rho[i] = exp(beta*z);
 
-          for(j=2;j<=E->composition.ncomp+1;j++){
-	    E->refstate.thermal_expansivity[i][k][j] = 1;
-	    E->refstate.heat_capacity[i][k][j] = 1;
-	    E->refstate.rho[i][k][j] = exp(beta*z)*E->composition.buoyancy_ratio[j-2];
-            if (E->parallel.me == 0) fprintf(stderr,"i: %d k: %d j: %d rho: %f\n",i,k,j,E->refstate.rho[i][k][j]);
-            //E->refstate.delta_rho[j][i][k] = 1.0;}}
-}}
     }
 
     return;
@@ -412,30 +414,27 @@ static void adams_williamson_eos(struct All_variables *E)
 
 static void new_eos(struct All_variables *E)
 {
-    int i,j,k;
-    double r, z, beta;
+	int i,j,k;
+	double r, z, beta;
 
-    beta = E->control.disptn_number * E->control.inv_gruneisen;
+	beta = E->control.disptn_number * E->control.inv_gruneisen;
 
-    for(i=1; i<=E->lmesh.noz; i++) {
-	r = E->sx[1][3][i];
-	z = 1 - r;
-	E->refstate.gravity[i] = 1;
-	E->refstate.thermal_conductivity[i] = 1;
-        E->refstate.free_enthalpy[i] = 1;
-        E->refstate.rad_viscosity[i] = 1;
-        E->refstate.stress_exp[i] = 1;
-	/*E->refstate.Tadi[i] = (E->control.adiabaticT0 + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;*/
-        E->refstate.Tadi[i] = 1;
-        for(k=1;k<=E->composition.ntdeps;k++){
-            for(j=1;j<E->composition.ncomp+1;j++){
-	      E->refstate.heat_capacity[i][k][j] = 1;
-	      E->refstate.thermal_expansivity[i][k][j] = 0.2 + 0.8 * (E->sx[1][3][i]- E->sphere.ri)/(E->sphere.ro - E->sphere.ri);
-	      E->refstate.rho[i][k][j] = exp(beta*z);
-              E->refstate.delta_rho[j][i][k] = 1.0;}}
-    }
+	for(i=1; i<=E->lmesh.noz; i++) {
+		r = E->sx[1][3][i];
+		z = 1 - r;
+		E->refstate.gravity[i] = 1;
+		E->refstate.thermal_conductivity[i] = 1;
+		E->refstate.free_enthalpy[i] = 1;
+		E->refstate.rad_viscosity[i] = 1;
+		E->refstate.stress_exp[i] = 1;
+		/*E->refstate.Tadi[i] = (E->control.adiabaticT0 + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;*/
+		E->refstate.Tadi[i] = 1;
+		E->refstate.heat_capacity[i] = 1;
+		E->refstate.thermal_expansivity[i] = 0.2 + 0.8 * (E->sx[1][3][i]- E->sphere.ri)/(E->sphere.ro - E->sphere.ri);
+		E->refstate.rho[i] = exp(beta*z);
+	}
 
-    return;
+	return;
 }
 
 double get_g_el(struct All_variables *E, int m, int el)
@@ -558,56 +557,139 @@ const double get_property_el(struct All_variables *E, double*** property, const 
 
 double get_cp_el(struct All_variables *E, int m, int el)
 {
+	if (E->composition.tdep_buoyancy == 1)
+	{
 	const int temperature_accurate = 0;
-	const double cp = get_property_el(E,E->refstate.heat_capacity,m,el,temperature_accurate);
+	const double cp = get_property_el(E,E->refstate.tab_heat_capacity,m,el,temperature_accurate);
 	return cp;
+	}
+		else
+		{
+			int nn,a;
+
+			const int ends=enodes[E->mesh.nsd];
+			const int lev=E->mesh.levmax;
+			double prop = 0;
+
+
+			for(a=1;a<=ends;a++){
+				nn = E->IEN[lev][m][el].node[a];
+				prop += get_cp_nd(E,m,nn);
+			}
+
+			prop /= ends;
+			return prop;
+		}
 }
 
 
 double get_cp_nd(struct All_variables *E, int m, int nn)
 {
+	if (E->composition.tdep_buoyancy == 1)
+	{
 	const int temperature_accurate = 0;
-	double cp = get_property_nd(E,E->refstate.heat_capacity,m,nn,temperature_accurate);
+	double cp = get_property_nd(E,E->refstate.tab_heat_capacity,m,nn,temperature_accurate);
 	return cp;
+	}
+		else
+		{
+			return E->refstate.heat_capacity[idxNz(nn,E->lmesh.noz)];
+		}
 }
 
 
 double get_alpha_nd(struct All_variables *E, int m, int nn)
 {
+	if (E->composition.tdep_buoyancy == 1)
+	{
 	const int temperature_accurate = 0;
-	double alpha = get_property_nd(E,E->refstate.thermal_expansivity,m,nn,temperature_accurate);
+	double alpha = get_property_nd(E,E->refstate.tab_thermal_expansivity,m,nn,temperature_accurate);
 	return alpha;
+	}
+		else
+		{
+			return E->refstate.thermal_expansivity[idxNz(nn,E->lmesh.noz)];
+		}
 }
 
 
 double get_alpha_el(struct All_variables *E, int m, int el)
 {
+	if (E->composition.tdep_buoyancy == 1)
+	{
 	const int temperature_accurate = 0;
-	const double alpha = get_property_el(E,E->refstate.thermal_expansivity,m,el,temperature_accurate);
+	const double alpha = get_property_el(E,E->refstate.tab_thermal_expansivity,m,el,temperature_accurate);
 	return alpha;
+	}
+		else
+		{
+			int nn,a;
+
+			const int ends=enodes[E->mesh.nsd];
+			const int lev=E->mesh.levmax;
+			double prop = 0;
+
+
+			for(a=1;a<=ends;a++){
+				nn = E->IEN[lev][m][el].node[a];
+				prop += get_alpha_nd(E,m,nn);
+			}
+
+			prop /= ends;
+			return prop;
+		}
 }
 
 
 double get_rho_el(struct All_variables *E, int m, int el)
 {
+	if (E->composition.tdep_buoyancy == 1)
+	{
 	const int temperature_accurate = 1;
-	double rho = get_property_el(E,E->refstate.rho,m,el,temperature_accurate);
+	double rho = get_property_el(E,E->refstate.tab_density,m,el,temperature_accurate);
 	return rho;
+	}
+	else
+	{
+		int nn,a;
+
+		const int ends=enodes[E->mesh.nsd];
+		const int lev=E->mesh.levmax;
+		double prop = 0;
+
+
+		for(a=1;a<=ends;a++){
+			nn = E->IEN[lev][m][el].node[a];
+			prop += get_rho_nd(E,m,nn);
+		}
+
+		prop /= ends;
+		return prop;
+	}
+
 }
 
 
 double get_rho_nd(struct All_variables *E, int m, int nn)
 {
-	const int temperature_accurate = 1;
-	double rho = get_property_nd(E,E->refstate.rho,m,nn,temperature_accurate);
-	return rho;
+	if (E->composition.tdep_buoyancy == 1)
+	{
+		const int temperature_accurate = 1;
+		double rho = get_property_nd(E,E->refstate.tab_density,m,nn,temperature_accurate);
+		return rho;
+	}
+	else
+	{
+		return E->refstate.rho[idxNz(nn,E->lmesh.noz)];
+	}
+
 }
 
 
 double get_vs_el(struct All_variables *E, int m, int el)
 {
 	const int temperature_accurate = 0;
-	double vs = get_property_el(E,E->refstate.vs,m,el,temperature_accurate);
+	double vs = get_property_el(E,E->refstate.tab_seismic_vs,m,el,temperature_accurate);
 	return vs;
 }
 
@@ -615,7 +697,7 @@ double get_vs_el(struct All_variables *E, int m, int el)
 double get_vs_nd(struct All_variables *E, int m, int nn)
 {
 	const int temperature_accurate = 0;
-	double vs = get_property_nd(E,E->refstate.vs,m,nn,temperature_accurate);
+	double vs = get_property_nd(E,E->refstate.tab_seismic_vs,m,nn,temperature_accurate);
         return vs;
 }
 
@@ -623,7 +705,7 @@ double get_vs_nd(struct All_variables *E, int m, int nn)
 double get_vp_el(struct All_variables *E, int m, int el)
 {
 	const int temperature_accurate = 0;
-	double vp = get_property_el(E,E->refstate.vp,m,el,temperature_accurate);
+	double vp = get_property_el(E,E->refstate.tab_seismic_vp,m,el,temperature_accurate);
         return vp;
 }
 
@@ -631,7 +713,7 @@ double get_vp_el(struct All_variables *E, int m, int el)
 double get_vp_nd(struct All_variables *E, int m, int nn)
 {
 	const int temperature_accurate = 0;
-	double vp = get_property_nd(E,E->refstate.vp,m,nn,temperature_accurate);
+	double vp = get_property_nd(E,E->refstate.tab_seismic_vp,m,nn,temperature_accurate);
 	return vp;
 }
 
@@ -669,16 +751,16 @@ const double get_radheat_nd_new(const struct All_variables *E, const int m,const
         for(j=0;j<E->composition.ncomp;j++){
         	proportion_normal_material -= E->composition.comp_node[m][j][nn];
 
-        	density = E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT][j+2] + E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT][1];
+        	density = E->refstate.tab_density[(nz-1)*E->composition.pressure_oversampling + 1][nT][j+2] + E->refstate.tab_density[(nz-1)*E->composition.pressure_oversampling + 1][nT][1];
             radheat +=  (1-weight) * density * E->composition.comp_node[m][j][nn] * E->control.Q0ER[j];
 
-        	density = E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT+1][j+2] + E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT+1][1];
+        	density = E->refstate.tab_density[(nz-1)*E->composition.pressure_oversampling + 1][nT+1][j+2] + E->refstate.tab_density[(nz-1)*E->composition.pressure_oversampling + 1][nT+1][1];
             radheat +=  weight * density * E->composition.comp_node[m][j][nn] * E->control.Q0ER[j];
         }
     }
 
-    radheat += (1-weight) * E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT][1] * proportion_normal_material * E->control.Q0;
-    radheat += weight * E->refstate.rho[(nz-1)*E->composition.pressure_oversampling + 1][nT+1][1] * proportion_normal_material * E->control.Q0;
+    radheat += (1-weight) * E->refstate.tab_density[(nz-1)*E->composition.pressure_oversampling + 1][nT][1] * proportion_normal_material * E->control.Q0;
+    radheat += weight * E->refstate.tab_density[(nz-1)*E->composition.pressure_oversampling + 1][nT+1][1] * proportion_normal_material * E->control.Q0;
 
     return radheat;
 }
