@@ -47,23 +47,34 @@ static void write_ascii_array_float(int nn, int perLine, float *array, FILE *fp)
 static void write_ascii_array_double(int nn, int perLine, double *array, FILE *fp);
 static void write_ascii_array(int nn, int perLine, int ascii_precision, double *array, FILE *fp);
 
+// TODO: Write a unit test for this function. Should be pretty easy except from including this source file.
+void get_compressor_string(int is_not_binary, int string_length, char* compressor_string)
+{
+	if (is_not_binary == 0)
+		snprintf (compressor_string,string_length," compressor=\"vtkZLibDataCompressor\" byte_order=\"LittleEndian\"");
+	else
+		snprintf (compressor_string,string_length,"");
+}
+
 static void vts_file_header(struct All_variables *E, FILE *fp)
 {
 
     const char format[] =
         "<?xml version=\"1.0\"?>\n"
-        "<VTKFile type=\"StructuredGrid\" version=\"0.1\" compressor=\"vtkZLibDataCompressor\" byte_order=\"LittleEndian\">\n"
+        "<VTKFile type=\"StructuredGrid\" version=\"0.1\"%s>\n"
         "  <StructuredGrid WholeExtent=\"%s\">\n"
         "    <Piece Extent=\"%s\">\n";
 
-    char extent[64], header[1024];
+    char extent[64], compressor_string[128], header[1024];
 
     snprintf(extent, 64, "%d %d %d %d %d %d",
              E->lmesh.ezs, E->lmesh.ezs + E->lmesh.elz,
              E->lmesh.exs, E->lmesh.exs + E->lmesh.elx,
              E->lmesh.eys, E->lmesh.eys + E->lmesh.ely);
 
-    snprintf(header, 1024, format, extent, extent);
+    get_compressor_string (strcmp(E->output.vtk_format,"binary"),128,compressor_string);
+
+    snprintf(header, 1024, format, compressor_string, extent, extent);
 
     fputs(header, fp);
 
