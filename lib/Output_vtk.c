@@ -40,9 +40,11 @@
 
 #define CHUNK 16384
 
+static void write_binary_array_double(int nn, double* array, FILE * f);
 static void write_binary_array(int nn, float* array, FILE * f);
 static void write_int_binary_array(int nn, int* array, FILE * f);
-static void write_ascii_array(int nn, int perLine, float *array, FILE *fp);
+static void write_ascii_array_float(int nn, int perLine, float *array, FILE *fp);
+static void write_ascii_array(int nn, int perLine, double *array, FILE *fp);
 
 static void vts_file_header(struct All_variables *E, FILE *fp)
 {
@@ -115,20 +117,15 @@ static void vtk_output_temp(struct All_variables *E, FILE *fp)
 {
     int i;
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
-    float* floattemp = malloc(nodes*sizeof(float));
 
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"temperature\" format=\"%s\">\n", E->output.vtk_format);
 
-    for(i=0;i <= nodes;i++) 
-        floattemp[i] =  (float) *(E->T[1]+i+1);
-
     if (strcmp(E->output.vtk_format,"binary") == 0) {
-        write_binary_array(nodes,floattemp,fp);
+        write_binary_array_double(nodes,E->T[1]+1,fp);
     } else {
-        write_ascii_array(nodes,1,floattemp,fp);
+        write_ascii_array(nodes,1,E->T[1]+1,fp);
     }
     fputs("        </DataArray>\n", fp);
-    free(floattemp);
     return;
 }
 
@@ -136,22 +133,22 @@ static void vtk_output_melttemp(struct All_variables *E, FILE *fp)
 {
     int i,nz;
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
-    float* floatmelttemp = malloc(nodes*sizeof(float));
+    double* melttemp = malloc(nodes*sizeof(double));
 
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"melt excess temperature\" format=\"%s\">\n", E->output.vtk_format);
 
     for(i=0;i < nodes;i++){
         nz = i % E->lmesh.noz;
-        floatmelttemp[i] =  ((float) *(E->T[1]+i+1) + E->control.surface_temp) * E->data.ref_temperature - E->refstate.Tm[nz*E->composition.pressure_oversampling + 1];
+        melttemp[i] =  (*(E->T[1]+i+1) + E->control.surface_temp) * E->data.ref_temperature - E->refstate.Tm[nz*E->composition.pressure_oversampling + 1];
     }
 
     if (strcmp(E->output.vtk_format,"binary") == 0) {
-        write_binary_array(nodes,floatmelttemp,fp);
+        write_binary_array_double(nodes,melttemp,fp);
     } else {
-        write_ascii_array(nodes,1,floatmelttemp,fp);
+        write_ascii_array(nodes,1,melttemp,fp);
     }
     fputs("        </DataArray>\n", fp);
-    free(floatmelttemp);
+    free(melttemp);
     return;
 }
 
@@ -159,7 +156,7 @@ static void vtk_output_deltat(struct All_variables *E, FILE *fp)
 {
     int i,nz;
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
-    float* deltatemp = malloc(nodes*sizeof(float));
+    double* deltatemp = malloc(nodes*sizeof(double));
 
     compute_horiz_avg(E);
 
@@ -167,12 +164,12 @@ static void vtk_output_deltat(struct All_variables *E, FILE *fp)
 
     for(i=0;i <= nodes;i++){ 
         nz = i % E->lmesh.noz + 1;
-        deltatemp[i] = (float) (*(E->T[1]+i+1)-E->Have.T[nz]) * E->data.ref_temperature;
+        deltatemp[i] = (*(E->T[1]+i+1)-E->Have.T[nz]) * E->data.ref_temperature;
     }
         
 
     if (strcmp(E->output.vtk_format,"binary") == 0) {
-        write_binary_array(nodes,deltatemp,fp);
+        write_binary_array_double(nodes,deltatemp,fp);
     } else {
         write_ascii_array(nodes,1,deltatemp,fp);
     }
@@ -188,7 +185,7 @@ static void vtk_output_velo(struct All_variables *E, FILE *fp)
     double sint, sinf, cost, cosf;
     float *V[4];
     const int lev = E->mesh.levmax;
-    float* floatvel = malloc(nodes*3*sizeof(float));
+    double* vel = malloc(nodes*3*sizeof(double));
 
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"velocity\" NumberOfComponents=\"3\" format=\"%s\">\n", E->output.vtk_format);
 
@@ -203,19 +200,19 @@ static void vtk_output_velo(struct All_variables *E, FILE *fp)
             cost = E->SinCos[lev][j][2][i];
             cosf = E->SinCos[lev][j][3][i];
 
-            floatvel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+0] = (float)(V[1][i]*cost*cosf - V[2][i]*sinf + V[3][i]*sint*cosf);
-            floatvel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+1] = (float)(V[1][i]*cost*sinf + V[2][i]*cosf + V[3][i]*sint*sinf);
-            floatvel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+2] = (float)(-V[1][i]*sint + V[3][i]*cost);
+            vel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+0] = V[1][i]*cost*cosf - V[2][i]*sinf + V[3][i]*sint*cosf;
+            vel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+1] = V[1][i]*cost*sinf + V[2][i]*cosf + V[3][i]*sint*sinf;
+            vel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+2] = -V[1][i]*sint + V[3][i]*cost;
         }
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0) 
-        write_binary_array(nodes*3,floatvel,fp);
+        write_binary_array_double(nodes*3,vel,fp);
     else 
-        write_ascii_array(nodes*3,3,floatvel,fp);
+        write_ascii_array(nodes*3,3,vel,fp);
     fputs("        </DataArray>\n", fp);
 
-    free(floatvel);
+    free(vel);
     return;
 }
 
@@ -223,22 +220,22 @@ static void vtk_output_material(struct All_variables *E, FILE *fp)
 {
     int i, m;
     int nodes=E->sphere.caps_per_proc*E->lmesh.nno;
-    float* floatalpha = malloc(nodes*sizeof(float));
-    float* floatrho = malloc(nodes*sizeof(float));
-    float* floatcp = malloc(nodes*sizeof(float));
-    float* floatradheat = malloc(nodes*sizeof(float));
+    double* alpha = malloc(nodes*sizeof(double));
+    double* rho = malloc(nodes*sizeof(double));
+    double* cp = malloc(nodes*sizeof(double));
+    double* radheat = malloc(nodes*sizeof(double));
 
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"rho\" format=\"%s\">\n", E->output.vtk_format);
 
     for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=E->lmesh.nno; i++) {
-            floatrho[((m-1)*E->sphere.caps_per_proc)+i-1] = (float) get_rho_nd(E,m,i);
+            rho[((m-1)*E->sphere.caps_per_proc)+i-1] = get_rho_nd(E,m,i);
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0) 
-        write_binary_array(nodes,floatrho,fp);
+        write_binary_array_double(nodes,rho,fp);
     else 
-        write_ascii_array(nodes,1,floatrho,fp);
+        write_ascii_array(nodes,1,rho,fp);
     fputs("        </DataArray>\n", fp);
 
 
@@ -246,13 +243,13 @@ static void vtk_output_material(struct All_variables *E, FILE *fp)
 
     for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=E->lmesh.nno; i++) {
-            floatalpha[((m-1)*E->sphere.caps_per_proc)+i-1] = (float) get_alpha_nd(E,m,i);
+            alpha[((m-1)*E->sphere.caps_per_proc)+i-1] = get_alpha_nd(E,m,i);
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0) 
-        write_binary_array(nodes,floatalpha,fp);
+        write_binary_array_double(nodes,alpha,fp);
     else 
-        write_ascii_array(nodes,1,floatalpha,fp);
+        write_ascii_array(nodes,1,alpha,fp);
     fputs("        </DataArray>\n", fp);
 
 
@@ -260,32 +257,32 @@ static void vtk_output_material(struct All_variables *E, FILE *fp)
 
     for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=E->lmesh.nno; i++) {
-            floatcp[((m-1)*E->sphere.caps_per_proc)+i-1] = (float) get_cp_nd(E,m,i);
+            cp[((m-1)*E->sphere.caps_per_proc)+i-1] = get_cp_nd(E,m,i);
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0) 
-        write_binary_array(nodes,floatcp,fp);
+        write_binary_array_double(nodes,cp,fp);
     else 
-        write_ascii_array(nodes,1,floatcp,fp);
+        write_ascii_array(nodes,1,cp,fp);
     fputs("        </DataArray>\n", fp);
 
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"radiogenic heating\" format=\"%s\">\n", E->output.vtk_format);
 
     for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=E->lmesh.nno; i++) {
-            floatradheat[((m-1)*E->sphere.caps_per_proc)+i-1] = (float) get_radheat_nd(E,m,i);
+            radheat[((m-1)*E->sphere.caps_per_proc)+i-1] = get_radheat_nd(E,m,i);
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0) 
-        write_binary_array(nodes,floatradheat,fp);
+        write_binary_array_double(nodes,radheat,fp);
     else 
-        write_ascii_array(nodes,1,floatradheat,fp);
+        write_ascii_array(nodes,1,radheat,fp);
     fputs("        </DataArray>\n", fp);
 
-    free(floatalpha);
-    free(floatrho);
-    free(floatcp);
-    free(floatradheat);
+    free(alpha);
+    free(rho);
+    free(cp);
+    free(radheat);
     return;
 }
 
@@ -293,25 +290,25 @@ static void vtk_output_svelo(struct All_variables *E, FILE *fp)
 {
     int i, j;
     int nodes=E->sphere.caps_per_proc*E->lmesh.nno;
-    float* floatsvel = malloc(nodes*3*sizeof(float));
+    double* svel = malloc(nodes*3*sizeof(double));
 
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"spherical velocity\" NumberOfComponents=\"3\" format=\"%s\">\n", E->output.vtk_format);
 
     for(j=1; j<=E->sphere.caps_per_proc; j++) {
         for(i=1; i<=E->lmesh.nno; i++) {
-            floatsvel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+0] = (float)(E->sphere.cap[j].V[1][i]);
-            floatsvel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+1] = (float)(E->sphere.cap[j].V[2][i]);
-            floatsvel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+2] = (float)(E->sphere.cap[j].V[3][i]);
+            svel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+0] = E->sphere.cap[j].V[1][i];
+            svel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+1] = E->sphere.cap[j].V[2][i];
+            svel[(((j-1)*E->sphere.caps_per_proc)+i-1)*3+2] = E->sphere.cap[j].V[3][i];
         }
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0) 
-        write_binary_array(nodes*3,floatsvel,fp);
+        write_binary_array_double(nodes*3,svel,fp);
     else 
-        write_ascii_array(nodes*3,3,floatsvel,fp);
+        write_ascii_array(nodes*3,3,svel,fp);
     fputs("        </DataArray>\n", fp);
 
-    free(floatsvel);
+    free(svel);
     return;
 }
 
@@ -326,7 +323,7 @@ void vtk_output_seismic(struct All_variables *E, int cycles, FILE *fp)
     char prem_file[255];
 
     double **rho, **vp, **vs;
-    float *floatrho, *floatvp, *floatvs;
+    double *output_rho, *output_vp, *output_vs;
     double *arho, *avp, *avs;
     double premrho,premvp,premvs;
     const int nodes = E->lmesh.nno + 1;
@@ -337,9 +334,9 @@ void vtk_output_seismic(struct All_variables *E, int cycles, FILE *fp)
     rho[1] = (double *) malloc(nodes * sizeof(double));
     vp[1] = (double *) malloc(nodes * sizeof(double));
     vs[1] = (double *) malloc(nodes * sizeof(double));
-    floatrho = malloc(nodes * sizeof(float));
-    floatvp = malloc(nodes * sizeof(float));
-    floatvs = malloc(nodes * sizeof(float));
+    output_rho = malloc(nodes * sizeof(double));
+    output_vp = malloc(nodes * sizeof(double));
+    output_vs = malloc(nodes * sizeof(double));
     arho = (double *)malloc( (E->lmesh.noz+1)*sizeof(double));
     avp = (double *)malloc( (E->lmesh.noz+1)*sizeof(double));
     avs = (double *)malloc( (E->lmesh.noz+1)*sizeof(double));
@@ -371,9 +368,9 @@ void vtk_output_seismic(struct All_variables *E, int cycles, FILE *fp)
 
         for (i=0;i<nodes;i++){
             nz = i % E->lmesh.noz;
-            floatrho[i] = (float) rho[1][i+1]*100.0/arho[nz+1];
-            floatvp[i] = (float) vp[1][i+1]*100.0/avp[nz+1];
-            floatvs[i] = (float) vs[1][i+1]*100.0/avs[nz+1];
+            output_rho[i] = rho[1][i+1]*100.0/arho[nz+1];
+            output_vp[i] = vp[1][i+1]*100.0/avp[nz+1];
+            output_vs[i] = vs[1][i+1]*100.0/avs[nz+1];
         }
         if (E->parallel.me < E->parallel.nprocz){
             snprintf(prem_file, 255, "%s.prem.%d.%d.csv", E->control.data_file, E->parallel.me, cycles);
@@ -389,23 +386,23 @@ void vtk_output_seismic(struct All_variables *E, int cycles, FILE *fp)
 
     if (strcmp(E->output.vtk_format, "binary") == 0){
         fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Rho\" format=\"%s\">\n", E->output.vtk_format);
-        write_binary_array(nodes-1,floatrho,fp);
+        write_binary_array_double(nodes-1,output_rho,fp);
         fputs("        </DataArray>\n", fp);
         fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vp\" format=\"%s\">\n", E->output.vtk_format);
-        write_binary_array(nodes-1,floatvp,fp);
+        write_binary_array_double(nodes-1,output_vp,fp);
         fputs("        </DataArray>\n", fp);
         fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vs\" format=\"%s\">\n", E->output.vtk_format);
-        write_binary_array(nodes-1,floatvs,fp);
+        write_binary_array_double(nodes-1,output_vs,fp);
         fputs("        </DataArray>\n", fp);
     }else {
         fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Rho\" format=\"%s\">\n", E->output.vtk_format);
-        write_ascii_array(nodes-1,1,floatrho,fp);
+        write_ascii_array(nodes-1,1,output_rho,fp);
         fputs("        </DataArray>\n", fp);
         fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vp\" format=\"%s\">\n", E->output.vtk_format);
-        write_ascii_array(nodes-1,1,floatvp,fp);
+        write_ascii_array(nodes-1,1,output_vp,fp);
         fputs("        </DataArray>\n", fp);
         fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vs\" format=\"%s\">\n", E->output.vtk_format);
-        write_ascii_array(nodes-1,1,floatvs,fp);
+        write_ascii_array(nodes-1,1,output_vs,fp);
         fputs("        </DataArray>\n", fp);
     }
 
@@ -438,9 +435,9 @@ void vtk_output_seismic(struct All_variables *E, int cycles, FILE *fp)
     free(rho);
     free(vp);
     free(vs);
-    free(floatrho);
-    free(floatvp);
-    free(floatvs);
+    free(output_rho);
+    free(output_vp);
+    free(output_vs);
     free(arho);
     free(avp);
     free(avs);
@@ -457,7 +454,7 @@ static void vtk_output_visc(struct All_variables *E, FILE *fp)
         if (strcmp(E->output.vtk_format, "binary") == 0) {
             write_binary_array(nodes,&E->VI[lev][1][1],fp);
         } else {
-            write_ascii_array(nodes,1,&E->VI[lev][1][1],fp);
+            write_ascii_array_float(nodes,1,&E->VI[lev][1][1],fp);
         }
        
     fputs("        </DataArray>\n", fp);
@@ -469,24 +466,24 @@ static void vtk_output_dens(struct All_variables *E, FILE *fp)
     int lev = E->mesh.levmax;
     int i,j,k,nz,nT;
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
-    float* floatdensity = malloc(nodes*sizeof(float));
+    double* density = malloc(nodes*sizeof(double));
 
         for(j=1; j<=E->sphere.caps_per_proc; j++) {
             for(i=1; i<=E->lmesh.nno; i++) {
                 nz = ((i-1) % E->lmesh.noz) + 1;
-                floatdensity[(j-1)*E->lmesh.nno+i-1] = (float)(E->buoyancy[j][i]/(E->control.Atemp*E->refstate.gravity[nz]*get_rho_nd(E,j,i)));
+                density[(j-1)*E->lmesh.nno+i-1] = (E->buoyancy[j][i]/(E->control.Atemp*E->refstate.gravity[nz]*get_rho_nd(E,j,i)));
 	    }
         }
 
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"density\" format=\"%s\">\n", E->output.vtk_format);
         if (strcmp(E->output.vtk_format, "binary") == 0) {
-            write_binary_array(nodes,floatdensity,fp);
+            write_binary_array_double(nodes,density,fp);
         } else {
-            write_ascii_array(nodes,1,floatdensity,fp);
+            write_ascii_array(nodes,1,density,fp);
         }
        
     fputs("        </DataArray>\n", fp);
-    free(floatdensity);
+    free(density);
     return;
 }
 
@@ -510,7 +507,7 @@ static void vtk_output_tracer(struct All_variables *E, FILE *fp)
         if (strcmp(E->output.vtk_format, "binary") == 0) {
             write_binary_array(nodes,floattracer,fp);
         } else {
-            write_ascii_array(nodes,1,floattracer,fp);
+            write_ascii_array_float(nodes,1,floattracer,fp);
         }
        
     fputs("        </DataArray>\n", fp);
@@ -524,26 +521,26 @@ static void vtk_output_coord(struct All_variables *E, FILE *fp)
        assume it. */
     int i, j;
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
-    float* floatpos = malloc(nodes*3*sizeof(float));
+    double* pos = malloc(nodes*3*sizeof(double));
 
     fputs("      <Points>\n", fp);
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"%s\">\n", E->output.vtk_format);
 
     for(j=1; j<=E->sphere.caps_per_proc; j++) {
         for(i=1; i<=E->lmesh.nno; i++){
-                floatpos[((j-1)*E->lmesh.nno+i-1)*3] = (float)(E->x[j][1][i]);
-	        floatpos[((j-1)*E->lmesh.nno+i-1)*3+1]=(float)(E->x[j][2][i]);
-	        floatpos[((j-1)*E->lmesh.nno+i-1)*3+2]=(float)(E->x[j][3][i]);
+                pos[((j-1)*E->lmesh.nno+i-1)*3] = (E->x[j][1][i]);
+	        pos[((j-1)*E->lmesh.nno+i-1)*3+1] = (E->x[j][2][i]);
+	        pos[((j-1)*E->lmesh.nno+i-1)*3+2] = (E->x[j][3][i]);
         }
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0)
-        write_binary_array(nodes*3,floatpos,fp);
+        write_binary_array_double(nodes*3,pos,fp);
     else
-        write_ascii_array(nodes*3,3,floatpos,fp);    
+        write_ascii_array(nodes*3,3,pos,fp);    
     fputs("        </DataArray>\n", fp);
     fputs("      </Points>\n", fp);
-    free(floatpos);
+    free(pos);
     return;
 }
 
@@ -567,7 +564,7 @@ static void vtk_output_stress(struct All_variables *E, FILE *fp)
     if (strcmp(E->output.vtk_format, "binary") == 0) {
         write_binary_array(nodes*6,&E->gstress[1][1],fp);
     } else {
-        write_ascii_array(nodes*6,6,&E->gstress[1][1],fp);
+        write_ascii_array_float(nodes*6,6,&E->gstress[1][1],fp);
     }
 
     fputs("        </DataArray>\n", fp);
@@ -578,24 +575,24 @@ static void vtk_output_comp_nd(struct All_variables *E, FILE *fp)
 {
     int i, j, k;
     int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
-    float* floatcompo = malloc (nodes*sizeof(float));
+    double* compo = malloc (nodes*sizeof(double));
     
     for(k=0;k<E->composition.ncomp;k++) {
         fprintf(fp, "        <DataArray type=\"Float32\" Name=\"composition%d\" format=\"%s\">\n", k+1, E->output.vtk_format);
 
         for(j=1; j<=E->sphere.caps_per_proc; j++) {
             for(i=1; i<=E->lmesh.nno; i++) {
-                floatcompo[(j-1)*E->lmesh.nno+i-1] = (float) (E->composition.comp_node[j][k][i]);
+                compo[(j-1)*E->lmesh.nno+i-1] = (E->composition.comp_node[j][k][i]);
 	    }
         }
 
         if (strcmp(E->output.vtk_format, "binary") == 0)
-            write_binary_array(nodes,floatcompo,fp);
+            write_binary_array_double(nodes,compo,fp);
         else
-            write_ascii_array(nodes,1,floatcompo,fp);
+            write_ascii_array(nodes,1,compo,fp);
         fputs("        </DataArray>\n", fp);
     }
-    free(floatcompo);
+    free(compo);
     return;
 }
 
@@ -656,7 +653,7 @@ void vtk_output_surf_botm(struct All_variables *E,  FILE *fp, int cycles)
     if (strcmp(E->output.vtk_format, "binary") == 0)
         write_binary_array(nodes,floattopo,fp);
     else
-        write_ascii_array(nodes,1,floattopo,fp);
+        write_ascii_array_float(nodes,1,floattopo,fp);
 
     fputs("        </DataArray>\n", fp);
 
@@ -675,7 +672,7 @@ void vtk_output_surf_botm(struct All_variables *E,  FILE *fp, int cycles)
     if (strcmp(E->output.vtk_format, "binary") == 0)
         write_binary_array(nodes,floatheating,fp);
     else
-        write_ascii_array(nodes,1,floatheating,fp);
+        write_ascii_array_float(nodes,1,floatheating,fp);
 
     fputs("        </DataArray>\n", fp);
 
@@ -980,7 +977,7 @@ static void vtk_tracer_extraq(struct All_variables *E, int idx_extraq, FILE *fp)
     if (strcmp(E->output.vtk_format, "binary") == 0)
         write_binary_array(tracers,floatextraq,fp);
     else
-        write_ascii_array(tracers,1,floatextraq,fp);
+        write_ascii_array_float(tracers,1,floatextraq,fp);
     fputs("        </DataArray>\n", fp);
     free(floatextraq);
     return;
@@ -993,27 +990,27 @@ static void vtk_tracer_coord(struct All_variables *E, FILE *ft)
        assume it. Currently just working for caps_per_proc == 1*/
     int i, j;
     int tracers = 0;
-    float* floatpos = malloc (E->trace.ntracers[1]*3*sizeof(float)); // caps_per_proc != 1
+    double* pos = malloc (E->trace.ntracers[1]*3*sizeof(double)); // caps_per_proc != 1
 
     fputs("      <Points>\n", ft);
     fprintf(ft, "        <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"%s\">\n", E->output.vtk_format);
 
     for(j=1; j<=E->sphere.caps_per_proc; j++) {
         for(i=1; i<=E->trace.ntracers[j]; i++){
-                floatpos[(i-1)*3] = (float) (E->trace.basicq[j][3][i]);
-	        floatpos[(i-1)*3+1]=(float) (E->trace.basicq[j][4][i]);
-	        floatpos[(i-1)*3+2]=(float) (E->trace.basicq[j][5][i]);
+                pos[(i-1)*3] = E->trace.basicq[j][3][i];
+	        pos[(i-1)*3+1]= E->trace.basicq[j][4][i];
+	        pos[(i-1)*3+2]= E->trace.basicq[j][5][i];
         }
     tracers += E->trace.ntracers[j];
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0)
-        write_binary_array(tracers*3,floatpos,ft);
+        write_binary_array_double(tracers*3,pos,ft);
     else
-        write_ascii_array(tracers*3,3,floatpos,ft);    
+        write_ascii_array(tracers*3,3,pos,ft);
     fputs("        </DataArray>\n", ft);
     fputs("      </Points>\n", ft);
-    free(floatpos);
+    free(pos);
     return;
 }
 
@@ -1072,8 +1069,19 @@ void write_tracer_file(struct All_variables *E, int cycles)
 
 }
 
+static void write_ascii_array_float(int nn, int perLine, float *array, FILE *fp)
+{
+	int i;
+		double* double_array = malloc(nn * sizeof(double));
 
-static void write_ascii_array(int nn, int perLine, float *array, FILE *fp)
+		for (i=0;i<nn;i++) double_array[i] = (double) array [i];
+
+		write_ascii_array(nn,perLine,double_array,fp);
+		free(double_array);
+}
+
+
+static void write_ascii_array(int nn, int perLine, double *array, FILE *fp)
 {
     int i,a;
     int ascii_precision = 6;
@@ -1331,6 +1339,18 @@ static void write_int_binary_array(int nn, int* array, FILE * f)
     free(base64plusheadarray);
     free(compressedarray);
 }
+
+static void write_binary_array_double(int nn, double* array, FILE * f)
+{
+	int i;
+	float* float_array = malloc(nn * sizeof(float));
+
+	for (i=0;i<nn;i++) float_array[i] = (float) array [i];
+
+	write_binary_array(nn,float_array,f);
+	free(float_array);
+}
+
 
 static void write_binary_array(int nn, float* array, FILE * f)
 {
