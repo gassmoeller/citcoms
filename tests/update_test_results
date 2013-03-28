@@ -9,6 +9,7 @@ read -p "This will overwrite ALL your current reference test results, are you su
 if [ "$answer" == "Yes" ]; then
 for testcase in `ls $reference_tests`
 do
+rm -r $reference_tests/$testcase/data
 cp -r $recent_tests/$testcase/data $reference_tests/$testcase/
 done
 fi
