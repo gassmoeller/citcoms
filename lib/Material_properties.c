@@ -497,7 +497,7 @@ const int idxNz (const int nn, const int noz) {
 	}
 }
 
-const double get_property_nd(struct All_variables *E, double*** property, const int m, const int nn, const int temperature_accurate)
+const double get_property_nd_perplex(struct All_variables *E, double*** property, const int m, const int nn, const int temperature_accurate)
 {
 
     int i,j;
@@ -536,7 +536,7 @@ const double get_property_nd(struct All_variables *E, double*** property, const 
 	return prop;
 }
 
-const double get_property_el(struct All_variables *E, double*** property, const int m, const int el, const int temperature_accurate)
+const double get_property_el_perplex(struct All_variables *E, double*** property, const int m, const int el, const int temperature_accurate)
 {
 	int nn,a;
 
@@ -547,39 +547,46 @@ const double get_property_el(struct All_variables *E, double*** property, const 
 
 	for(a=1;a<=ends;a++){
 		nn = E->IEN[lev][m][el].node[a];
-		prop += get_property_nd(E,property,m,nn,temperature_accurate);
+		prop += get_property_nd_perplex(E,property,m,nn,temperature_accurate);
 	}
 
 	prop /= ends;
 	return prop;
 }
 
+const double get_property_nd_refstate(struct All_variables *E, double* property, const int m, const int nn)
+{
+	return property[idxNz(nn,E->lmesh.noz)];
+}
+
+const double get_property_el_refstate(struct All_variables *E, double* property, const int m, const int el)
+{
+	int a,nn;
+
+	const int ends=enodes[E->mesh.nsd];
+	const int lev=E->mesh.levmax;
+	double prop = 0;
+
+	for(a=1;a<=ends;a++){
+		nn = E->IEN[lev][m][el].node[a];
+		prop += get_property_nd_refstate(E,property,m,nn);
+	}
+
+	prop /= ends;
+	return prop;
+}
 
 double get_cp_el(struct All_variables *E, int m, int el)
 {
 	if (E->composition.tdep_buoyancy == 1)
 	{
-	const int temperature_accurate = 0;
-	const double cp = get_property_el(E,E->refstate.tab_heat_capacity,m,el,temperature_accurate);
-	return cp;
+		const int temperature_accurate = 0;
+		return get_property_el_perplex(E,E->refstate.tab_heat_capacity,m,el,temperature_accurate);
 	}
-		else
-		{
-			int nn,a;
-
-			const int ends=enodes[E->mesh.nsd];
-			const int lev=E->mesh.levmax;
-			double prop = 0;
-
-
-			for(a=1;a<=ends;a++){
-				nn = E->IEN[lev][m][el].node[a];
-				prop += get_cp_nd(E,m,nn);
-			}
-
-			prop /= ends;
-			return prop;
-		}
+	else
+	{
+		return get_property_el_refstate(E,E->refstate.heat_capacity,m,el);
+	}
 }
 
 
@@ -587,14 +594,13 @@ double get_cp_nd(struct All_variables *E, int m, int nn)
 {
 	if (E->composition.tdep_buoyancy == 1)
 	{
-	const int temperature_accurate = 0;
-	double cp = get_property_nd(E,E->refstate.tab_heat_capacity,m,nn,temperature_accurate);
-	return cp;
+		const int temperature_accurate = 0;
+		return get_property_nd_perplex(E,E->refstate.tab_heat_capacity,m,nn,temperature_accurate);
 	}
-		else
-		{
-			return E->refstate.heat_capacity[idxNz(nn,E->lmesh.noz)];
-		}
+	else
+	{
+		return get_property_nd_refstate(E, E->refstate.heat_capacity,m,nn);
+	}
 }
 
 
@@ -602,14 +608,13 @@ double get_alpha_nd(struct All_variables *E, int m, int nn)
 {
 	if (E->composition.tdep_buoyancy == 1)
 	{
-	const int temperature_accurate = 0;
-	double alpha = get_property_nd(E,E->refstate.tab_thermal_expansivity,m,nn,temperature_accurate);
-	return alpha;
+		const int temperature_accurate = 0;
+		return get_property_nd_perplex(E,E->refstate.tab_thermal_expansivity,m,nn,temperature_accurate);
 	}
-		else
-		{
-			return E->refstate.thermal_expansivity[idxNz(nn,E->lmesh.noz)];
-		}
+	else
+	{
+		return get_property_nd_refstate(E, E->refstate.thermal_expansivity,m,nn);
+	}
 }
 
 
@@ -617,27 +622,13 @@ double get_alpha_el(struct All_variables *E, int m, int el)
 {
 	if (E->composition.tdep_buoyancy == 1)
 	{
-	const int temperature_accurate = 0;
-	const double alpha = get_property_el(E,E->refstate.tab_thermal_expansivity,m,el,temperature_accurate);
-	return alpha;
+		const int temperature_accurate = 0;
+		return get_property_el_perplex(E,E->refstate.tab_thermal_expansivity,m,el,temperature_accurate);
 	}
-		else
-		{
-			int nn,a;
-
-			const int ends=enodes[E->mesh.nsd];
-			const int lev=E->mesh.levmax;
-			double prop = 0;
-
-
-			for(a=1;a<=ends;a++){
-				nn = E->IEN[lev][m][el].node[a];
-				prop += get_alpha_nd(E,m,nn);
-			}
-
-			prop /= ends;
-			return prop;
-		}
+	else
+	{
+		return get_property_el_refstate(E,E->refstate.heat_capacity,m,el);
+	}
 }
 
 
@@ -645,28 +636,13 @@ double get_rho_el(struct All_variables *E, int m, int el)
 {
 	if (E->composition.tdep_buoyancy == 1)
 	{
-	const int temperature_accurate = 1;
-	double rho = get_property_el(E,E->refstate.tab_density,m,el,temperature_accurate);
-	return rho;
+		const int temperature_accurate = 1;
+		return get_property_el_perplex(E,E->refstate.tab_density,m,el,temperature_accurate);
 	}
 	else
 	{
-		int nn,a;
-
-		const int ends=enodes[E->mesh.nsd];
-		const int lev=E->mesh.levmax;
-		double prop = 0;
-
-
-		for(a=1;a<=ends;a++){
-			nn = E->IEN[lev][m][el].node[a];
-			prop += get_rho_nd(E,m,nn);
-		}
-
-		prop /= ends;
-		return prop;
+		return get_property_el_refstate(E,E->refstate.heat_capacity,m,el);
 	}
-
 }
 
 
@@ -675,12 +651,11 @@ double get_rho_nd(struct All_variables *E, int m, int nn)
 	if (E->composition.tdep_buoyancy == 1)
 	{
 		const int temperature_accurate = 1;
-		double rho = get_property_nd(E,E->refstate.tab_density,m,nn,temperature_accurate);
-		return rho;
+		return get_property_nd_perplex(E,E->refstate.tab_density,m,nn,temperature_accurate);
 	}
 	else
 	{
-		return E->refstate.rho[idxNz(nn,E->lmesh.noz)];
+		return get_property_nd_refstate(E, E->refstate.rho,m,nn);
 	}
 
 }
@@ -689,7 +664,7 @@ double get_rho_nd(struct All_variables *E, int m, int nn)
 double get_vs_el(struct All_variables *E, int m, int el)
 {
 	const int temperature_accurate = 0;
-	double vs = get_property_el(E,E->refstate.tab_seismic_vs,m,el,temperature_accurate);
+	double vs = get_property_el_perplex(E,E->refstate.tab_seismic_vs,m,el,temperature_accurate);
 	return vs;
 }
 
@@ -697,7 +672,7 @@ double get_vs_el(struct All_variables *E, int m, int el)
 double get_vs_nd(struct All_variables *E, int m, int nn)
 {
 	const int temperature_accurate = 0;
-	double vs = get_property_nd(E,E->refstate.tab_seismic_vs,m,nn,temperature_accurate);
+	double vs = get_property_nd_perplex(E,E->refstate.tab_seismic_vs,m,nn,temperature_accurate);
         return vs;
 }
 
@@ -705,7 +680,7 @@ double get_vs_nd(struct All_variables *E, int m, int nn)
 double get_vp_el(struct All_variables *E, int m, int el)
 {
 	const int temperature_accurate = 0;
-	double vp = get_property_el(E,E->refstate.tab_seismic_vp,m,el,temperature_accurate);
+	double vp = get_property_el_perplex(E,E->refstate.tab_seismic_vp,m,el,temperature_accurate);
         return vp;
 }
 
@@ -713,7 +688,7 @@ double get_vp_el(struct All_variables *E, int m, int el)
 double get_vp_nd(struct All_variables *E, int m, int nn)
 {
 	const int temperature_accurate = 0;
-	double vp = get_property_nd(E,E->refstate.tab_seismic_vp,m,nn,temperature_accurate);
+	double vp = get_property_nd_perplex(E,E->refstate.tab_seismic_vp,m,nn,temperature_accurate);
 	return vp;
 }
 
