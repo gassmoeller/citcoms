@@ -195,9 +195,6 @@ void get_system_viscosity(E,propogate,evisc,visc)
     else
         visc_from_mat(E,evisc);
 
-    if(E->viscosity.CDEPV)	/* compositional prefactor */
-      visc_from_C(E,evisc);
-
     if(E->viscosity.SDEPV)
       visc_from_S(E,evisc,propogate);
 
@@ -232,6 +229,9 @@ void get_system_viscosity(E,propogate,evisc,visc)
                     if(evisc[m][(i-1)*vpts + j] < E->viscosity.min_value)
                         evisc[m][(i-1)*vpts + j] = E->viscosity.min_value;
     }
+
+    if(E->viscosity.CDEPV)	/* compositional prefactor */
+      visc_from_C(E,evisc);
 
     if (E->control.verbose)  {
       fprintf(E->fp_out,"output_evisc \n");
