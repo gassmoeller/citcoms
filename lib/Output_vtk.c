@@ -848,14 +848,14 @@ void write_pvd(struct All_variables *E, int cycles)
     char pvd_file[255];
     int i;
     snprintf(pvd_file, 255, "%s.pvd",
-    E->control.data_file);
+            E->control.data_file);
 
     if (cycles == 0){
         fp = output_open(pvd_file, "w");
         const char format[] =
-            "<?xml version=\"1.0\"?>\n"
-            "<VTKFile type=\"Collection\" version=\"0.1\"%s>\n"
-            "  <Collection>\n";
+                "<?xml version=\"1.0\"?>\n"
+                "<VTKFile type=\"Collection\" version=\"0.1\"%s>\n"
+                "  <Collection>\n";
 
         char compressor_string[128];
 
