@@ -705,19 +705,19 @@ void write_pvtp(struct All_variables *E, int cycles)
 
     const char format[] =
         "<?xml version=\"1.0\"?>\n"
-        "<VTKFile type=\"PPolyData\" version=\"0.1\" compressor=\"vtkZLibDataCompressor\" byte_order=\"LittleEndian\">\n"
+        "<VTKFile type=\"PPolyData\" version=\"0.1\"%s>\n"
         "  <PPolyData GhostLevel=\"#\">\n"
-        "    <PPointData Scalars=\"Composition\" Vectors=\"velocity\">\n"
-        "      <DataArray type=\"Float32\" Name=\"composition\" format=\"%s\"/>\n"
-        "      <DataArray type=\"Float32\" Name=\"Original Latitude\" NumberOfComponents=\"3\" format=\"%s\"/>\n"
-        "      <DataArray type=\"Float32\" Name=\"Original Longitude\" format=\"%s\"/>\n";
+        "    <PPointData Scalars=\"Composition\" Vectors=\"velocity\">\n";
 
-    char extent[64], header[1024];
+    char extent[64], compressor_string[128], header[1024];
 
-    snprintf(header, 1024, format, E->output.vtk_format, 
-             E->output.vtk_format, E->output.vtk_format);
+    get_compressor_string (strcmp(E->output.vtk_format,"binary"),128,compressor_string);
+
+    snprintf(header, 1024, format, compressor_string);
     fputs(header, fp);
-    fprintf(fp,"      <DataArray type=\"Float32\" Name=\"Original Radius\" format=\"%s\"/>\n", E->output.vtk_format);
+
+    for (i = 0; i<E->trace.number_of_extra_quantities;i++)
+        fprintf(fp, "      <DataArray type=\"Float32\" Name=\"Tracer Quantity %d\" format=\"%s\"/>\n", i, E->output.vtk_format);
 
     fputs("    </PPointData>\n \n"
     "    <PCellData>\n",fp);
