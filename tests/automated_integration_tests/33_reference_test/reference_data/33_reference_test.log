@@ -1,0 +1,124 @@
+Total temperature contrast = 2339.968262 K
+Problem has 33 x 33 x 33 nodes per cap, 405570 nodes and 393216 elements in total
+Velocity: Starting Age = 1, Elapsed time = 0, Current Age = 1
+Velocity: File1 = 33-2/bvel.dat1.0
+Velocity: File2 = 33-2/bvel.dat2.0
+Momentum equation force 8.411007991e+06
+ *  residual (001) = 7.049e+03 from 8.411e+06 to 4.206e+04 in  0.66 secs 
+(000)   0.8 s v=5.423614e+03 p=0.000000e+00 div/v=2.42e+00 dv/v=1.00e+00 dp/p=1.00e+00 step 0
+ *  residual (001) = 3.770e+03 from 3.961e+05 to 4.206e+04 in  1.14 secs 
+(001)   2.1 s v=4.706225e+03 p=6.714795e+05 div/v=3.49e+00 dv/v=4.05e-01 dp/p=1.00e+00 step 0
+ *  residual (001) = 1.841e+03 from 3.816e+05 to 4.206e+04 in  1.06 secs 
+(002)   3.4 s v=4.868785e+03 p=9.989961e+05 div/v=2.56e+00 dv/v=1.76e-01 dp/p=5.41e-01 step 0
+ *  residual (001) = 3.261e+02 from 1.214e+04 to 4.206e+04 in  1.09 secs 
+(003)   4.6 s v=4.751446e+03 p=1.013654e+06 div/v=3.54e+00 dv/v=9.84e-02 dp/p=1.21e-01 step 0
+ *  residual (001) = 8.725e+02 from 4.218e+04 to 4.206e+04 in  1.04 secs 
+(004)   5.8 s v=4.375972e+03 p=1.052371e+06 div/v=3.64e+00 dv/v=3.04e-01 dp/p=2.29e-01 step 0
+ *  residual (001) = 8.230e+02 from 3.863e+04 to 4.206e+04 in  1.11 secs 
+(005)   7.1 s v=4.298048e+03 p=1.053050e+06 div/v=2.91e+00 dv/v=1.27e-01 dp/p=1.44e-01 step 0
+ *  residual (001) = 7.663e+02 from 4.002e+04 to 4.206e+04 in  1.17 secs 
+(006)   8.5 s v=4.182413e+03 p=1.087774e+06 div/v=2.85e+00 dv/v=1.51e-01 dp/p=1.43e-01 step 0
+ *  residual (001) = 5.460e+02 from 3.251e+04 to 4.206e+04 in  1.12 secs 
+(007)   9.8 s v=4.133608e+03 p=1.099798e+06 div/v=1.93e+00 dv/v=9.87e-02 dp/p=1.18e-01 step 0
+ *  residual (001) = 5.196e+02 from 1.947e+04 to 4.206e+04 in  0.72 secs 
+(008)  10.6 s v=4.092257e+03 p=1.112263e+06 div/v=1.77e+00 dv/v=8.32e-02 dp/p=6.61e-02 step 0
+ *  residual (001) = 3.320e+02 from 2.622e+04 to 4.206e+04 in  0.89 secs 
+(009)  11.7 s v=4.066070e+03 p=1.111592e+06 div/v=1.55e+00 dv/v=7.23e-02 dp/p=7.63e-02 step 0
+ *  residual (001) = 3.694e+02 from 1.148e+04 to 4.206e+04 in  1.00 secs 
+(010)  12.9 s v=4.052018e+03 p=1.115735e+06 div/v=1.21e+00 dv/v=4.96e-02 dp/p=3.93e-02 step 0
+ *  residual (001) = 2.395e+02 from 1.253e+04 to 4.206e+04 in  1.05 secs 
+(011)  14.1 s v=4.041515e+03 p=1.128126e+06 div/v=1.13e+00 dv/v=5.39e-02 dp/p=4.73e-02 step 0
+ *  residual (001) = 2.156e+02 from 1.379e+04 to 4.206e+04 in  1.06 secs 
+(012)  15.3 s v=4.034325e+03 p=1.134659e+06 div/v=8.45e-01 dv/v=3.46e-02 dp/p=3.33e-02 step 0
+ *  residual (001) = 1.927e+02 from 6.899e+03 to 4.206e+04 in  1.04 secs 
+(013)  16.6 s v=4.031339e+03 p=1.139122e+06 div/v=6.25e-01 dv/v=2.79e-02 dp/p=2.43e-02 step 0
+ *  residual (001) = 1.154e+02 from 7.157e+03 to 4.206e+04 in  1.08 secs 
+(014)  17.8 s v=4.029169e+03 p=1.138313e+06 div/v=5.63e-01 dv/v=2.39e-02 dp/p=2.17e-02 step 0
+ *  residual (001) = 1.108e+02 from 6.277e+03 to 4.206e+04 in  0.96 secs 
+(015)  19.0 s v=4.027300e+03 p=1.137417e+06 div/v=4.23e-01 dv/v=1.93e-02 dp/p=1.55e-02 step 0
+ *  residual (001) = 8.404e+01 from 3.102e+03 to 4.206e+04 in  1.19 secs 
+(016)  20.3 s v=4.027826e+03 p=1.138834e+06 div/v=3.50e-01 dv/v=1.53e-02 dp/p=1.28e-02 step 0
+ *  residual (001) = 6.785e+01 from 4.592e+03 to 4.206e+04 in  0.50 secs 
+(017)  21.0 s v=4.027801e+03 p=1.140622e+06 div/v=2.84e-01 dv/v=1.16e-02 dp/p=1.07e-02 step 0
+ *  residual (001) = 5.414e+01 from 2.662e+03 to 4.206e+04 in  1.08 secs 
+(018)  22.2 s v=4.027631e+03 p=1.142212e+06 div/v=2.08e-01 dv/v=9.35e-03 dp/p=8.05e-03 step 0
+ *  residual (001) = 4.349e+01 from 2.214e+03 to 4.206e+04 in  0.99 secs 
+(019)  23.4 s v=4.027800e+03 p=1.142908e+06 div/v=1.91e-01 dv/v=7.78e-03 dp/p=6.58e-03 step 0
+ *  residual (001) = 3.573e+01 from 2.122e+03 to 4.206e+04 in  0.95 secs 
+(020)  24.5 s v=4.027850e+03 p=1.142754e+06 div/v=1.58e-01 dv/v=6.72e-03 dp/p=6.21e-03 step 0
+ *  residual (001) = 3.490e+01 from 1.766e+03 to 4.206e+04 in  0.95 secs 
+(021)  25.6 s v=4.028158e+03 p=1.142927e+06 div/v=1.29e-01 dv/v=5.34e-03 dp/p=4.78e-03 step 0
+ *  residual (001) = 2.665e+01 from 1.196e+03 to 4.206e+04 in  0.97 secs 
+(022)  26.7 s v=4.028398e+03 p=1.143516e+06 div/v=1.16e-01 dv/v=4.64e-03 dp/p=4.23e-03 step 0
+ *  residual (001) = 2.297e+01 from 1.271e+03 to 4.206e+04 in  0.99 secs 
+(023)  27.9 s v=4.028554e+03 p=1.144200e+06 div/v=9.41e-02 dv/v=4.25e-03 dp/p=4.14e-03 step 0
+bottom heat flux= 70.326500
+bottom heat flux= 70.326500
+Momentum equation force 8.411009106e+06
+ *  residual (001) = 3.029e+03 from 1.115e+04 to 4.206e+04 in  1.02 secs 
+(000)   1.2 s v=5.204131e+03 p=1.144200e+06 div/v=1.68e+00 dv/v=1.00e+00 dp/p=1.00e+00 step 1
+ *  residual (001) = 4.348e+03 from 3.101e+04 to 4.206e+04 in  0.99 secs 
+(001)   2.3 s v=4.588737e+03 p=1.078536e+06 div/v=2.00e+00 dv/v=2.55e-01 dp/p=2.74e-01 step 1
+ *  residual (001) = 2.587e+02 from 1.442e+04 to 4.206e+04 in  0.98 secs 
+(002)   3.5 s v=4.471110e+03 p=1.075577e+06 div/v=2.80e+00 dv/v=8.25e-02 dp/p=1.01e-01 step 1
+ *  residual (001) = 5.000e+02 from 1.538e+04 to 4.206e+04 in  0.92 secs 
+(003)   4.6 s v=4.230091e+03 p=1.051766e+06 div/v=4.09e+00 dv/v=1.54e-01 dp/p=1.19e-01 step 1
+ *  residual (001) = 9.127e+02 from 2.612e+04 to 4.206e+04 in  0.90 secs 
+(004)   5.7 s v=3.859128e+03 p=9.919192e+05 div/v=3.81e+00 dv/v=3.00e-01 dp/p=2.08e-01 step 1
+ *  residual (001) = 6.159e+02 from 2.819e+04 to 4.206e+04 in  0.89 secs 
+(005)   6.7 s v=3.791113e+03 p=9.681133e+05 div/v=2.46e+00 dv/v=1.24e-01 dp/p=1.27e-01 step 1
+ *  residual (001) = 5.545e+02 from 1.202e+04 to 4.206e+04 in  0.97 secs 
+(006)   7.8 s v=3.740972e+03 p=9.635194e+05 div/v=1.63e+00 dv/v=9.80e-02 dp/p=7.11e-02 step 1
+ *  residual (001) = 2.158e+02 from 8.057e+03 to 4.206e+04 in  0.93 secs 
+(007)   8.9 s v=3.733496e+03 p=9.608614e+05 div/v=1.13e+00 dv/v=5.77e-02 dp/p=4.30e-02 step 1
+ *  residual (001) = 2.320e+02 from 6.197e+03 to 4.206e+04 in  0.85 secs 
+(008)   9.9 s v=3.726206e+03 p=9.618941e+05 div/v=7.90e-01 dv/v=4.39e-02 dp/p=3.24e-02 step 1
+ *  residual (001) = 1.159e+02 from 3.301e+03 to 4.206e+04 in  0.89 secs 
+(009)  11.0 s v=3.725095e+03 p=9.631916e+05 div/v=6.25e-01 dv/v=2.75e-02 dp/p=1.57e-02 step 1
+ *  residual (001) = 1.031e+02 from 2.468e+03 to 4.206e+04 in  0.89 secs 
+(010)  12.0 s v=3.723707e+03 p=9.640331e+05 div/v=5.02e-01 dv/v=2.26e-02 dp/p=1.34e-02 step 1
+ *  residual (001) = 7.407e+01 from 2.810e+03 to 4.206e+04 in  0.99 secs 
+(011)  13.2 s v=3.723349e+03 p=9.638687e+05 div/v=3.93e-01 dv/v=1.71e-02 dp/p=1.21e-02 step 1
+ *  residual (001) = 5.397e+01 from 1.589e+03 to 4.206e+04 in  1.14 secs 
+(012)  14.5 s v=3.724051e+03 p=9.636428e+05 div/v=3.03e-01 dv/v=1.31e-02 dp/p=7.10e-03 step 1
+ *  residual (001) = 4.959e+01 from 1.621e+03 to 4.206e+04 in  0.93 secs 
+(013)  15.6 s v=3.723402e+03 p=9.641307e+05 div/v=2.26e-01 dv/v=1.17e-02 dp/p=8.35e-03 step 1
+ *  residual (001) = 3.164e+01 from 1.546e+03 to 4.206e+04 in  0.94 secs 
+(014)  16.7 s v=3.723524e+03 p=9.646408e+05 div/v=1.66e-01 dv/v=6.99e-03 dp/p=4.79e-03 step 1
+ *  residual (001) = 2.575e+01 from 7.187e+02 to 4.206e+04 in  0.80 secs 
+(015)  17.6 s v=3.723853e+03 p=9.651759e+05 div/v=1.31e-01 dv/v=6.76e-03 dp/p=3.94e-03 step 1
+ *  residual (001) = 1.865e+01 from 1.014e+03 to 4.206e+04 in  0.91 secs 
+(016)  18.7 s v=3.723853e+03 p=9.654346e+05 div/v=1.08e-01 dv/v=4.34e-03 dp/p=3.17e-03 step 1
+ *  residual (001) = 1.520e+01 from 6.040e+02 to 4.206e+04 in  0.88 secs 
+(017)  19.7 s v=3.723883e+03 p=9.655893e+05 div/v=8.79e-02 dv/v=3.91e-03 dp/p=2.55e-03 step 1
+Velocity: Starting Age = 1, Elapsed time = 1.15278e-07, Current Age = 0.851728
+Velocity: File1 = 33-2/bvel.dat0.0
+Velocity: File2 = 33-2/bvel.dat1.0
+bottom heat flux= 70.254074
+Momentum equation force 8.410141092e+06
+ *  residual (001) = 8.399e+02 from 1.723e+04 to 4.205e+04 in  0.90 secs 
+(000)   1.1 s v=3.622469e+03 p=9.655893e+05 div/v=3.92e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 2
+ *  residual (001) = 8.415e+02 from 6.626e+03 to 4.205e+04 in  0.92 secs 
+(001)   2.2 s v=3.612540e+03 p=9.655463e+05 div/v=4.11e-01 dv/v=6.14e-02 dp/p=5.91e-02 step 2
+ *  residual (001) = 5.042e+01 from 2.798e+03 to 4.205e+04 in  0.98 secs 
+(002)   3.3 s v=3.611866e+03 p=9.667120e+05 div/v=5.18e-01 dv/v=1.50e-02 dp/p=2.23e-02 step 2
+ *  residual (001) = 8.237e+01 from 4.448e+03 to 4.205e+04 in  0.74 secs 
+(003)   4.2 s v=3.605792e+03 p=9.710080e+05 div/v=7.02e-01 dv/v=3.34e-02 dp/p=3.14e-02 step 2
+ *  residual (001) = 2.004e+02 from 4.002e+03 to 4.205e+04 in  0.89 secs 
+(004)   5.2 s v=3.605511e+03 p=9.767993e+05 div/v=5.30e-01 dv/v=5.77e-02 dp/p=4.07e-02 step 2
+ *  residual (001) = 1.200e+02 from 1.013e+04 to 4.205e+04 in  0.76 secs 
+(005)   6.1 s v=3.606156e+03 p=9.773786e+05 div/v=3.61e-01 dv/v=1.96e-02 dp/p=3.03e-02 step 2
+ *  residual (001) = 1.097e+02 from 5.737e+03 to 4.205e+04 in  0.91 secs 
+(006)   7.1 s v=3.608340e+03 p=9.776190e+05 div/v=2.07e-01 dv/v=1.29e-02 dp/p=1.46e-02 step 2
+ *  residual (001) = 4.266e+01 from 2.165e+03 to 4.205e+04 in  1.00 secs 
+(007)   8.3 s v=3.608025e+03 p=9.775233e+05 div/v=1.58e-01 dv/v=6.85e-03 dp/p=8.33e-03 step 2
+ *  residual (001) = 3.302e+01 from 1.546e+03 to 4.205e+04 in  0.80 secs 
+(008)   9.2 s v=3.608231e+03 p=9.778266e+05 div/v=1.05e-01 dv/v=6.40e-03 dp/p=5.74e-03 step 2
+ *  residual (001) = 2.365e+01 from 1.144e+03 to 4.205e+04 in  0.77 secs 
+(009)  10.1 s v=3.608280e+03 p=9.780217e+05 div/v=8.20e-02 dv/v=3.64e-03 dp/p=3.80e-03 step 2
+ *  residual (001) = 1.663e+01 from 8.011e+02 to 4.205e+04 in  0.88 secs 
+(010)  11.1 s v=3.608277e+03 p=9.781494e+05 div/v=6.35e-02 dv/v=2.59e-03 dp/p=2.57e-03 step 2
+Velocity: Starting Age = 1, Elapsed time = 2.33417e-07, Current Age = 0.699777
+Velocity: File1 = 33-2/bvel.dat0.0
+Velocity: File2 = 33-2/bvel.dat1.0
+bottom heat flux= 70.102081

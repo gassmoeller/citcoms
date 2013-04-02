@@ -1,0 +1,12 @@
+#!/bin/bash
+
+for file in `ls data`;
+do 
+new_name=`echo $file | sed s/step//g`; 
+new_name=`echo $new_name | awk 'BEGIN { FS=OFS="." } /vts/ { $2 = "proc"$2 ; print }'`
+#echo $new_name
+
+mv data/$file data/$new_name
+
+
+done

@@ -1,0 +1,48 @@
+
+Tracing Activated! (proc: 10)
+   Allen K. McNamara 12-2003
+
+Generating New Tracer Array
+Tracers per element: 20
+Number of tracer flavors: 4
+Initialized tracer flavors by: 3
+Flavors in Lithosphere and CMB
+Regular Grid-> deltheta: 0.200000 delphi: 0.200000
+Box Cushion: 0.000010
+Number of Basic Quantities: 12
+Number of Extra Quantities: 1
+Total Number of Tracer Quantities: 13
+Active Tracers
+Ratio Method
+Buoyancy Ratio: 1.000000
+Buoyancy Ratio: 1.000000
+Buoyancy Ratio: 1.000000
+
+Regular grid:
+Theta min: 0.943052 max: 2.223085 
+Phi min: 0.000000 max: 6.283185 
+Adjusted deltheta: 0.003497 delphi: 0.003491
+(numtheta: 366  numphi: 1800)
+Number of regular elements: 658800  (nodes: 660967)
+regular/real ratio: 643.359375
+percentage mapped: 13.505364
+Mapping completed (20.747319 seconds)
+
+
+Information regarding number of real elements per regular elements
+ (stats done on regular elements that were used)
+Ichoice is number of real elements touched by a regular element
+  (ichoice=0 is optimal)
+Ichoice=0: 86.381906 percent
+Ichoice=1: 9.908622 percent
+Ichoice=2: 3.417729 percent
+Ichoice=3: 0.291743 percent
+Ichoice=4: 0.000000 percent
+Tracer intiailization takes 24.158282 seconds.
+
+Generating 655352 Tracers
+Physical size of tracer arrays (max_ntracers): 819190
+Sum of Tracers: 7864312
+WARNING(check_initial_composition)-number of tracers is low, 8 elements contain no tracer initially
+Using neighboring elements for initial composition...
+Done.
