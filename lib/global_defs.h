@@ -372,7 +372,7 @@ struct SLICE {    /* horizontally sliced data, including topography */
     float *divg[NCS];
     float *vort[NCS];
     float *freesurf[NCS];
-  };
+};
 
 
 struct MONITOR {
@@ -476,12 +476,12 @@ struct CONTROL {
 
     int coor;
     float coor_refine[4];
-  float rrlayer[20];
-  int nrlayer[20],rlayers;
+    float rrlayer[20];
+    int nrlayer[20],rlayers;
 
     char coor_file[100];
 
-  //int remove_hor_buoy_avg;
+    //int remove_hor_buoy_avg;
 
     float mantle_temp;
 

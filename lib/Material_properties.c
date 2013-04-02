@@ -120,34 +120,34 @@ void allocate_refstate(struct All_variables *E)
     /* reference profile of thermal conductivity */
     E->refstate.thermal_conductivity = (double *) malloc((noz+1)*sizeof(double));
 
-    /* reference profile of temperature */
+    /* reference profile of adiabatic temperature */
     E->refstate.Tadi = (double *) malloc((noz+1)*sizeof(double));
 
-	/* reference profile of temperature */
-	E->refstate.Tini = (double *) malloc((noz+1)*sizeof(double));
+    /* reference profile of initial temperature */
+    E->refstate.Tini = (double *) malloc((noz+1)*sizeof(double));
 
-	/* reference profile of gravity */
-	E->refstate.Tm = (double *) malloc((noz+1)*sizeof(double));
+    /* reference profile of gravity */
+    E->refstate.Tm = (double *) malloc((noz+1)*sizeof(double));
 
-	/* reference profile of free enthalpy */
-	/* only used in viscosity option 104 */
-	E->refstate.free_enthalpy = (double *) malloc((noz+1)*sizeof(double));
+    /* reference profile of free enthalpy */
+    /* only used in viscosity option 104 */
+    E->refstate.free_enthalpy = (double *) malloc((noz+1)*sizeof(double));
 
-	/* reference profile of radial viscosity */
-	/* only used in viscosity option 104 */
-	E->refstate.rad_viscosity = (double *) malloc((noz+1)*sizeof(double));
+    /* reference profile of radial viscosity */
+    /* only used in viscosity option 104 */
+    E->refstate.rad_viscosity = (double *) malloc((noz+1)*sizeof(double));
 
-	/* reference profile of stress dependence of viscosity */
-	/* only used in viscosity option 104 */
-	E->refstate.stress_exp = (double *) malloc((noz+1)*sizeof(double));
+    /* reference profile of stress dependence of viscosity */
+    /* only used in viscosity option 104 */
+    E->refstate.stress_exp = (double *) malloc((noz+1)*sizeof(double));
 
-	if (E->composition.continents){
-		E->refstate.cont_position = (int **) malloc((E->lmesh.nox+1)*sizeof(int *));
-		int i;
-		for (i=1;i<=E->lmesh.nox;i++){
-			E->refstate.cont_position[i] = (int *) malloc((E->lmesh.noy+1)*sizeof(int));
-		}
-	}
+    if (E->composition.continents){
+        E->refstate.cont_position = (int **) malloc((E->lmesh.nox+1)*sizeof(int *));
+        int i;
+        for (i=1;i<=E->lmesh.nox;i++){
+            E->refstate.cont_position[i] = (int *) malloc((E->lmesh.noy+1)*sizeof(int));
+        }
+    }
 }
 
 void mat_prop_allocate(struct All_variables *E)
@@ -199,7 +199,7 @@ void reference_state(struct All_variables *E)
         read_continent_position(E);
 
     if(E->parallel.me == 0) {
-      fprintf(stderr, "   nz     radius      depth    rho              layer\n");
+        fprintf(stderr, "   nz     radius      depth    rho              layer\n");
     }
     if(E->parallel.me < E->parallel.nprocz)
         for(i=1; i<=E->lmesh.noz; i++) {
@@ -283,22 +283,22 @@ static void read_perplexfile(struct All_variables *E)
     for(i=0; i<E->composition.pressure_oversampling*(E->lmesh.noz-1)+1; i++){
         fgets(buffer, 255, fp);
         if (i%E->composition.pressure_oversampling == 0) {
-        j++;
-        if(sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
-                  &(not_used1),
-                  &(E->refstate.gravity[j]),
-                  &(not_used2),
-                  &(not_used3),
-                  &(E->refstate.Tadi[j]),
-                  &(E->refstate.Tini[j]),
-                  &(E->refstate.Tm[i]),
-                  &(E->refstate.free_enthalpy[j]),
-                  &(E->refstate.rad_viscosity[j]),
-                  &(E->refstate.stress_exp[j]),
-                  &(E->refstate.thermal_conductivity[j])) != 11) {
-            fprintf(stderr,"Error while reading file '%s'\n", E->refstate.filename);
-            exit(8);
-        }
+            j++;
+            if(sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
+                    &(not_used1),
+                    &(E->refstate.gravity[j]),
+                    &(not_used2),
+                    &(not_used3),
+                    &(E->refstate.Tadi[j]),
+                    &(E->refstate.Tini[j]),
+                    &(E->refstate.Tm[i]),
+                    &(E->refstate.free_enthalpy[j]),
+                    &(E->refstate.rad_viscosity[j]),
+                    &(E->refstate.stress_exp[j]),
+                    &(E->refstate.thermal_conductivity[j])) != 11) {
+                fprintf(stderr,"Error while reading file '%s'\n", E->refstate.filename);
+                exit(8);
+            }
         }
     }
     fclose(fp);
@@ -333,22 +333,30 @@ static void read_perplexfile(struct All_variables *E)
     for(i=1; i<=E->composition.pressure_oversampling*(E->lmesh.nzs-1)*E->composition.ntdeps*(E->composition.ncomp+1); i++) {
         fgets(buffer, 255, fp);
     }
-    
-    for(j=1; j<=E->composition.pressure_oversampling*(E->lmesh.noz-1)+1; j++) {
-      for(k=1; k<=E->composition.ntdeps; k++){
-          for(i=1; i<=E->composition.ncomp+1; i++){
-            fgets(buffer, 255, fp);
-            if(sscanf(buffer, "%lf %lf %lf %lf %lf\n",&(E->refstate.tab_density[j][k][i]),&(E->refstate.tab_thermal_expansivity[j][k][i]), &(E->refstate.tab_heat_capacity[j][k][i]), &(E->refstate.tab_seismic_vp[j][k][i]), &(E->refstate.tab_seismic_vs[j][k][i]))!=5){
-                fprintf(stderr,"Error while reading file perplex.dat\n");
-                exit(8);
-	    }
-		if(E->parallel.me == 0 || E->parallel.me == 1) fprintf(stderr, "me: %d noz:%d ntdeps:%d ncomp:%d rho:%f alpha:%f cp:%f\n",
-                E->parallel.me,j,k,i,
-                E->refstate.tab_density[j][k][i],
-                E->refstate.tab_thermal_expansivity[j][k][i],
-                E->refstate.tab_heat_capacity[j][k][i]);
 
-}}}
+    for(j=1; j<=E->composition.pressure_oversampling*(E->lmesh.noz-1)+1; j++) {
+        for(k=1; k<=E->composition.ntdeps; k++){
+            for(i=1; i<=E->composition.ncomp+1; i++){
+                fgets(buffer, 255, fp);
+                if(sscanf(buffer, "%lf %lf %lf %lf %lf\n",&(E->refstate.tab_density[j][k][i]),&(E->refstate.tab_thermal_expansivity[j][k][i]), &(E->refstate.tab_heat_capacity[j][k][i]), &(E->refstate.tab_seismic_vp[j][k][i]), &(E->refstate.tab_seismic_vs[j][k][i]))!=5){
+                    fprintf(stderr,"Error while reading file perplex.dat\n");
+                    exit(8);
+                }
+
+                /*
+                 * Debug Output
+                 */
+                if(E->control.verbose)
+                {
+                    if(E->parallel.me == 0 || E->parallel.me == 1) fprintf(stderr, "me: %d noz:%d ntdeps:%d ncomp:%d rho:%f alpha:%f cp:%f\n",
+                            E->parallel.me,j,k,i,
+                            E->refstate.tab_density[j][k][i],
+                            E->refstate.tab_thermal_expansivity[j][k][i],
+                            E->refstate.tab_heat_capacity[j][k][i]);
+                }
+            }
+        }
+    }
 
     fclose(fp);
     return;
@@ -361,7 +369,7 @@ static void read_continent_position(struct All_variables *E)
     int i,j,k;
     char buffer[255];
 
-   sprintf(buffer,"continents.%d",E->sphere.capid[1]-1);
+    sprintf(buffer,"continents.%d",E->sphere.capid[1]-1);
     fp = fopen(buffer, "r");
     if(fp == NULL) {
         fprintf(stderr, "Cannot open continent file: %s\n",
@@ -369,16 +377,19 @@ static void read_continent_position(struct All_variables *E)
         parallel_process_termination();
     }
 
-        for(j=0; j<E->mesh.nox; j++) {
-            for(k=0; k<E->mesh.noy; k++){
-                fgets(buffer, 255, fp);
-                if((j>=E->parallel.me_loc[1]*E->lmesh.elx) && (j<=(E->parallel.me_loc[1]+1)*E->lmesh.elx)){ // in x-Range
-                    if((k>=E->parallel.me_loc[2]*E->lmesh.ely) && (k<=(E->parallel.me_loc[2]+1)*E->lmesh.ely)){
-                        if(sscanf(buffer, "%d",&(E->refstate.cont_position[(j + E->parallel.me_loc[1])%E->lmesh.nox + 1][(k + E->parallel.me_loc[2])%E->lmesh.noy + 1]))!=1){
-                            fprintf(stderr,"Error while reading file '%s'\n", E->refstate.densityfilename);
-            exit(8);
-        }}
-    }}}
+    for(j=0; j<E->mesh.nox; j++) {
+        for(k=0; k<E->mesh.noy; k++){
+            fgets(buffer, 255, fp);
+            if((j>=E->parallel.me_loc[1]*E->lmesh.elx) && (j<=(E->parallel.me_loc[1]+1)*E->lmesh.elx)){ // in x-Range
+                if((k>=E->parallel.me_loc[2]*E->lmesh.ely) && (k<=(E->parallel.me_loc[2]+1)*E->lmesh.ely)){
+                    if(sscanf(buffer, "%d",&(E->refstate.cont_position[(j + E->parallel.me_loc[1])%E->lmesh.nox + 1][(k + E->parallel.me_loc[2])%E->lmesh.noy + 1]))!=1){
+                        fprintf(stderr,"Error while reading file '%s'\n", E->refstate.densityfilename);
+                        exit(8);
+                    }
+                }
+            }
+        }
+    }
 
     fclose(fp);
 
@@ -388,24 +399,24 @@ static void read_continent_position(struct All_variables *E)
 
 static void adams_williamson_eos(struct All_variables *E)
 {
-	int i;
-	double r, z, beta;
+    int i;
+    double r, z, beta;
 
-	beta = E->control.disptn_number * E->control.inv_gruneisen;
+    beta = E->control.disptn_number * E->control.inv_gruneisen;
 
-	for(i=1; i<=E->lmesh.noz; i++) {
-		r = E->sx[1][3][i];
-		z = 1 - r;
-		E->refstate.gravity[i] = 1;
-		E->refstate.thermal_conductivity[i] = 1;
-		E->refstate.free_enthalpy[i] = 1;
-		E->refstate.rad_viscosity[i] = 1;
-		E->refstate.stress_exp[i] = 1;
-		E->refstate.Tadi[i] = (E->control.TBCtopval + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;
-		//E->refstate.Tadi[i] = 1;
-		E->refstate.thermal_expansivity[i] = 1;
-		E->refstate.heat_capacity[i] = 1;
-		E->refstate.rho[i] = exp(beta*z);
+    for(i=1; i<=E->lmesh.noz; i++) {
+        r = E->sx[1][3][i];
+        z = 1 - r;
+        E->refstate.gravity[i] = 1;
+        E->refstate.thermal_conductivity[i] = 1;
+        E->refstate.free_enthalpy[i] = 1;
+        E->refstate.rad_viscosity[i] = 1;
+        E->refstate.stress_exp[i] = 1;
+        E->refstate.Tadi[i] = (E->control.TBCtopval + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;
+        //E->refstate.Tadi[i] = 1;
+        E->refstate.thermal_expansivity[i] = 1;
+        E->refstate.heat_capacity[i] = 1;
+        E->refstate.rho[i] = exp(beta*z);
 
     }
 
@@ -414,27 +425,28 @@ static void adams_williamson_eos(struct All_variables *E)
 
 static void new_eos(struct All_variables *E)
 {
-	int i,j,k;
-	double r, z, beta;
+    int i,j,k;
+    double r, z, beta;
 
-	beta = E->control.disptn_number * E->control.inv_gruneisen;
+    beta = E->control.disptn_number * E->control.inv_gruneisen;
 
-	for(i=1; i<=E->lmesh.noz; i++) {
-		r = E->sx[1][3][i];
-		z = 1 - r;
-		E->refstate.gravity[i] = 1;
-		E->refstate.thermal_conductivity[i] = 1;
-		E->refstate.free_enthalpy[i] = 1;
-		E->refstate.rad_viscosity[i] = 1;
-		E->refstate.stress_exp[i] = 1;
-		/*E->refstate.Tadi[i] = (E->control.adiabaticT0 + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;*/
-		E->refstate.Tadi[i] = 1;
-		E->refstate.heat_capacity[i] = 1;
-		E->refstate.thermal_expansivity[i] = 0.2 + 0.8 * (E->sx[1][3][i]- E->sphere.ri)/(E->sphere.ro - E->sphere.ri);
-		E->refstate.rho[i] = exp(beta*z);
-	}
+    for(i=1; i<=E->lmesh.noz; i++)
+    {
+        r = E->sx[1][3][i];
+        z = 1 - r;
+        E->refstate.gravity[i] = 1;
+        E->refstate.thermal_conductivity[i] = 1;
+        E->refstate.free_enthalpy[i] = 1;
+        E->refstate.rad_viscosity[i] = 1;
+        E->refstate.stress_exp[i] = 1;
+        /*E->refstate.Tadi[i] = (E->control.adiabaticT0 + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;*/
+        E->refstate.Tadi[i] = 1;
+        E->refstate.heat_capacity[i] = 1;
+        E->refstate.thermal_expansivity[i] = 0.2 + 0.8 * (E->sx[1][3][i]- E->sphere.ri)/(E->sphere.ro - E->sphere.ri);
+        E->refstate.rho[i] = exp(beta*z);
+    }
 
-	return;
+    return;
 }
 
 double get_g_el(struct All_variables *E, int m, int el)
