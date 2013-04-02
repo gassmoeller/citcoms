@@ -174,7 +174,6 @@ void reference_state(struct All_variables *E)
     case 1:
         /* Adams-Williamson EoS */
         adams_williamson_eos(E);
-        fprintf(stderr,"Adams-Williamson EOS\n");
         break;
     case 2:
         /* New EoS */
@@ -402,6 +401,10 @@ static void adams_williamson_eos(struct All_variables *E)
     int i;
     double r, z, beta;
 
+    if(E->parallel.me == 0) {
+        fprintf(stderr,"Adams-Williamson EOS\n");
+    }
+
     beta = E->control.disptn_number * E->control.inv_gruneisen;
 
     for(i=1; i<=E->lmesh.noz; i++) {
@@ -413,11 +416,9 @@ static void adams_williamson_eos(struct All_variables *E)
         E->refstate.rad_viscosity[i] = 1;
         E->refstate.stress_exp[i] = 1;
         E->refstate.Tadi[i] = (E->control.TBCtopval + E->control.surface_temp) * exp(E->control.disptn_number * z) - E->control.surface_temp;
-        //E->refstate.Tadi[i] = 1;
         E->refstate.thermal_expansivity[i] = 1;
         E->refstate.heat_capacity[i] = 1;
         E->refstate.rho[i] = exp(beta*z);
-
     }
 
     return;
