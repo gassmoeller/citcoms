@@ -1,0 +1,23 @@
+#!/bin/bash
+
+reference_tests=/office/Software/Citcom-Versionen/CitcomS/tests/automated_integration_tests
+
+if [ "$1" == "" ]; then
+read -p "This will overwrite ALL your current reference test results, are you sure? ('Yes' to proceed):" answer
+
+if [ "$answer" == "Yes" ]; then
+for testcase in `ls $reference_tests`
+do
+rm -r $reference_tests/$testcase/reference_data
+cp -r $reference_tests/$testcase/data $reference_tests/$testcase/reference_data
+done
+fi
+
+else
+read -p "This will overwrite your current reference test results for test $1, are you sure? ('Yes' to proceed):" answer
+
+if [ "$answer" == "Yes" ]; then
+rm -r $reference_tests/$1/reference_data
+cp -r $reference_tests/$1/data $reference_tests/$1/reference_data
+fi
+fi
