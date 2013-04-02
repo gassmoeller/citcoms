@@ -93,6 +93,12 @@ void sphere_to_cart(struct All_variables *,
 int icheck_processor_shell(struct All_variables *,
                            int , double );
 static void chemical_changes(struct All_variables *E);
+void mark_hotspot_tracks(struct All_variables *E);
+void set_tracer_origin(struct All_variables *E);
+static void write_trace_instructions(struct All_variables *E);
+
+
+
 
 
 void tracer_input(struct All_variables *E)
@@ -251,6 +257,210 @@ void tracer_initial_settings(struct All_variables *E)
    }
 }
 
+void tracer_initial_setup(struct All_variables *E)
+{
+
+    char output_file[255];
+    void get_neighboring_caps();
+    double CPU_time0();
+    double begin_time = CPU_time0();
+
+    /* Some error control */
+
+    if (E->sphere.caps_per_proc>1) {
+        fprintf(stderr,"This code does not work for multiple caps per processor!\n");
+        parallel_process_termination();
+    }
+
+
+    /* open tracing output file */
+
+    sprintf(output_file,"%s.tracer_log.%d",E->control.data_file,E->parallel.me);
+    E->trace.fpt=fopen(output_file,"w");
+
+
+    /* reset statistical counters */
+
+    E->trace.istat_isend=0;
+    E->trace.istat_iempty=0;
+    E->trace.istat_elements_checked=0;
+    E->trace.istat1=0;
+
+
+    /* some obscure initial parameters */
+    /* This parameter specifies how close a tracer can get to the boundary */
+    E->trace.box_cushion=0.00001;
+
+    /* Determine number of tracer quantities */
+
+    /* advection_quantites - those needed for advection */
+    E->trace.number_of_basic_quantities=12;
+
+    /* extra_quantities - used for flavors, composition, etc.    */
+    /* (can be increased for additional science i.e. tracing chemistry */
+
+    E->trace.number_of_extra_quantities = 0;
+    if (E->trace.nflavors > 0)
+        E->trace.number_of_extra_quantities += 1;
+    if (E->trace.tracer_origin)
+        E->trace.number_of_extra_quantities += 3;
+    if (E->trace.hotspot_tracks)
+        E->trace.number_of_extra_quantities += 1;
+
+    E->trace.number_of_tracer_quantities =
+            E->trace.number_of_basic_quantities +
+            E->trace.number_of_extra_quantities;
+
+
+    /* Fixed positions in tracer array */
+    /* Flavor is always in extraq position 0  */
+    /* Current coordinates are always kept in basicq positions 0-5 */
+    /* Other positions may be used depending on science being done */
+
+
+    /* Some error control regarding size of pointer arrays */
+
+    if (E->trace.number_of_basic_quantities>99) {
+        fprintf(E->trace.fpt,"ERROR(initialize_trace)-increase 2nd position size of basic in tracer_defs.h\n");
+        fflush(E->trace.fpt);
+        parallel_process_termination();
+    }
+    if (E->trace.number_of_extra_quantities>99) {
+        fprintf(E->trace.fpt,"ERROR(initialize_trace)-increase 2nd position size of extraq in tracer_defs.h\n");
+        fflush(E->trace.fpt);
+        parallel_process_termination();
+    }
+    if (E->trace.number_of_tracer_quantities>99) {
+        fprintf(E->trace.fpt,"ERROR(initialize_trace)-increase 2nd position size of rlater in tracer_defs.h\n");
+        fflush(E->trace.fpt);
+        parallel_process_termination();
+    }
+
+    write_trace_instructions(E);
+
+    (E->problem_tracer_setup)(E);
+
+    if (E->composition.on)
+        composition_setup(E);
+
+    fprintf(E->trace.fpt, "Tracer initialization takes %f seconds.\n",
+            CPU_time0() - begin_time);
+
+}
+
+/**** WRITE TRACE INSTRUCTIONS ***************/
+static void write_trace_instructions(struct All_variables *E)
+{
+    int i;
+
+    fprintf(E->trace.fpt,"\nTracing Activated! (proc: %d)\n",E->parallel.me);
+    fprintf(E->trace.fpt,"   Allen K. McNamara 12-2003\n\n");
+
+    if (E->trace.ic_method==0)
+        {
+            fprintf(E->trace.fpt,"Generating New Tracer Array\n");
+            fprintf(E->trace.fpt,"Tracers per element: %d\n",E->trace.itperel);
+        }
+    if (E->trace.ic_method==1)
+        {
+            fprintf(E->trace.fpt,"Reading tracer file %s\n",E->trace.tracer_file);
+        }
+    if (E->trace.ic_method==2)
+        {
+            fprintf(E->trace.fpt,"Reading individual tracer files\n");
+        }
+
+    fprintf(E->trace.fpt,"Number of tracer flavors: %d\n", E->trace.nflavors);
+
+    if (E->trace.nflavors && E->trace.ic_method==0) {
+        fprintf(E->trace.fpt,"Initialized tracer flavors by: %d\n", E->trace.ic_method_for_flavors);
+        if (E->trace.ic_method_for_flavors == 0) {
+          /* default mode 0 */
+            fprintf(E->trace.fpt,"Layered tracer flavors\n");
+            for (i=0; i<E->trace.nflavors-1; i++)
+                fprintf(E->trace.fpt,"Interface Height: %d %f\n",i,E->trace.z_interface[i]);
+        }
+#ifdef USE_GGRD
+        else if((E->trace.ic_method_for_flavors == 1)||(E->trace.ic_method_for_flavors == 99)) {
+          /* ggrd modes 1 and 99 (99  is override for restart) */
+            fprintf(E->trace.fpt,"netcdf grd assigned tracer flavors\n");
+            if( E->trace.ggrd_layers > 0)
+              fprintf(E->trace.fpt,"file: %s top %i layers\n",E->trace.ggrd_file,
+                      E->trace.ggrd_layers);
+            else
+              fprintf(E->trace.fpt,"file: %s only layer %i\n",E->trace.ggrd_file,
+                      -E->trace.ggrd_layers);
+
+        }
+#endif
+
+       else if (E->trace.ic_method_for_flavors == 2) {
+            fprintf(E->trace.fpt,"Sphere in depth\n");
+                fprintf(E->trace.fpt,"Center Height: %f\n",E->convection.blob_center[2]);
+        }
+       else if (E->trace.ic_method_for_flavors == 3) {
+            fprintf(E->trace.fpt,"Flavors in Lithosphere and CMB\n");
+        }
+
+        else {
+            fprintf(E->trace.fpt,"Sorry-This IC methods for Flavors are Unavailable %d\n",E->trace.ic_method_for_flavors);
+            fflush(E->trace.fpt);
+            parallel_process_termination();
+        }
+    }
+
+    for (i=0; i<E->trace.nflavors-2; i++) {
+        if (E->trace.z_interface[i] < E->trace.z_interface[i+1]) {
+            fprintf(E->trace.fpt,"Sorry - The %d-th z_interface is smaller than the next one.\n", i);
+            fflush(E->trace.fpt);
+            parallel_process_termination();
+        }
+    }
+
+
+
+
+
+    /* regular grid stuff */
+    if(E->parallel.nprocxy == 12)
+        fprintf(E->trace.fpt,"Regular Grid-> deltheta: %f delphi: %f\n",
+                E->trace.deltheta[0],E->trace.delphi[0]);
+
+
+
+
+    /* more obscure stuff */
+
+    fprintf(E->trace.fpt,"Box Cushion: %f\n",E->trace.box_cushion);
+    fprintf(E->trace.fpt,"Number of Basic Quantities: %d\n",
+            E->trace.number_of_basic_quantities);
+    fprintf(E->trace.fpt,"Number of Extra Quantities: %d\n",
+            E->trace.number_of_extra_quantities);
+    fprintf(E->trace.fpt,"Total Number of Tracer Quantities: %d\n",
+            E->trace.number_of_tracer_quantities);
+
+
+    /* analytical test */
+
+    if(E->parallel.nprocxy == 12)
+        if (E->trace.ianalytical_tracer_test==1)
+        {
+            fprintf(E->trace.fpt,"\n\n ! Analytical Test Being Performed ! \n");
+            fprintf(E->trace.fpt,"(some of the above parameters may not be used or applied\n");
+            fprintf(E->trace.fpt,"Velocity functions given in main code\n");
+            fflush(E->trace.fpt);
+        }
+
+    if (E->trace.itracer_warnings==0)
+        {
+            fprintf(E->trace.fpt,"\n WARNING EXITS ARE TURNED OFF! TURN THEM ON!\n");
+            fprintf(stderr,"\n WARNING EXITS ARE TURNED OFF! TURN THEM ON!\n");
+            fflush(E->trace.fpt);
+        }
+
+    write_composition_instructions(E);
+    return;
+}
 
 
 /*****************************************************************************/
@@ -1912,25 +2122,44 @@ int icheck_that_processor_shell(struct All_variables *E,
     return 0;
 }
 
+const int tracer_in_hotspot_region(const struct All_variables *E, const int j, const int kk)
+{
+    if (E->trace.basicq[j][2][kk] > 0.9985)
+        return 1;
+    else
+        return 0;
+}
+
+const double get_element_temperature(const struct All_variables *E, const int j, const int el)
+{
+    double element_temperature = 0.0;
+    const int ends = enodes[E->mesh.nsd];
+    int jj;
+
+    for(jj=1;jj<=ends;jj++)
+        element_temperature += E->T[j][E->ien[j][el].node[jj]];
+    return element_temperature / ends;
+}
+
+const int tracer_in_melting_region(const struct All_variables *E, const int j, const int kk)
+{
+    const int el = E->trace.ielement[j][kk];
+    const double element_temperature = get_element_temperature (E,j,el);
+    
+    if (element_temperature >= E->control.mantle_temp + 150.0 / E->data.ref_temperature)
+        return 1;
+    return 0;
+}
+
 void mark_hotspot_tracks(struct All_variables *E)
 {
-    int j,jj,kk,el;
-    double element_temperature;
-    const int ends = enodes[E->mesh.nsd];
-
+    int j,kk,el;
 
     for (j=1;j<=E->sphere.caps_per_proc;j++)
         for (kk=1;kk<=E->trace.ntracers[j];kk++)
-            if ((E->trace.basicq[j][2][kk] > 0.9985) && (E->trace.extraq[j][0][kk] == 0))
-            {
-                el = E->trace.ielement[j][kk];
-                element_temperature = 0.0;
-                for(jj=1;jj<=ends;jj++)
-                    element_temperature += E->T[j][E->ien[j][el].node[jj]];
-                element_temperature /= ends;
-                if (element_temperature >= E->control.mantle_temp + 150.0 / E->data.ref_temperature)
-                    E->trace.extraq[j][1][kk] = E->monitor.elapsed_time;
-            }
+            if (tracer_in_hotspot_region(E,j,kk) && tracer_in_melting_region(E,j,kk))
+                E->trace.extraq[j][1][kk] = E->monitor.elapsed_time;
+
 }
 
 void set_tracer_origin(struct All_variables *E)
