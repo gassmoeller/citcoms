@@ -1914,21 +1914,23 @@ int icheck_that_processor_shell(struct All_variables *E,
 
 void mark_hotspot_tracks(struct All_variables *E)
 {
-    int j,jj,kk,el_idx;
+    int j,jj,kk,el;
     double element_temperature;
+    const int ends = enodes[E->mesh.nsd];
+
 
     for (j=1;j<=E->sphere.caps_per_proc;j++)
-      for (kk=1;kk<=E->trace.ntracers[j];kk++)
-        if ((E->trace.basicq[j][2][kk] > 0.9985) && (E->trace.extraq[j][0][kk] == 0))
-        {
-        	el_idx = E->trace.ielement[j][kk];
-    		element_temperature = 0.0;
-			for(jj=1;jj<=8;jj++)
-				element_temperature += E->T[j][E->ien[j][el_idx].node[jj]];
-			element_temperature /= 8.0;
-			if (element_temperature >= E->control.mantle_temp + 150.0 / E->data.ref_temperature)
-					E->trace.extraq[j][1][kk] = E->monitor.elapsed_time;
-        }
+        for (kk=1;kk<=E->trace.ntracers[j];kk++)
+            if ((E->trace.basicq[j][2][kk] > 0.9985) && (E->trace.extraq[j][0][kk] == 0))
+            {
+                el = E->trace.ielement[j][kk];
+                element_temperature = 0.0;
+                for(jj=1;jj<=ends;jj++)
+                    element_temperature += E->T[j][E->ien[j][el].node[jj]];
+                element_temperature /= ends;
+                if (element_temperature >= E->control.mantle_temp + 150.0 / E->data.ref_temperature)
+                    E->trace.extraq[j][1][kk] = E->monitor.elapsed_time;
+            }
 }
 
 void set_tracer_origin(struct All_variables *E)
