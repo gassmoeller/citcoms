@@ -243,21 +243,14 @@ class Solver(Component):
         dt = self.dt
         t = self.t
 
-        #output_timing = 1.0 Ma
-        output_timing = 7.774792e-7
-        #start_timing = 322 Ma for CMB-T1000
-        start_timing = 2.503483e-4
-        #start_timing = 750 Ma for CMB-T1000-long
-        #start_timing = 5.831094e-4
-
-        # output spacing is 'monitoringFrequency'
+#        output spacing is 'monitoringFrequency'
 #        if not (step % monitoringFrequency):
 #            output(self.all_variables, step)
 
         if (step == 0):
             output(self.all_variables, step)
 
-        if ((dt > outputTimeStep) or ((t-dt) % outputTimeStep > t % outputTimeStep)) and (t >= outputStartTime):
+        if ( (outputTimeStep == 0) or (dt > outputTimeStep) or ((t-dt) % outputTimeStep > t % outputTimeStep)) and (t >= outputStartTime):
             output(self.all_variables, step)
 
         output_time(self.all_variables, step)
