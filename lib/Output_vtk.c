@@ -30,6 +30,7 @@
 
 
 #include <math.h>
+#include <unistd.h>
 #include "element_definitions.h"
 #include "global_defs.h"
 #include "output.h"
@@ -853,25 +854,30 @@ void write_pvd(struct All_variables *E, int cycles)
         fp = output_open(pvd_file, "w");
         const char format[] =
             "<?xml version=\"1.0\"?>\n"
-            "<VTKFile type=\"Collection\" version=\"0.1\" compressor=\"vtkZLibDataCompressor\" byte_order=\"LittleEndian\">\n"
+            "<VTKFile type=\"Collection\" version=\"0.1\"%s>\n"
             "  <Collection>\n";
 
-        fputs(format,fp);
-        fclose(fp);
+        char compressor_string[128];
+
+        get_compressor_string(strcmp(E->output.vtk_format,"binary"),128,compressor_string);
+
+        fprintf(fp,format,compressor_string);
     }
-    fp = output_open(pvd_file, "a");
+    else
+    {
+        fp = output_open(pvd_file, "r+");
+        fseek(fp, -27, SEEK_END);
+    }
 
     for (i=0;i<E->sphere.caps;i++){
         fprintf(fp, "    <DataSet timestep=\"%.0f\" group=\"\" part=\"%d\" file=\"%s.%d.%d.pvts\"/>\n",E->monitor.elapsed_time*E->data.scalet*1000,i,E->control.data_prefix,i,cycles);
     }
     fflush(fp);
-    if (cycles == E->output.steps){
-        const char format[] = 
+    const char format[] =
             "  </Collection>\n"
             "</VTKFile>\n";
-        fputs(format,fp);
-        fclose(fp);
-    }
+    fputs(format,fp);
+    fclose(fp);
 }
 
 static void vtk_tracer_extraq(struct All_variables *E, int idx_extraq, FILE *fp)
