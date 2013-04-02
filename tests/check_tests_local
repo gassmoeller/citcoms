@@ -21,7 +21,7 @@ then
 status="failed"
 diff_log_file=$reference_results/$testcase/data/$file.diff
 echo "$Diff from `date`" > $diff_log_file
-diff $reference_results/$testcase/data/$file $recent_results/$testcase/data/$file >> $diff_log_file
+diff $reference_results/$testcase/data/$file $reference_results/$testcase/reference_data/$file >> $diff_log_file
 fi
 
 difference=""
