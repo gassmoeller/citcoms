@@ -51,51 +51,51 @@ int layers_r(struct All_variables *,float);
 void allocate_perplex_refstate(struct All_variables *E)
 {
 
-	int noz = E->lmesh.noz;
-	int nno = E->lmesh.nno;
-	int nel = E->lmesh.nel;
-	int i,j;
+    int noz = E->lmesh.noz;
+    int nno = E->lmesh.nno;
+    int nel = E->lmesh.nel;
+    int i,j;
 
-	/* reference profile of density */
-		E->refstate.tab_density = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
-		for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
-			E->refstate.tab_density[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
-			for (j=1;j<=E->composition.ntdeps;j++){
-				E->refstate.tab_density[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
-			}
-		}
+    /* reference profile of density */
+    E->refstate.tab_density = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
+    for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
+        E->refstate.tab_density[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
+        for (j=1;j<=E->composition.ntdeps;j++){
+            E->refstate.tab_density[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
+        }
+    }
 
-		/* reference profile of coefficient of thermal expansion */
-		E->refstate.tab_thermal_expansivity = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
-		for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
-			E->refstate.tab_thermal_expansivity[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
-			for (j=1;j<=E->composition.ntdeps;j++){
-				E->refstate.tab_thermal_expansivity[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
-			}
+    /* reference profile of coefficient of thermal expansion */
+    E->refstate.tab_thermal_expansivity = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
+    for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
+        E->refstate.tab_thermal_expansivity[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
+        for (j=1;j<=E->composition.ntdeps;j++){
+            E->refstate.tab_thermal_expansivity[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
+        }
 
-		}
+    }
 
-		/* reference profile of heat capacity */
-		E->refstate.tab_heat_capacity = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
-		for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
-			E->refstate.tab_heat_capacity[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
-			for (j=1;j<=E->composition.ntdeps;j++){
-				E->refstate.tab_heat_capacity[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
-			}
-		}
+    /* reference profile of heat capacity */
+    E->refstate.tab_heat_capacity = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
+    for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
+        E->refstate.tab_heat_capacity[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
+        for (j=1;j<=E->composition.ntdeps;j++){
+            E->refstate.tab_heat_capacity[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
+        }
+    }
 
-		/* reference profile of coefficient of seismic velocity */
-		E->refstate.tab_seismic_vp = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
-		E->refstate.tab_seismic_vs = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
-		for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
-			E->refstate.tab_seismic_vp[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
-			E->refstate.tab_seismic_vs[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
-			for (j=1;j<=E->composition.ntdeps;j++){
-				E->refstate.tab_seismic_vp[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
-				E->refstate.tab_seismic_vs[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
-			}
+    /* reference profile of coefficient of seismic velocity */
+    E->refstate.tab_seismic_vp = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
+    E->refstate.tab_seismic_vs = (double ***) malloc((E->composition.pressure_oversampling*(noz-1)+2)*sizeof(double **));
+    for (i=1;i<=E->composition.pressure_oversampling*(noz-1)+1;i++){
+        E->refstate.tab_seismic_vp[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
+        E->refstate.tab_seismic_vs[i] = (double **) malloc((E->composition.ntdeps+1)*sizeof(double *));
+        for (j=1;j<=E->composition.ntdeps;j++){
+            E->refstate.tab_seismic_vp[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
+            E->refstate.tab_seismic_vs[i][j] = (double *) malloc((E->composition.ncomp+2)*sizeof(double));
+        }
 
-		}
+    }
 }
 
 void allocate_refstate(struct All_variables *E)
