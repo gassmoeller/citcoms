@@ -12,6 +12,6 @@
     <PPoints>
       <DataArray type="Float32" Name="coordinate" NumberOfComponents="3" format="binary" />
     </PPoints>
-    <Piece Source="mark_hotspots_test.tracer_file.0.10.vtp"/>
+    <Piece Source="hotspots_test.tracer_file.0.10.vtp"/>
   </PPolyData>
 </VTKFile>
