@@ -131,6 +131,7 @@ void tracer_input(struct All_variables *E)
 
         if (E->trace.ic_method==0){
             input_int("tracers_per_element",&(E->trace.itperel),"10,0,nomax",m);
+            input_int("deterministic_initial_tracer_positions",&(E->trace.deterministic_initial_tracer_positions),"0,0,1",m);
 	}
         else if (E->trace.ic_method==1)
             input_string("tracer_file",E->trace.tracer_file,"tracer.dat",m);
@@ -1044,6 +1045,9 @@ static void generate_random_tracers(struct All_variables *E,
     /* Tracers are placed randomly in cap */
     /* (intentionally using rand() instead of srand() )*/
 
+    if (E->trace.deterministic_initial_tracer_positions == 1)
+        srand48(0);
+
     while (E->trace.ntracers[j]<tracers_cap) {
 
         number_of_tries++;
@@ -1051,7 +1055,7 @@ static void generate_random_tracers(struct All_variables *E,
 
         if (number_of_tries>max_tries) {
             fprintf(E->trace.fpt,"Error(make_tracer_array)-too many tries?\n");
-            fprintf(E->trace.fpt,"%d %d %d\n",max_tries,number_of_tries,RAND_MAX);
+            fprintf(E->trace.fpt,"%d %d %d %d\n",max_tries,number_of_tries,E->trace.ntracers[j],RAND_MAX);
             fflush(E->trace.fpt);
             exit(10);
         }

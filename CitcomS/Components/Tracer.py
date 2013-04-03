@@ -74,6 +74,7 @@ class Tracer(CitcomComponent):
 
         # (tracer_ic_method == 0)
         tracers_per_element = inv.int("tracers_per_element", default=10)
+        deterministic_initial_tracer_positions = inv.int("deterministic_initial_tracer_positions", default=0)
 
         # (tracer_ic_method == 1)
         tracer_file = inv.str("tracer_file", default="tracer.dat")
