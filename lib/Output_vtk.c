@@ -30,7 +30,6 @@
 
 
 #include <math.h>
-#include <unistd.h>
 #include "element_definitions.h"
 #include "global_defs.h"
 #include "output.h"
@@ -47,6 +46,12 @@ static void write_int_binary_array(int nn, int* array, FILE * f);
 static void write_ascii_array_float(int nn, int perLine, float *array, FILE *fp);
 static void write_ascii_array_double(int nn, int perLine, double *array, FILE *fp);
 static void write_ascii_array(int nn, int perLine, int ascii_precision, double *array, FILE *fp);
+
+
+const float get_time_in_Myears(struct All_variables *E)
+{
+    return E->monitor.elapsed_time * E->data.scalet;
+}
 
 // TODO: Write a unit test for this function. Should be pretty easy except from including this source file.
 void get_compressor_string(int is_not_binary, int string_length, char* compressor_string)
@@ -695,6 +700,44 @@ void vtk_output_surf_botm(struct All_variables *E,  FILE *fp, int cycles)
   return;
 }
 
+void vtk_output_geoid(struct All_variables *E, int cycles)
+{
+    void compute_geoid();
+    int ll, mm, p;
+    char output_file[255];
+    FILE *fp1;
+
+    compute_geoid(E);
+
+    if (E->parallel.me == (E->parallel.nprocz-1))  {
+        sprintf(output_file, "%s.geoid.%d.%d", E->control.data_file,
+                E->parallel.me, cycles);
+        fp1 = output_open(output_file, "w");
+
+        /* write headers */
+        fprintf(fp1, "%d %d %.5e\n", cycles, E->output.llmax,
+                E->monitor.elapsed_time);
+
+        /* write sph harm coeff of geoid and topos */
+        for (ll=0; ll<=E->output.llmax; ll++)
+            for(mm=0; mm<=ll; mm++)  {
+                p = E->sphere.hindex[ll][mm];
+                fprintf(fp1,"%d %d %.4e %.4e %.4e %.4e %.4e %.4e\n",
+                        ll, mm,
+                        E->sphere.harm_geoid[0][p],
+                        E->sphere.harm_geoid[1][p],
+                        E->sphere.harm_geoid_from_tpgt[0][p],
+                        E->sphere.harm_geoid_from_tpgt[1][p],
+                        E->sphere.harm_geoid_from_bncy[0][p],
+                        E->sphere.harm_geoid_from_bncy[1][p]);
+            }
+
+        fclose(fp1);
+    }
+}
+
+
+
 void write_pvtp(struct All_variables *E, int cycles)
 {
     FILE *fp;
@@ -870,7 +913,7 @@ void write_pvd(struct All_variables *E, int cycles)
     }
 
     for (i=0;i<E->sphere.caps;i++){
-        fprintf(fp, "    <DataSet timestep=\"%.0f\" group=\"\" part=\"%d\" file=\"%s.%d.%d.pvts\"/>\n",E->monitor.elapsed_time*E->data.scalet*1000,i,E->control.data_prefix,i,cycles);
+        fprintf(fp, "    <DataSet timestep=\"%.3f\" group=\"\" part=\"%d\" file=\"%s.%d.%d.pvts\"/>\n",get_time_in_Myears(E),i,E->control.data_prefix,i,cycles);
     }
     fflush(fp);
     const char format[] =
@@ -1338,6 +1381,10 @@ void vtk_output(struct All_variables *E, int cycles)
 
     if (E->output.surf){
     vtk_output_surf_botm(E, fp, cycles);}
+
+    if (E->output.geoid){
+        vtk_output_geoid(E,cycles);
+    }
 
     if (E->output.density){
     vtk_output_dens(E, fp);}
