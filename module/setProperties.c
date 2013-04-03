@@ -664,6 +664,9 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
     getIntProperty(properties, "tracer_origin", E->trace.tracer_origin, fp);
     getFloatProperty(properties, "tracer_origin_set_time", E->trace.tracer_origin_set_time, fp);
     getIntProperty(properties, "hotspot_tracks", E->trace.hotspot_tracks, fp);
+    getDoubleProperty(properties, "hotspot_depth", E->trace.hotspot_depth, fp);
+    getDoubleProperty(properties, "hotspot_delta_temperature", E->trace.hotspot_delta_temperature, fp);
+
 
     getIntProperty(properties, "tdep_buoyancy", E->composition.tdep_buoyancy, fp);
     getIntProperty(properties, "pressure_oversampling", E->composition.pressure_oversampling, fp);

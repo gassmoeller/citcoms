@@ -73,6 +73,8 @@ struct TRACE{
 
     /* whether to track hot material at the surface */
     int hotspot_tracks;
+    double hotspot_depth;
+    double hotspot_delta_temperature;
 
     int ic_method_for_flavors;
     double *z_interface;

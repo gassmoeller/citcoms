@@ -125,6 +125,8 @@ class Tracer(CitcomComponent):
         tracer_origin_set_time = inv.float("tracer_origin_set_time", default=0.0)
         chemical_changes = inv.int("chemical_changes", default=0)
         hotspot_tracks = inv.int("hotspot_tracks", default=0)
+        hotspot_depth = inv.float("hotspot_depth", default=0.95)
+        hotspot_delta_temperature = inv.float("hotspot_delta_temperature", default=0.1)
         
         # This is not used anymore and is left here for backward compatibility
         reset_initial_composition = inv.bool("reset_initial_composition",

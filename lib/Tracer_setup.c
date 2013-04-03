@@ -209,11 +209,11 @@ void tracer_input(struct All_variables *E)
         E->trace.tracer_origin_set = 0;
         input_float("tracer_origin_set_time",&(E->trace.tracer_origin_set_time),"0,0,nomax",m);
 
-        input_int("hotspot_tracks",&(E->trace.hotspot_tracks),"0,0,nomax",m);
-
-
         /* whether to track hot material at the surface */
-        int hotspot_tracks;
+        input_int("hotspot_tracks",&(E->trace.hotspot_tracks),"0,0,1",m);
+        input_double("hotspot_depth",&(E->trace.hotspot_depth),"0.95,0,nomax",m);
+        input_double("hotspot_delta_temperature",&(E->trace.hotspot_delta_temperature),"0.1,0,nomax",m);
+
 
         if(E->parallel.nprocxy == 12)
             full_tracer_input(E);
@@ -2124,7 +2124,7 @@ int icheck_that_processor_shell(struct All_variables *E,
 
 const int tracer_in_hotspot_region(const struct All_variables *E, const int j, const int kk)
 {
-    if (E->trace.basicq[j][2][kk] > 0.9985)
+    if (E->trace.basicq[j][2][kk] > E->trace.hotspot_depth)
         return 1;
     else
         return 0;
@@ -2146,7 +2146,7 @@ const int tracer_in_melting_region(const struct All_variables *E, const int j, c
     const int el = E->trace.ielement[j][kk];
     const double element_temperature = get_element_temperature (E,j,el);
     
-    if (element_temperature >= E->control.mantle_temp + 150.0 / E->data.ref_temperature)
+    if (element_temperature >= E->control.mantle_temp + E->trace.hotspot_delta_temperature)
         return 1;
     return 0;
 }
@@ -2157,8 +2157,13 @@ void mark_hotspot_tracks(struct All_variables *E)
 
     for (j=1;j<=E->sphere.caps_per_proc;j++)
         for (kk=1;kk<=E->trace.ntracers[j];kk++)
+        {
+            //fprintf(stdout, "Region=%d Melting=%d\n",region,melting);
             if (tracer_in_hotspot_region(E,j,kk) && tracer_in_melting_region(E,j,kk))
                 E->trace.extraq[j][1][kk] = E->monitor.elapsed_time;
+
+        }
+
 
 }
 
