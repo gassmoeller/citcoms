@@ -2148,7 +2148,16 @@ const int tracer_in_melting_region(const struct All_variables *E, const int j, c
     
     if (element_temperature >= E->control.mantle_temp + E->trace.hotspot_delta_temperature)
         return 1;
-    return 0;
+    else
+        return 0;
+}
+
+const int tracer_not_yet_hotspot_chain(const struct All_variables *E, const int j, const int kk)
+{
+    if (E->trace.extraq[j][1][kk] <= D_EPS)
+        return 1;
+    else
+        return 0;
 }
 
 void mark_hotspot_tracks(struct All_variables *E)
@@ -2159,7 +2168,9 @@ void mark_hotspot_tracks(struct All_variables *E)
         for (kk=1;kk<=E->trace.ntracers[j];kk++)
         {
             //fprintf(stdout, "Region=%d Melting=%d\n",region,melting);
-            if (tracer_in_hotspot_region(E,j,kk) && tracer_in_melting_region(E,j,kk))
+            if (tracer_in_hotspot_region(E,j,kk) &&
+                    tracer_in_melting_region(E,j,kk) &&
+                    tracer_not_yet_hotspot_chain(E,j,kk))
                 E->trace.extraq[j][1][kk] = E->monitor.elapsed_time;
 
         }

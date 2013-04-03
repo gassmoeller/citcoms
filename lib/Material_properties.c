@@ -36,8 +36,6 @@
 #include "material_properties.h"
 #include "parallel_related.h"
 
-#define EPS 1e-7
-
 static void read_refstate(struct All_variables *E);
 static void read_perplexfile(struct All_variables *E);
 static void read_densityfile(struct All_variables *E);
@@ -470,7 +468,7 @@ const double get_refTemp(const struct All_variables *E, const int m, const int n
 {
 	//const double compressible_factor = fmax(0, E->control.disptn_number)
 	//		/ fmax(1e-7, E->control.disptn_number);
-	const double compressible_factor = (E->control.disptn_number <= EPS) ? 0.0 : 1.0;
+	const double compressible_factor = (E->control.disptn_number <= F_EPS) ? 0.0 : 1.0;
 	const double compressible_correction = E->refstate.Tadi[nz]
 			- E->control.adiabaticT0 * E->data.ref_temperature;
 

@@ -105,6 +105,9 @@ extern "C" {
 #define MAX_LEVELS 12   /* max. number of multigrid levels */
 #define NCS      14   /* max. number of sphere caps */
 
+#define D_EPS 1e-14
+#define F_EPS 1e-6
+
 /* type of elt_del and elt_c arrays */
 /* double precision doesn't help,
  * probably due to the coordinate transformation c33matrix */
