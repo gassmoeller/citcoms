@@ -396,7 +396,7 @@ void vtk_output_seismic(struct All_variables *E, int cycles, FILE *fp)
             fprintf(fp2,"Radius PremVP PremVS PremRho AverageVP AverageVS AverageRho\n");
             for (nz=1;nz <= E->lmesh.noz;nz++){
                 get_prem(E->sx[1][3][nz], &premvp, &premvs, &premrho);
-                fprintf(fp2,"%f %f %f %f %f %f %f\n", E->sx[1][3][nz], premvp,premvs,premrho*1000,avp[nz],avs[nz],arho[nz]*E->data.density);
+                fprintf(fp2,"%lf %lf %lf %lf %lf %lf %.4lf\n", E->sx[1][3][nz], premvp,premvs,premrho*1000,avp[nz],avs[nz],arho[nz]*E->data.density);
             }
             fclose(fp2);
         }
