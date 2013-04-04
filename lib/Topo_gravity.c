@@ -840,7 +840,7 @@ void compute_geoid(E)
                               E->sphere.harm_geoid_from_tpgt,
                               E->sphere.harm_geoid_from_tpgb);
 
-    if (E->parallel.me == (E->parallel.nprocz-1))  {
+    if (E->parallel.me_loc[3] == (E->parallel.nprocz-1))  {
         for (i = 0; i < 2; i++)
             for (p = 0; p < E->sphere.hindice; p++) {
                 E->sphere.harm_geoid[i][p]

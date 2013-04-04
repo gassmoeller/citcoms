@@ -46,6 +46,8 @@ static void write_int_binary_array(int nn, int* array, FILE * f);
 static void write_ascii_array_float(int nn, int perLine, float *array, FILE *fp);
 static void write_ascii_array_double(int nn, int perLine, double *array, FILE *fp);
 static void write_ascii_array(int nn, int perLine, int ascii_precision, double *array, FILE *fp);
+double modified_plgndr_a(int, int, double);
+
 
 
 const float get_time_in_Myears(struct All_variables *E)
@@ -700,7 +702,7 @@ void vtk_output_surf_botm(struct All_variables *E,  FILE *fp, int cycles)
   return;
 }
 
-void vtk_output_geoid(struct All_variables *E, int cycles)
+void vtk_output_geoid(struct All_variables *E, FILE *fp, int cycles)
 {
     void compute_geoid();
     int ll, mm, p;
@@ -734,6 +736,45 @@ void vtk_output_geoid(struct All_variables *E, int cycles)
 
         fclose(fp1);
     }
+
+    const int nodes = E->sphere.caps_per_proc*E->lmesh.nno;
+    const int me_surface_proc = (E->parallel.me_loc[3] == E->parallel.nprocz - 1) ? 1 : 0;
+    double* geoid = calloc (nodes,sizeof(double));
+    int i,j,k,node;
+    double t1,f1;
+
+    for(j=1;j<=E->sphere.caps_per_proc;j++){
+    	for(i=1;i<=E->lmesh.nno;i++){
+    		if ((me_surface_proc) && (idxNz(i,E->lmesh.noz) == E->lmesh.noz)){
+    			t1 = E->sx[j][1][i];
+    			f1 = E->sx[j][2][i];
+    			for (ll=0; ll<=E->output.llmax; ll++)
+    			{
+    				for(mm=0; mm<=ll; mm++)  {
+    					p = E->sphere.hindex[ll][mm];
+    					geoid[(j-1)*E->lmesh.nno + i - 1] += modified_plgndr_a(ll,mm,t1)
+    							* ((double)(E->sphere.harm_geoid[0][p])* cos(mm*f1)
+    							+ (double) E->sphere.harm_geoid[1][p] * sin(mm*f1));
+    					//fprintf(stderr,"%e\n",geoid[(j-1)*E->lmesh.nno + i - 1]);
+
+    				}
+    			}
+    		}
+    		else
+    			geoid[(j-1)*E->lmesh.nno + i - 1] = 0.0;
+    	}
+    }
+
+    fprintf(fp,"        <DataArray type=\"Float32\" Name=\"geoid\" format=\"%s\">\n", E->output.vtk_format);
+    if (strcmp(E->output.vtk_format, "binary") == 0)
+        write_binary_array_double(nodes,geoid,fp);
+    else
+        write_ascii_array_double(nodes,1,geoid,fp);
+
+    fputs("        </DataArray>\n", fp);
+
+  free(geoid);
+
 }
 
 
@@ -741,11 +782,11 @@ void vtk_output_geoid(struct All_variables *E, int cycles)
 void write_pvtp(struct All_variables *E, int cycles)
 {
     FILE *fp;
-    char pvts_file[255];
+    char pvtp_file[255];
     int i,j,k,l;
-    snprintf(pvts_file, 255, "%s.tracer_file.%d.pvtp",
+    snprintf(pvtp_file, 255, "%s.tracer_file.%d.pvtp",
     E->control.data_file,cycles);
-    fp = output_open(pvts_file, "w");
+    fp = output_open(pvtp_file, "w");
 
     const char format[] =
         "<?xml version=\"1.0\"?>\n"
@@ -824,6 +865,11 @@ void write_pvts(struct All_variables *E, int cycles)
         fprintf(fp,"      <DataArray type=\"Float32\" Name=\"surface\" format=\"%s\"/>\n", E->output.vtk_format); 
         fprintf(fp,"      <DataArray type=\"Float32\" Name=\"heatflux\" format=\"%s\"/>\n", E->output.vtk_format); 
     }
+
+    if (E->output.geoid){
+        fprintf(fp,"      <DataArray type=\"Float32\" Name=\"geoid\" format=\"%s\"/>\n", E->output.vtk_format);
+    }
+
     if (E->output.density){
         fprintf(fp,"      <DataArray type=\"Float32\" Name=\"density\" format=\"%s\"/>\n", E->output.vtk_format); 
     }
@@ -1383,7 +1429,7 @@ void vtk_output(struct All_variables *E, int cycles)
     vtk_output_surf_botm(E, fp, cycles);}
 
     if (E->output.geoid){
-        vtk_output_geoid(E,cycles);
+        vtk_output_geoid(E,fp,cycles);
     }
 
     if (E->output.density){
