@@ -146,7 +146,7 @@ void allocate_refstate(struct All_variables *E)
 void mat_prop_allocate(struct All_variables *E)
 {
 	allocate_refstate(E);
-	if (E->composition.tdep_buoyancy == 1)
+	if (E->refstate.choice == 3)
 		allocate_perplex_refstate(E);
 }
 
@@ -584,7 +584,7 @@ const double get_property_el_refstate(struct All_variables *E, double* property,
 
 double get_cp_el(struct All_variables *E, int m, int el)
 {
-	if (E->composition.tdep_buoyancy == 1)
+	if (E->refstate.choice == 3)
 	{
 		const int temperature_accurate = 0;
 		return get_property_el_perplex(E,E->refstate.tab_heat_capacity,m,el,temperature_accurate);
@@ -598,7 +598,7 @@ double get_cp_el(struct All_variables *E, int m, int el)
 
 double get_cp_nd(struct All_variables *E, int m, int nn)
 {
-	if (E->composition.tdep_buoyancy == 1)
+	if (E->refstate.choice == 3)
 	{
 		const int temperature_accurate = 0;
 		return get_property_nd_perplex(E,E->refstate.tab_heat_capacity,m,nn,temperature_accurate);
@@ -612,7 +612,7 @@ double get_cp_nd(struct All_variables *E, int m, int nn)
 
 double get_alpha_nd(struct All_variables *E, int m, int nn)
 {
-	if (E->composition.tdep_buoyancy == 1)
+	if (E->refstate.choice == 3)
 	{
 		const int temperature_accurate = 0;
 		return get_property_nd_perplex(E,E->refstate.tab_thermal_expansivity,m,nn,temperature_accurate);
@@ -626,7 +626,7 @@ double get_alpha_nd(struct All_variables *E, int m, int nn)
 
 double get_alpha_el(struct All_variables *E, int m, int el)
 {
-	if (E->composition.tdep_buoyancy == 1)
+	if (E->refstate.choice == 3)
 	{
 		const int temperature_accurate = 0;
 		return get_property_el_perplex(E,E->refstate.tab_thermal_expansivity,m,el,temperature_accurate);
@@ -640,7 +640,7 @@ double get_alpha_el(struct All_variables *E, int m, int el)
 
 double get_rho_el(struct All_variables *E, int m, int el)
 {
-	if (E->composition.tdep_buoyancy == 1)
+	if (E->refstate.choice == 3)
 	{
 		const int temperature_accurate = 1;
 		return get_property_el_perplex(E,E->refstate.tab_density,m,el,temperature_accurate);
@@ -654,7 +654,7 @@ double get_rho_el(struct All_variables *E, int m, int el)
 
 double get_rho_nd(struct All_variables *E, int m, int nn)
 {
-	if (E->composition.tdep_buoyancy == 1)
+	if (E->refstate.choice == 3)
 	{
 		const int temperature_accurate = 1;
 		return get_property_nd_perplex(E,E->refstate.tab_density,m,nn,temperature_accurate);

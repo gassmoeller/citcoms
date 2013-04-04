@@ -149,7 +149,7 @@ void apply_side_sbc(struct All_variables *E)
 double get_material_buoyancy(struct All_variables *E, int m, int i)
 {
 
-	if (E->composition.tdep_buoyancy == 1)
+	if (E->refstate.choice == 3)
 	{
 		return -1.0 * get_rho_nd(E,m,i) / (E->data.therm_exp * E->data.ref_temperature);
 	}
