@@ -6,7 +6,11 @@ reference_data=$1reference_data
 test_data=$1data
 
 status="passed"
+if [ "`ls $test_data | grep diff`" != "" ]
+then
 rm $test_data/*.diff
+fi
+
 
 for file in `ls $reference_data`
 do 
@@ -28,7 +32,7 @@ fi
 difference=""
 done
 
-echo "test $testcase $status"
+echo "test $1 $status"
 #if [ "$status" != "passed" ]
 #then
 #echo "differences are saved in the $testcase data folder's .diff files"

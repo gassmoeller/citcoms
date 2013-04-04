@@ -1,11 +1,10 @@
 #!/bin/bash
 
-reference_tests=/office/Software/Citcom-Versionen/CitcomS/tests/automated_integration_tests
+cd `dirname $0`
 
-for testcase in `ls $reference_tests`
+test_folder="automated_integration_tests"
+
+for testcase in `ls $test_folder`
 do
-echo start $testcase
-cd $reference_tests/$testcase/configuration/ 
-/office/Software/Citcom-Versionen/CitcomS/bin/citcoms $testcase.cfg
-
+./start_test_local $test_folder/$testcase/
 done
