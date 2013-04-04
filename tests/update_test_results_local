@@ -14,8 +14,8 @@ do
 reference_data="$testcase"reference_data
 test_data="$testcase"data
 
-rm -r $reference__data/*
-cp -r $test_data/* $reference__data/
+svn rm --force $reference_data/*
+svn cp -r $test_data/* $reference__data/
 svn info $citcom_folder | grep `Revision` > $reference_tests/$testcase/reference_data/revision.log
 done
 fi
@@ -27,7 +27,6 @@ if [ "$answer" == "Yes" ]; then
 reference_data=$1reference_data
 test_data=$1data
 
-rm -r $reference_data/*
 cp -r $test_data/* $reference_data/
 svn info $citcom_folder | grep Revision > $reference_data/revision.log
 fi
