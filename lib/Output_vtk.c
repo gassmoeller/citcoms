@@ -368,8 +368,8 @@ void vtk_output_seismic(struct All_variables *E, int cycles, FILE *fp)
     if (E->refstate.choice != 3){
         /* isotropic seismic velocity only */
         /* XXX: update for anisotropy in the future */
-    /*    compute_seismic_model(E, rho, vp, vs);
-        for (i=0;i<nodes;i++){
+        compute_seismic_model(E, output_rho, output_vp, output_vs);
+      /*  for (i=0;i<nodes;i++){
             floatrho[i] = (float) rho[i];
             floatvp[i]  = (float) vp[i];
             floatvs[i]  = (float) vs[i];
