@@ -1015,6 +1015,13 @@ void visc_from_T(E,EEta,propogate)
 	// Bernhards Viscosity profile with consistent Temperature Dependency
 	// relative to horizontal average
 
+    	if ((E->refstate.choice != 3) && (E->refstate.choice != 0))
+    	{
+    		fprintf(stderr, "Error, Viscosity 104 needs refstate variables that are not provided in this refstate!!!\n");
+    		fflush(stderr);
+    		parallel_process_termination();
+    	}
+
             compute_horiz_avg(E);
 
         for(m=1;m<=E->sphere.caps_per_proc;m++)
