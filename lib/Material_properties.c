@@ -228,10 +228,10 @@ static void read_refstate(struct All_variables *E)
         if (i%E->composition.pressure_oversampling == 0) {
             j++;
             if(sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
-                    &(not_used1),
+                    &(E->refstate.rho[j]),
                     &(E->refstate.gravity[j]),
-                    &(not_used2),
-                    &(not_used3),
+                    &(E->refstate.thermal_expansivity[j]),
+                    &(E->refstate.heat_capacity[j]),
                     &(E->refstate.Tadi[j]),
                     &(E->refstate.Tini[j]),
                     &(E->refstate.Tm[i]),
