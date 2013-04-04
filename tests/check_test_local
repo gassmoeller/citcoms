@@ -1,25 +1,28 @@
 #!/bin/bash
 
-reference_results=~/Software/CitcomS/tests/automated_integration_tests
+cd `dirname $0`
+
+reference_data=$1reference_data
+test_data=$1data
 
 status="passed"
-rm $reference_results/$1/data/*.diff
+rm $test_data/*.diff
 
-for file in `ls $reference_results/$1/reference_data/`
+for file in `ls $reference_data`
 do 
 tracer_log_file=`echo $file| grep 'tracer_log\|log\|time\|chkpt'`
 if [ "$tracer_log_file" == "" ]
 then
 #echo "Checking file:" $file
-difference=`diff $reference_results/$1/reference_data/$file $reference_results/$1/data/$file`
+difference=`diff $reference_data/$file $test_data/$file`
 fi
 
 if [ "$difference" != "" ]
 then
 status="failed"
-diff_log_file=$reference_results/$1/data/$file.diff
+diff_log_file=$test_data/$file.diff
 echo "$Diff from `date`" > $diff_log_file
-diff $reference_results/$1/data/$file $reference_results/$1/reference_data/$file >> $diff_log_file
+diff $reference_data/$file $test_data/$file >> $diff_log_file
 fi
 
 difference=""
