@@ -2,10 +2,16 @@
 
 reference_results=/office/Software/Citcom-Versionen/CitcomS/tests/automated_integration_tests
 
+
 for testcase in `ls $reference_results`
 do
 status="passed"
-rm $recent_results/$testcase/data/*.diff
+test_data=$reference_results/$testcase/data
+
+if [ "`ls $test_data | grep diff`" != "" ]
+then
+rm $reference_results/$testcase/data/*.diff
+fi
 
 for file in `ls $reference_results/$testcase/reference_data/`
 do 

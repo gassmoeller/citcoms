@@ -4,4 +4,4 @@ cd `dirname $0`
 
 echo start "$1"
 cd "$1"/configuration/ 
-~/Software/CitcomS/bin/citcoms "`basename $1`".cfg
+../../../../bin/citcoms "`basename $1`".cfg
