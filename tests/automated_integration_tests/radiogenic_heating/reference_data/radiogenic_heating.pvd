@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1">
+  <Collection>
+    <DataSet timestep="0.000" group="" part="0" file="radiogenic_heating.0.0.pvts"/>
+    <DataSet timestep="128.621" group="" part="0" file="radiogenic_heating.0.1.pvts"/>
+    <DataSet timestep="257.242" group="" part="0" file="radiogenic_heating.0.2.pvts"/>
+    <DataSet timestep="385.862" group="" part="0" file="radiogenic_heating.0.3.pvts"/>
+    <DataSet timestep="514.483" group="" part="0" file="radiogenic_heating.0.4.pvts"/>
+    <DataSet timestep="643.104" group="" part="0" file="radiogenic_heating.0.5.pvts"/>
+    <DataSet timestep="771.725" group="" part="0" file="radiogenic_heating.0.6.pvts"/>
+    <DataSet timestep="900.346" group="" part="0" file="radiogenic_heating.0.7.pvts"/>
+    <DataSet timestep="1028.966" group="" part="0" file="radiogenic_heating.0.8.pvts"/>
+    <DataSet timestep="1157.587" group="" part="0" file="radiogenic_heating.0.9.pvts"/>
+    <DataSet timestep="1286.208" group="" part="0" file="radiogenic_heating.0.10.pvts"/>
+  </Collection>
+</VTKFile>
