@@ -610,14 +610,7 @@ static void element_residual(struct All_variables *E, int el,
     cp = get_cp_el(E,m,el);
 
     /* heat production */
-    Q = E->control.Q0 * rho;
-
-    /* should we add a compositional contribution? */
-    if(E->control.tracer_enriched){
-
-      /* Q = Q0*C[0] + sum_j (Q0ER[j]*C[j]) */
-        Q = get_radheat_el(E,m,el);
-    }
+    Q = get_radheat_el(E,m,el);
 
     if(E->control.disptn_number == 0)
         heating = Q;

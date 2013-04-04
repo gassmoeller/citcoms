@@ -1,7 +1,7 @@
 #!/bin/bash
 
-reference_tests=/office/Software/Citcom-Versionen/CitcomS/tests/automated_integration_tests
+reference_tests=~/Software/CitcomS/tests/automated_integration_tests
 
 echo start "$1"
 cd $reference_tests/"$1"/configuration/ 
-/office/Software/Citcom-Versionen/CitcomS/bin/citcoms "$1".cfg
+~/Software/CitcomS/bin/citcoms "$1".cfg

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-reference_results=/office/Software/Citcom-Versionen/CitcomS/tests/automated_integration_tests
+reference_results=~/Software/CitcomS/tests/automated_integration_tests
 
 status="passed"
 rm $reference_results/$1/data/*.diff

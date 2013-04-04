@@ -715,7 +715,7 @@ double get_radheat_el(struct All_variables *E, int m, int el)
 }
 
 
-const double get_radheat_nd_new(const struct All_variables *E, const int m,const int nn)
+const double get_radheat_nd_perplex(const struct All_variables *E, const int m,const int nn)
 {
 
     const int nz = idxNz(nn,E->lmesh.noz);
@@ -748,8 +748,14 @@ const double get_radheat_nd_new(const struct All_variables *E, const int m,const
 
 double get_radheat_nd(struct All_variables *E, int m, int nn)
 {
-	const int temperature_accurate = 0;
-	double radheat = get_radheat_nd_new(E,m,nn);
-	return radheat;
+	if (E->refstate.choice == 3)
+	{
+		const int temperature_accurate = 0;
+		return get_radheat_nd_perplex(E,m,nn);
+	}
+	else
+	{
+		return E->control.Q0 * get_rho_nd(E,m,nn);
+	}
 }
 
