@@ -174,6 +174,7 @@ void reference_state(struct All_variables *E)
         break;
     case 3:
         /* read from a file */
+    	read_refstate(E);
         read_perplexfile(E);
         break;
     default:
@@ -207,58 +208,8 @@ void reference_state(struct All_variables *E)
 static void read_refstate(struct All_variables *E)
 {
     FILE *fp;
-    int i;
+    int i,j;
     char buffer[255];
-    double not_used1, not_used2, not_used3;
-
-    fp = fopen(E->refstate.filename, "r");
-    if(fp == NULL) {
-        fprintf(stderr, "Cannot open reference state file: %s\n",
-                E->refstate.filename);
-        parallel_process_termination();
-    }
-
-    /* skip these lines, which belong to other processors */
-    for(i=1; i<E->lmesh.nzs; i++) {
-        fgets(buffer, 255, fp);
-    }
-
-    for(i=1; i<=E->lmesh.noz; i++) {
-        fgets(buffer, 255, fp);
-        if(sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
-                  &(E->refstate.rho[i]),
-                  &(E->refstate.gravity[i]),
-                  &(E->refstate.thermal_expansivity[i]),
-                  &(E->refstate.heat_capacity[i]),
-                  &(E->refstate.Tadi[i]),
-                  &(E->refstate.Tm[i]),
-                  &(E->refstate.free_enthalpy[i]),
-                  &(E->refstate.rad_viscosity[i]),
-                  &(E->refstate.stress_exp[i]),
-                  &(E->refstate.thermal_conductivity[i])) != 10) {
-            fprintf(stderr,"Error while reading file '%s'\n", E->refstate.filename);
-            exit(8);
-        }
-        /**** debug ****
-        fprintf(stderr, "%d %f %f %f %f\n",
-                i,
-                E->refstate.rho[i],
-                E->refstate.gravity[i],
-                E->refstate.thermal_expansivity[i],
-                E->refstate.heat_capacity[i]);
-        /* end of debug */
-    }
-
-    fclose(fp);
-    return;
-}
-
-static void read_perplexfile(struct All_variables *E)
-{
-    FILE *fp;
-    int i,j,k;
-    char buffer[255];
-    char refstate_file[255];
     double not_used1, not_used2, not_used3;
 
     fp = fopen(E->refstate.filename, "r");
@@ -294,6 +245,16 @@ static void read_perplexfile(struct All_variables *E)
         }
     }
     fclose(fp);
+    return;
+}
+
+static void read_perplexfile(struct All_variables *E)
+{
+    FILE *fp;
+    int i,j,k;
+    char buffer[255];
+    char refstate_file[255];
+    double not_used1, not_used2, not_used3;
 
     if (E->parallel.me < E->parallel.nprocz){
         snprintf(refstate_file, 255, "%s.refstate.%d.csv", E->control.data_file, E->parallel.me);
