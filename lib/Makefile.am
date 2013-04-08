@@ -97,6 +97,8 @@ sources = \
 	interuption.h \
 	lith_age.h \
 	Lith_age.c \
+	Material_properties_perplex.c \
+	material_properties_perplex.h \
 	Material_properties.c \
 	material_properties.h \
 	Mineral_physics_models.c \
