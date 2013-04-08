@@ -1,0 +1,2 @@
+mpicc unit_tests.c ../lib/Output_vtk.c ../lib/Material_properties.c -lm -lcunit
+ 
