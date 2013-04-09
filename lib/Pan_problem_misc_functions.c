@@ -151,7 +151,7 @@ double get_material_buoyancy(struct All_variables *E, int m, int i)
 
 	if (E->refstate.choice == 3)
 	{
-		return -1.0 * get_rho_nd(E,m,i) / (E->data.therm_exp * E->data.ref_temperature);
+		return -1.0 * E->get_rho_nd(E,m,i) / (E->data.therm_exp * E->data.ref_temperature);
 	}
 	else
 	{

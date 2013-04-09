@@ -175,7 +175,7 @@ static void calc_phase_change(struct All_variables *E,
         /*XXX: dz*rho[nz]*g[nz] is only a approximation for the reduced
          * pressure, a more accurate formula is:
          *   integral(rho(z)*g(z)*dz) from depth_ph to current depth   */
-        e_pressure = dz * ((float)get_rho_nd(E,m,i)) * E->refstate.gravity[nz]
+        e_pressure = dz * ((float)E->get_rho_nd(E,m,i)) * E->refstate.gravity[nz]
              - clapeyron * (E->T[m][i] - transT);
 
         B[m][i] = pt5 * (one + tanh(inv_width * e_pressure));

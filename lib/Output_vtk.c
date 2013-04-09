@@ -249,7 +249,7 @@ static void vtk_output_material(struct All_variables *E, FILE *fp)
 
     for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=E->lmesh.nno; i++) {
-            rho[((m-1)*E->sphere.caps_per_proc)+i-1] = get_rho_nd(E,m,i);
+            rho[((m-1)*E->sphere.caps_per_proc)+i-1] = E->get_rho_nd(E,m,i);
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0) 
@@ -263,7 +263,7 @@ static void vtk_output_material(struct All_variables *E, FILE *fp)
 
     for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=E->lmesh.nno; i++) {
-            alpha[((m-1)*E->sphere.caps_per_proc)+i-1] = get_alpha_nd(E,m,i);
+            alpha[((m-1)*E->sphere.caps_per_proc)+i-1] = E->get_alpha_nd(E,m,i);
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0) 
@@ -277,7 +277,7 @@ static void vtk_output_material(struct All_variables *E, FILE *fp)
 
     for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=E->lmesh.nno; i++) {
-            cp[((m-1)*E->sphere.caps_per_proc)+i-1] = get_cp_nd(E,m,i);
+            cp[((m-1)*E->sphere.caps_per_proc)+i-1] = E->get_cp_nd(E,m,i);
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0) 
@@ -290,7 +290,7 @@ static void vtk_output_material(struct All_variables *E, FILE *fp)
 
     for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=E->lmesh.nno; i++) {
-            radheat[((m-1)*E->sphere.caps_per_proc)+i-1] = get_radheat_nd(E,m,i);
+            radheat[((m-1)*E->sphere.caps_per_proc)+i-1] = E->get_radheat_nd(E,m,i);
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0) 
@@ -378,9 +378,9 @@ void vtk_output_seismic(struct All_variables *E, int cycles, FILE *fp)
         }*/
     } else{
         for (i=1;i<=nodes;i++){
-            rho[1][i]= get_rho_nd(E,1,i);
-            vp[1][i] = get_vp_nd(E,1,i);
-            vs[1][i] = get_vs_nd(E,1,i);
+            rho[1][i]= E->get_rho_nd(E,1,i);
+            vp[1][i] = E->get_vp_nd(E,1,i);
+            vs[1][i] = E->get_vs_nd(E,1,i);
         }
         remove_horiz_ave(E,rho,arho,0);
         remove_horiz_ave(E,vp,avp,0);
@@ -491,7 +491,7 @@ static void vtk_output_dens(struct All_variables *E, FILE *fp)
         for(j=1; j<=E->sphere.caps_per_proc; j++) {
             for(i=1; i<=E->lmesh.nno; i++) {
                 nz = ((i-1) % E->lmesh.noz) + 1;
-                density[(j-1)*E->lmesh.nno+i-1] = (E->buoyancy[j][i]/(E->control.Atemp*E->refstate.gravity[nz]*get_rho_nd(E,j,i)));
+                density[(j-1)*E->lmesh.nno+i-1] = (E->buoyancy[j][i]/(E->control.Atemp*E->refstate.gravity[nz]*E->get_rho_nd(E,j,i)));
 	    }
         }
 

@@ -584,9 +584,9 @@ static void expand_topo_sph_harm(struct All_variables *E,
         (E->data.radius_km*E->data.radius_km*1e6);
 
     /* density contrast across surface, need to dimensionalize reference density */
-    den_contrast1 = E->data.density * ((float)get_rho_nd(E,m,E->lmesh.noz)) - E->data.density_above;
+    den_contrast1 = E->data.density * ((float)E->get_rho_nd(E,m,E->lmesh.noz)) - E->data.density_above;
     /* density contrast across CMB, need to dimensionalize reference density */
-    den_contrast2 = -E->data.density * ((float)get_rho_nd(E,m,1)) + E->data.density_below;
+    den_contrast2 = -E->data.density * ((float)E->get_rho_nd(E,m,1)) + E->data.density_below;
 
     /* gravity at surface */
     grav1 = E->refstate.gravity[E->lmesh.noz] * E->data.grav_acc;
@@ -651,9 +651,9 @@ static void geoid_from_topography(struct All_variables *E,
     int m = 1;
 
     /* density contrast across surface, need to dimensionalize reference density */
-    den_contrast1 = E->data.density*((float)get_rho_nd(E,m,E->lmesh.noz)) - E->data.density_above;
+    den_contrast1 = E->data.density*((float)E->get_rho_nd(E,m,E->lmesh.noz)) - E->data.density_above;
     /* density contrast across CMB, need to dimensionalize reference density */
-    den_contrast2 = -E->data.density*((float)get_rho_nd(E,m,1)) + E->data.density_below;
+    den_contrast2 = -E->data.density*((float)E->get_rho_nd(E,m,1)) + E->data.density_below;
 
 
     /* reset arrays */
@@ -730,9 +730,9 @@ static void geoid_from_topography_self_g(struct All_variables *E,
     ri = E->sphere.ri;
 
     /* density contrast across surface, need to dimensionalize reference density */
-    den_contrast1 = E->data.density*get_rho_nd(E,m,E->lmesh.noz) - E->data.density_above;
+    den_contrast1 = E->data.density*E->get_rho_nd(E,m,E->lmesh.noz) - E->data.density_above;
     /* density contrast across CMB, need to dimensionalize reference density */
-    den_contrast2 = -E->data.density*get_rho_nd(E,m,1) + E->data.density_below;
+    den_contrast2 = -E->data.density*E->get_rho_nd(E,m,1) + E->data.density_below;
 
     /* gravity at surface */
     grav1 = E->refstate.gravity[E->lmesh.noz] * E->data.grav_acc;

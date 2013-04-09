@@ -881,7 +881,7 @@ void get_elt_c(struct All_variables *E, int el,
 
         for(a=1;a<=ends;a++) {
             j = E->IEN[lev][m][el].node[a];
-            rho[a] = get_rho_nd(E,m,j);
+            rho[a] = E->get_rho_nd(E,m,j);
         }
 
         rho_avg = 0;

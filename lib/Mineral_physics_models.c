@@ -196,7 +196,7 @@ static void modified_Trampert_Vacher_Vlaar_PEPI2001(struct All_variables *E,
         d2 = d * d;
         dT = (E->T[m][i] - E->Have.T[nz]) * E->data.ref_temperature;
 
-        drho = -dT * get_alpha_nd(E,m,i) * E->data.therm_exp;
+        drho = -dT * E->get_alpha_nd(E,m,i) * E->data.therm_exp;
 
         dvp = dT * (dlnvpdt[0] + dlnvpdt[1]*d + dlnvpdt[2]*d2);
         dvs = dT * (dlnvsdt[0] + dlnvsdt[1]*d + dlnvsdt[2]*d2);
@@ -206,7 +206,7 @@ static void modified_Trampert_Vacher_Vlaar_PEPI2001(struct All_variables *E,
                 dC = E->composition.comp_node[m][j][i] - E->Have.C[j][nz];
 
                 drho += dC * E->composition.buoyancy_ratio[j]
-                    * E->data.ref_temperature * E->data.therm_exp / get_rho_nd(E,m,i);
+                    * E->data.ref_temperature * E->data.therm_exp / E->get_rho_nd(E,m,i);
 
                 dvp += dC * (dlnvpdc[0] + dlnvpdc[1]*d + dlnvpdc[2]*d2);
                 dvs += dC * (dlnvsdc[0] + dlnvsdc[1]*d + dlnvsdc[2]*d2);

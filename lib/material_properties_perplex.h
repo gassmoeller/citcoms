@@ -33,7 +33,16 @@
 extern "C" {
 #endif
 
+void allocate_perplex_refstate(struct All_variables *E);
+
 void read_perplexfile(struct All_variables *E);
+
+const double get_cp_nd_perplex(const struct All_variables *E, const int m, const int nn);
+const double get_alpha_nd_perplex(const struct All_variables *E, const int m, const int nn);
+const double get_rho_nd_perplex(const struct All_variables *E, const int m, const int nn);
+const double get_vp_nd_perplex(const struct All_variables *E, const int m, const int nn);
+const double get_vs_nd_perplex(const struct All_variables *E, const int m, const int nn);
+const double get_radheat_nd_perplex(const struct All_variables *E, const int m, const int nn);
 
 #ifdef __cplusplus
 }

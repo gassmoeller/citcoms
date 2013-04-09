@@ -31,21 +31,13 @@ void mat_prop_allocate(struct All_variables *E);
 void reference_state(struct All_variables *E);
 
 
-double get_cp_el(struct All_variables *E, int m, int el);
-double get_alpha_el(struct All_variables *E, int m, int el);
-double get_rho_el(struct All_variables *E, int m, int el);
-double get_g_el(struct All_variables *E, int m, int el);
-double get_vp_el(struct All_variables *E, int m, int el);
-double get_vs_el(struct All_variables *E, int m, int el);
-double get_radheat_el(struct All_variables *E, int m, int el);
-
-double get_cp_nd(struct All_variables *E, int m, int nn);
-double get_alpha_nd(struct All_variables *E, int m, int nn);
-double get_rho_nd(struct All_variables *E, int m, int nn);
-double get_deltarho_nd(struct All_variables *E, int m, int nn, int j);
-double get_vp_nd(struct All_variables *E, int m, int nn);
-double get_vs_nd(struct All_variables *E, int m, int nn);
-double get_radheat_nd(struct All_variables *E, int m, int nn);
+const double get_cp_el(const struct All_variables *E, const int m, const int el);
+const double get_alpha_el(const struct All_variables *E, const int m, const int el);
+const double get_rho_el(const struct All_variables *E, const int m, const int el);
+double get_g_el(struct All_variables *, int m, int el);
+double get_vp_el(struct All_variables *, int m, int el);
+double get_vs_el(struct All_variables *, int m, int el);
+const double get_radheat_el(const struct All_variables *, const int m, const int el);
 
 const double get_refTemp(const struct All_variables *E, const int m, const int nn, const int nz);
 const int idxTemp(const double refTemp, const float delta_temp, const int ntempsteps);

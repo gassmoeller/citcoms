@@ -273,7 +273,7 @@ void PG_timestep_solve(struct All_variables *E)
                   fprintf(stderr, "I am number:%d showing nodenum:%d T:%f maxnode:%d \n",
                           E->parallel.me, T_interior2.index, E->T[1][T_interior2.index],E->lmesh.nno);
                   fflush(stderr);
-                  fprintf(stderr, "Material properties: Rho:%f Alpha:%f CP:%f radheat:%f\n", get_rho_nd(E,1,T_interior2.index),get_alpha_nd(E,1,T_interior2.index),get_cp_nd(E,1,T_interior2.index),get_radheat_nd(E,1,T_interior2.index));
+                  fprintf(stderr, "Material properties: Rho:%f Alpha:%f CP:%f radheat:%f\n", E->get_rho_nd(E,1,T_interior2.index),E->get_alpha_nd(E,1,T_interior2.index),E->get_cp_nd(E,1,T_interior2.index),E->get_radheat_nd(E,1,T_interior2.index));
               }
               for(m=1;m<=E->sphere.caps_per_proc;m++)
                   for (i=1;i<=E->lmesh.nno;i++)   {
@@ -451,7 +451,7 @@ static void pg_solver(struct All_variables *E,
     for (m=1;m<=E->sphere.caps_per_proc;m++)
       for(i=1;i<=E->lmesh.nno;i++) {
         if(!(E->node[m][i] & (TBX | TBY | TBZ))){
-	  DTdot[m][i] *= E->TMass[m][i] / (get_rho_nd(E,m,i)*get_cp_nd(E,m,i));         /* lumped mass matrix */
+	  DTdot[m][i] *= E->TMass[m][i] / (E->get_rho_nd(E,m,i)*E->get_cp_nd(E,m,i));         /* lumped mass matrix */
 	}	else
 	  DTdot[m][i] = 0.0;         /* lumped mass matrix */
       }
@@ -710,7 +710,7 @@ static void filter(struct All_variables *E)
 
     for(m=1;m<=E->sphere.caps_per_proc;m++)
         for(i=1;i<=E->lmesh.nno;i++)  {
-            rhocp[i] = get_rho_nd(E,m,i)*get_cp_nd(E,m,i);
+            rhocp[i] = E->get_rho_nd(E,m,i)*E->get_cp_nd(E,m,i);
 
             /* compute sum(rho*cp*T) before filtering, skipping nodes
                that's shared by another processor */

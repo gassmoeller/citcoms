@@ -572,6 +572,8 @@ struct REF_STATE {
     double *rad_viscosity;
     double *stress_exp;
     int **cont_position;
+
+
 };
 
 
@@ -729,6 +731,7 @@ struct CITCOM_GNOMONIC {
 
 struct All_variables {
 
+
 #include "solver.h"
 #include "convection_variables.h"
 #include "viscosity_descriptions.h"
@@ -858,6 +861,13 @@ struct All_variables {
     void (* solve_stokes_problem)(void*);
     void (* solver_allocate_vars)(void*);
     void (* transform)(void*);
+
+    const double (* get_rho_nd)(const struct All_variables *, const int, const int);
+    const double (* get_alpha_nd)(const struct All_variables *, const int, const int);
+    const double (* get_cp_nd)(const struct All_variables *, const int, const int);
+    const double (* get_vp_nd)(const struct All_variables *, const int, const int);
+    const double (* get_vs_nd)(const struct All_variables *, const int, const int);
+    const double (* get_radheat_nd)(const struct All_variables *, const int, const int);
 
     float (* node_space_function[3])(void*);
 

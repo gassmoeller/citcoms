@@ -33,63 +33,24 @@
 #include <math.h>
 #include "element_definitions.h"
 #include "global_defs.h"
+
 #include "material_properties.h"
+#include "material_properties_perplex.h"
 #include "parallel_related.h"
 
 static void read_refstate(struct All_variables *E);
-static void read_perplexfile(struct All_variables *E);
 static void read_densityfile(struct All_variables *E);
 static void read_continent_position(struct All_variables *E);
 static void adams_williamson_eos(struct All_variables *E);
 static void new_eos(struct All_variables *E);
+const double get_alpha_nd_refstate(const struct All_variables *E, const int m, const int nn);
+const double get_rho_nd_refstate(const struct All_variables *E, const int m, const int nn);
+const double get_cp_nd_refstate(const struct All_variables *E, const int m, const int nn);
+const double get_radheat_nd_refstate(const struct All_variables *E, const int m, const int nn);
+
 
 int layers_r(struct All_variables *,float);
 
-
-void allocate_perplex_refstate(struct All_variables *E)
-{
-
-    int noz = E->lmesh.noz;
-    int nno = E->lmesh.nno;
-    int nel = E->lmesh.nel;
-    int i,j;
-    const size_t nodes_size = (E->composition.pressure_oversampling
-            * (noz - 1) + 2) * sizeof(double**);
-    const size_t temperature_size = (E->composition.ntdeps + 1)
-            * sizeof(double*);
-    const size_t composition_size = (E->composition.ncomp + 2)
-            * sizeof(double);
-
-    /*
-     * Perplex reference tables for nondimensional
-     * density, thermal_expansivity, specific heat
-     * and dimensional seismic velocities in dependence
-     * of depth, temperature and composition
-     */
-    E->refstate.tab_density = (double***) malloc(nodes_size);
-    E->refstate.tab_thermal_expansivity = (double ***) malloc(nodes_size);
-    E->refstate.tab_heat_capacity = (double ***) malloc(nodes_size);
-    E->refstate.tab_seismic_vp = (double ***) malloc(nodes_size);
-    E->refstate.tab_seismic_vs = (double ***) malloc(nodes_size);
-
-    for (i=1;i<=nodes_size-1;i++)
-    {
-        E->refstate.tab_density[i] = (double**) malloc(temperature_size);
-        E->refstate.tab_thermal_expansivity[i] = (double **) malloc(temperature_size);
-        E->refstate.tab_heat_capacity[i] = (double **) malloc(temperature_size);
-        E->refstate.tab_seismic_vp[i] = (double **) malloc(temperature_size);
-        E->refstate.tab_seismic_vs[i] = (double **) malloc(temperature_size);
-
-        for (j=1;j<=temperature_size-1;j++)
-        {
-            E->refstate.tab_density[i][j] = (double*) malloc(composition_size);
-            E->refstate.tab_thermal_expansivity[i][j] = (double *) malloc(composition_size);
-            E->refstate.tab_heat_capacity[i][j] = (double *) malloc(composition_size);
-            E->refstate.tab_seismic_vp[i][j] = (double *) malloc(composition_size);
-            E->refstate.tab_seismic_vs[i][j] = (double *) malloc(composition_size);
-        }
-    }
-}
 
 void allocate_refstate(struct All_variables *E)
 {
@@ -150,6 +111,26 @@ void mat_prop_allocate(struct All_variables *E)
 		allocate_perplex_refstate(E);
 }
 
+void set_refstate(struct All_variables *E)
+{
+    E->get_alpha_nd = get_alpha_nd_refstate;
+    E->get_cp_nd = get_cp_nd_refstate;
+    E->get_rho_nd = get_rho_nd_refstate;
+    E->get_vp_nd = NULL;
+    E->get_vs_nd = NULL;
+    E->get_radheat_nd = get_radheat_nd_refstate;
+}
+
+void set_perplex(struct All_variables *E)
+{
+    E->get_alpha_nd = get_alpha_nd_perplex;
+    E->get_cp_nd = get_cp_nd_perplex;
+    E->get_rho_nd = get_rho_nd_perplex;
+    E->get_vp_nd = get_vp_nd_perplex;
+    E->get_vs_nd = get_vs_nd_perplex;
+    E->get_radheat_nd = get_radheat_nd_perplex;
+}
+
 
 void reference_state(struct All_variables *E)
 {
@@ -186,6 +167,11 @@ void reference_state(struct All_variables *E)
         parallel_process_termination();
         break;
     }
+
+    if (E->refstate.choice == 3)
+        set_perplex(E);
+    else
+        set_refstate(E);
 
 
     if(E->composition.continents && ((E->parallel.me+1) % E->parallel.nprocz == 0))
@@ -247,74 +233,6 @@ static void read_refstate(struct All_variables *E)
     fclose(fp);
     return;
 }
-
-static void read_perplexfile(struct All_variables *E)
-{
-    FILE *fp;
-    int i,j,k;
-    char buffer[255];
-    char refstate_file[255];
-    double not_used1, not_used2, not_used3;
-
-    if (E->parallel.me < E->parallel.nprocz){
-        snprintf(refstate_file, 255, "%s.refstate.%d.csv", E->control.data_file, E->parallel.me);
-        fp = output_open(refstate_file, "w");
-        fprintf(fp,"Gravity AdiabaticTemperature InitialTemp SolidusTemp Activation_Enthalpy ViscosityPrefactor StressExponent ThermalDiffusivity\n");
-        for (i=1;i <= E->lmesh.noz;i++){
-            fprintf(fp,"%f %f %f %f %f %f %f\n", E->refstate.gravity[i]*E->data.grav_acc,E->refstate.Tadi[i],E->refstate.Tini[i],E->refstate.Tm[i],E->refstate.free_enthalpy[i],E->refstate.rad_viscosity[i],E->refstate.stress_exp[i],E->refstate.thermal_conductivity[i]*E->data.therm_diff);
-        }
-        fclose(fp);
-    }
-
-    /**** debug ****
-    fprintf(stderr, "%d %f %f %f %f\n",
-            i,
-            E->refstate.rho[i],
-            E->refstate.gravity[i],
-            E->refstate.thermal_expansivity[i],
-            E->refstate.heat_capacity[i]);
-     end of debug */
-
-
-    fp = fopen("perplex.dat", "r");
-    if(fp == NULL) {
-        fprintf(stderr, "Cannot open perplex file: %s\n",
-                "perplex.dat");
-        parallel_process_termination();
-    }
-    /* skip these lines, which belong to other processors */
-    for(i=1; i<=E->composition.pressure_oversampling*(E->lmesh.nzs-1)*E->composition.ntdeps*(E->composition.ncomp+1); i++) {
-        fgets(buffer, 255, fp);
-    }
-
-    for(j=1; j<=E->composition.pressure_oversampling*(E->lmesh.noz-1)+1; j++) {
-        for(k=1; k<=E->composition.ntdeps; k++){
-            for(i=1; i<=E->composition.ncomp+1; i++){
-                fgets(buffer, 255, fp);
-                if(sscanf(buffer, "%lf %lf %lf %lf %lf\n",&(E->refstate.tab_density[j][k][i]),&(E->refstate.tab_thermal_expansivity[j][k][i]), &(E->refstate.tab_heat_capacity[j][k][i]), &(E->refstate.tab_seismic_vp[j][k][i]), &(E->refstate.tab_seismic_vs[j][k][i]))!=5){
-                    fprintf(stderr,"Error while reading file perplex.dat\n");
-                    exit(8);
-                }
-
-                /*
-                 * Debug Output
-                 */
-                if(E->control.verbose)
-                {
-                    if(E->parallel.me == 0 || E->parallel.me == 1) fprintf(stderr, "me: %d noz:%d ntdeps:%d ncomp:%d rho:%f alpha:%f cp:%f\n",
-                            E->parallel.me,j,k,i,
-                            E->refstate.tab_density[j][k][i],
-                            E->refstate.tab_thermal_expansivity[j][k][i],
-                            E->refstate.tab_heat_capacity[j][k][i]);
-                }
-            }
-        }
-    }
-
-    fclose(fp);
-    return;
-}
-
 
 static void read_continent_position(struct All_variables *E)
 {
@@ -427,8 +345,6 @@ const double get_dimensionalT(const double dimensionlessT, const double dimensio
 
 const double get_refTemp(const struct All_variables *E, const int m, const int nn, const int nz)
 {
-	//const double compressible_factor = fmax(0, E->control.disptn_number)
-	//		/ fmax(1e-7, E->control.disptn_number);
 	const double compressible_factor = (E->control.disptn_number <= F_EPS) ? 0.0 : 1.0;
 	const double compressible_correction = E->refstate.Tadi[nz]
 			- E->control.adiabaticT0 * E->data.ref_temperature;
@@ -464,69 +380,12 @@ const int idxNz (const int nn, const int noz) {
 	}
 }
 
-const double get_property_nd_perplex(struct All_variables *E, double*** property, const int m, const int nn, const int temperature_accurate)
-{
-
-    int i,j;
-
-    double prop = 0.0;
-	double deltaT;
-
-    const int nz = idxNz(nn, E->lmesh.noz);
-
-    /* Calculating the borders in the case of pressure_oversampling == x > 1 (x times more depth nodes in material table than in model)
-     * In case pressure_oversampling == 1 : nzmin == nzmax == nz
-     */
-    const int nzmin = max(E->composition.pressure_oversampling*(nz-1) + 1 - E->composition.pressure_oversampling/2,1);
-    const int nzmax = min(E->composition.pressure_oversampling*(nz-1) + 1 + E->composition.pressure_oversampling/2,(E->lmesh.noz-1)*E->composition.pressure_oversampling+1);
-
-    const double refTemp = get_refTemp(E,m,nn,nz);
-    const int nT = idxTemp(refTemp,E->composition.delta_temp,E->composition.ntdeps);
-
-    const double weight = (temperature_accurate == 1) ? fmax(fmin(refTemp / E->composition.delta_temp - (nT-1),1),0) : 0.0;
-
-    for (i=nzmin;i<=nzmax;i++){
-    	prop = property[i][nT][1];
-    	if (temperature_accurate == 1)
-    	{
-    		prop *= (1-weight);
-    		prop += weight * property[i][nT+1][1];
-    	}
-
-		for(j=0;j<E->composition.ncomp;j++){
-			prop +=  (1-weight) * property[i][nT][j+2]*E->composition.comp_node[m][j][nn];
-			prop +=  weight * property[i][nT+1][j+2]*E->composition.comp_node[m][j][nn];
-		}
-    }
-    prop /= (nzmax-nzmin+1);
-
-	return prop;
-}
-
-const double get_property_el_perplex(struct All_variables *E, double*** property, const int m, const int el, const int temperature_accurate)
-{
-	int nn,a;
-
-	const int ends=enodes[E->mesh.nsd];
-	const int lev=E->mesh.levmax;
-	double prop = 0;
-
-
-	for(a=1;a<=ends;a++){
-		nn = E->IEN[lev][m][el].node[a];
-		prop += get_property_nd_perplex(E,property,m,nn,temperature_accurate);
-	}
-
-	prop /= ends;
-	return prop;
-}
-
-const double get_property_nd_refstate(struct All_variables *E, double* property, const int m, const int nn)
+const double get_property_nd_refstate(const struct All_variables *E, const double* property, const int m, const int nn)
 {
 	return property[idxNz(nn,E->lmesh.noz)];
 }
 
-const double get_property_el_refstate(struct All_variables *E, double* property, const int m, const int el)
+const double get_property_el(const struct All_variables *E, const double (*get_property_nd)(const struct All_variables *, const int, const int), const int m, const int el)
 {
 	int a,nn;
 
@@ -536,187 +395,50 @@ const double get_property_el_refstate(struct All_variables *E, double* property,
 
 	for(a=1;a<=ends;a++){
 		nn = E->IEN[lev][m][el].node[a];
-		prop += get_property_nd_refstate(E,property,m,nn);
+		prop += get_property_nd(E,m,nn);
 	}
 
 	prop /= ends;
 	return prop;
 }
 
-double get_cp_el(struct All_variables *E, int m, int el)
+const double get_cp_el(const struct All_variables *E, const int m, const int el)
 {
-	if (E->refstate.choice == 3)
-	{
-		const int temperature_accurate = 0;
-		return get_property_el_perplex(E,E->refstate.tab_heat_capacity,m,el,temperature_accurate);
-	}
-	else
-	{
-		return get_property_el_refstate(E,E->refstate.heat_capacity,m,el);
-	}
+    return get_property_el(E, E->get_cp_nd,m,el);
 }
 
-
-double get_cp_nd(struct All_variables *E, int m, int nn)
+const double get_alpha_el(const struct All_variables *E, const int m, const int el)
 {
-	if (E->refstate.choice == 3)
-	{
-		const int temperature_accurate = 0;
-		return get_property_nd_perplex(E,E->refstate.tab_heat_capacity,m,nn,temperature_accurate);
-	}
-	else
-	{
-		return get_property_nd_refstate(E, E->refstate.heat_capacity,m,nn);
-	}
+    return get_property_el(E, E->get_alpha_nd,m,el);
 }
 
-
-double get_alpha_nd(struct All_variables *E, int m, int nn)
+const double get_rho_el(const struct All_variables *E, const int m, const int el)
 {
-	if (E->refstate.choice == 3)
-	{
-		const int temperature_accurate = 0;
-		return get_property_nd_perplex(E,E->refstate.tab_thermal_expansivity,m,nn,temperature_accurate);
-	}
-	else
-	{
-		return get_property_nd_refstate(E, E->refstate.thermal_expansivity,m,nn);
-	}
+    return get_property_el(E, E->get_rho_nd,m,el);
 }
 
-
-double get_alpha_el(struct All_variables *E, int m, int el)
+const double get_radheat_el(const struct All_variables *E, const int m, const int el)
 {
-	if (E->refstate.choice == 3)
-	{
-		const int temperature_accurate = 0;
-		return get_property_el_perplex(E,E->refstate.tab_thermal_expansivity,m,el,temperature_accurate);
-	}
-	else
-	{
-		return get_property_el_refstate(E,E->refstate.heat_capacity,m,el);
-	}
+    return get_property_el(E, E->get_radheat_nd,m,el);
 }
 
-
-double get_rho_el(struct All_variables *E, int m, int el)
+const double get_cp_nd_refstate(const struct All_variables *E, const int m, const int nn)
 {
-	if (E->refstate.choice == 3)
-	{
-		const int temperature_accurate = 1;
-		return get_property_el_perplex(E,E->refstate.tab_density,m,el,temperature_accurate);
-	}
-	else
-	{
-		return get_property_el_refstate(E,E->refstate.heat_capacity,m,el);
-	}
+    return get_property_nd_refstate(E, E->refstate.heat_capacity,m,nn);
 }
 
-
-double get_rho_nd(struct All_variables *E, int m, int nn)
+const double get_alpha_nd_refstate(const struct All_variables *E, const int m, const int nn)
 {
-	if (E->refstate.choice == 3)
-	{
-		const int temperature_accurate = 1;
-		return get_property_nd_perplex(E,E->refstate.tab_density,m,nn,temperature_accurate);
-	}
-	else
-	{
-		return get_property_nd_refstate(E, E->refstate.rho,m,nn);
-	}
-
+    return get_property_nd_refstate(E, E->refstate.thermal_expansivity,m,nn);
 }
 
-
-double get_vs_el(struct All_variables *E, int m, int el)
+const double get_rho_nd_refstate(const struct All_variables *E, const int m, const int nn)
 {
-	const int temperature_accurate = 0;
-	double vs = get_property_el_perplex(E,E->refstate.tab_seismic_vs,m,el,temperature_accurate);
-	return vs;
+    return get_property_nd_refstate(E, E->refstate.rho,m,nn);
 }
 
-
-double get_vs_nd(struct All_variables *E, int m, int nn)
+const double get_radheat_nd_refstate(const struct All_variables *E, const int m, const int nn)
 {
-	const int temperature_accurate = 0;
-	double vs = get_property_nd_perplex(E,E->refstate.tab_seismic_vs,m,nn,temperature_accurate);
-        return vs;
-}
-
-
-double get_vp_el(struct All_variables *E, int m, int el)
-{
-	const int temperature_accurate = 0;
-	double vp = get_property_el_perplex(E,E->refstate.tab_seismic_vp,m,el,temperature_accurate);
-        return vp;
-}
-
-
-double get_vp_nd(struct All_variables *E, int m, int nn)
-{
-	const int temperature_accurate = 0;
-	double vp = get_property_nd_perplex(E,E->refstate.tab_seismic_vp,m,nn,temperature_accurate);
-	return vp;
-}
-
-
-double get_radheat_el(struct All_variables *E, int m, int el)
-{
-    int nn,a;
-    const int ends=enodes[E->mesh.nsd];
-    const int lev=E->mesh.levmax;
-    double radheat=0;
-    
-    for(a=1;a<=ends;a++){
-        nn = E->IEN[lev][m][el].node[a];
-        radheat += get_radheat_nd(E,m,nn);
-    }
-    radheat /= ends;
-    return radheat;
-}
-
-
-const double get_radheat_nd_perplex(const struct All_variables *E, const int m,const int nn)
-{
-
-    const int nz = idxNz(nn,E->lmesh.noz);
-    const double refTemp = get_refTemp(E,m,nn,nz);
-    const int nT = idxTemp(refTemp,E->composition.delta_temp,E->composition.ntdeps);
-    const double weight = fmax(fmin(refTemp / E->composition.delta_temp - (nT-1),1),0);
-
-    double radheat = 0.0;
-    double density = 0.0;
-    double proportion_normal_material = 1.0;
-
-    if (E->control.tracer_enriched){
-    	int j;
-        for(j=0;j<E->composition.ncomp;j++){
-        	proportion_normal_material -= E->composition.comp_node[m][j][nn];
-
-        	density = E->refstate.tab_density[(nz-1)*E->composition.pressure_oversampling + 1][nT][j+2] + E->refstate.tab_density[(nz-1)*E->composition.pressure_oversampling + 1][nT][1];
-            radheat +=  (1-weight) * density * E->composition.comp_node[m][j][nn] * E->control.Q0ER[j];
-
-        	density = E->refstate.tab_density[(nz-1)*E->composition.pressure_oversampling + 1][nT+1][j+2] + E->refstate.tab_density[(nz-1)*E->composition.pressure_oversampling + 1][nT+1][1];
-            radheat +=  weight * density * E->composition.comp_node[m][j][nn] * E->control.Q0ER[j];
-        }
-    }
-
-    radheat += (1-weight) * E->refstate.tab_density[(nz-1)*E->composition.pressure_oversampling + 1][nT][1] * proportion_normal_material * E->control.Q0;
-    radheat += weight * E->refstate.tab_density[(nz-1)*E->composition.pressure_oversampling + 1][nT+1][1] * proportion_normal_material * E->control.Q0;
-
-    return radheat;
-}
-
-double get_radheat_nd(struct All_variables *E, int m, int nn)
-{
-	if (E->refstate.choice == 3)
-	{
-		const int temperature_accurate = 0;
-		return get_radheat_nd_perplex(E,m,nn);
-	}
-	else
-	{
-		return E->control.Q0 * get_rho_nd(E,m,nn);
-	}
+    return E->control.Q0 * get_rho_nd_refstate(E,m,nn);
 }
 
