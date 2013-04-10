@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<VTKFile type="PPolyData" version="0.1">
+  <PPolyData GhostLevel="#">
+    <PPointData Scalars="Composition" Vectors="velocity">
+      <DataArray type="Float32" Name="Tracer Quantity 0" format="ascii"/>
+      <DataArray type="Float32" Name="Tracer Quantity 1" format="ascii"/>
+    </PPointData>
+ 
+    <PCellData>
+    </PCellData>
+ 
+    <PPoints>
+      <DataArray type="Float32" Name="coordinate" NumberOfComponents="3" format="binary" />
+    </PPoints>
+    <Piece Source="hotspots_test_selected_tracers.tracer_file.0.10.vtp"/>
+  </PPolyData>
+</VTKFile>
