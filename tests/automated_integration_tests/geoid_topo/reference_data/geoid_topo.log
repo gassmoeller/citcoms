@@ -1,0 +1,34 @@
+Problem has 9 x 9 x 9 nodes per cap, 6930 nodes and 6144 elements in total
+Momentum equation force 1.418458674e+01
+ *  residual (041) = 1.034e-03 from 1.418e+01 to 1.418e-03 in  0.35 secs 
+(000)   0.4 s v=2.082429e+00 p=0.000000e+00 div/v=4.12e+00 dv/v=1.00e+00 dp/p=1.00e+00 step 0
+ *  residual (035) = 1.360e-03 from 1.280e+01 to 1.418e-03 in  0.21 secs 
+(001)   0.6 s v=1.869494e+00 p=2.572412e+01 div/v=6.57e-01 dv/v=5.09e-01 dp/p=1.00e+00 step 0
+ *  residual (020) = 9.613e-04 from 2.307e+00 to 1.418e-03 in  0.20 secs 
+(002)   0.8 s v=1.857098e+00 p=2.603302e+01 div/v=6.18e-02 dv/v=4.83e-02 dp/p=1.45e-01 step 0
+ *  residual (015) = 1.222e-03 from 2.370e-01 to 1.418e-03 in  0.06 secs 
+(003)   0.8 s v=1.859766e+00 p=2.602739e+01 div/v=9.54e-03 dv/v=9.16e-03 dp/p=1.39e-02 step 0
+ *  residual (005) = 1.350e-03 from 3.459e-02 to 1.418e-03 in  0.02 secs 
+(004)   0.9 s v=1.859789e+00 p=2.602960e+01 div/v=1.77e-03 dv/v=6.09e-04 dp/p=2.30e-03 step 0
+ *  residual (003) = 1.002e-03 from 5.411e-03 to 1.418e-03 in  0.02 secs 
+(005)   0.9 s v=1.859785e+00 p=2.602679e+01 div/v=7.81e-04 dv/v=1.32e-04 dp/p=5.34e-04 step 0
+ *  residual (002) = 6.954e-04 from 2.323e-03 to 1.418e-03 in  0.02 secs 
+(006)   0.9 s v=1.859778e+00 p=2.602506e+01 div/v=5.33e-04 dv/v=6.17e-05 dp/p=3.57e-04 step 0
+ *  residual (001) = 8.592e-04 from 1.670e-03 to 1.418e-03 in  0.00 secs 
+(007)   0.9 s v=1.859775e+00 p=2.602304e+01 div/v=4.75e-04 dv/v=3.50e-05 dp/p=3.18e-04 step 0
+ *  residual (001) = 1.144e-03 from 2.264e-03 to 1.418e-03 in  0.01 secs 
+(008)   0.9 s v=1.859773e+00 p=2.602119e+01 div/v=4.11e-04 dv/v=2.46e-05 dp/p=3.10e-04 step 0
+ *  residual (001) = 1.125e-03 from 2.017e-03 to 1.418e-03 in  0.00 secs 
+(009)   0.9 s v=1.859772e+00 p=2.602035e+01 div/v=3.54e-04 dv/v=2.13e-05 dp/p=2.89e-04 step 0
+ *  residual (001) = 8.528e-04 from 1.484e-03 to 1.418e-03 in  0.00 secs 
+(010)   1.0 s v=1.859772e+00 p=2.602015e+01 div/v=2.80e-04 dv/v=1.95e-05 dp/p=2.42e-04 step 0
+ *  residual (001) = 5.888e-04 from 1.020e-03 to 1.418e-03 in  0.02 secs 
+(011)   1.0 s v=1.859771e+00 p=2.602002e+01 div/v=2.56e-04 dv/v=1.70e-05 dp/p=2.14e-04 step 0
+ *  residual (001) = 6.072e-04 from 1.235e-03 to 1.418e-03 in  0.01 secs 
+(012)   1.0 s v=1.859771e+00 p=2.602025e+01 div/v=1.96e-04 dv/v=1.24e-05 dp/p=1.78e-04 step 0
+ *  residual (001) = 5.026e-04 from 8.426e-04 to 1.418e-03 in  0.00 secs 
+(013)   1.0 s v=1.859771e+00 p=2.602044e+01 div/v=1.36e-04 dv/v=1.01e-05 dp/p=1.24e-04 step 0
+ *  residual (001) = 3.205e-04 from 7.533e-04 to 1.418e-03 in  0.01 secs 
+(014)   1.0 s v=1.859771e+00 p=2.602057e+01 div/v=8.62e-05 dv/v=6.11e-06 dp/p=7.48e-05 step 0
+Angular momentum: rot=7.053469e-08 tr=9.067506e+01 fr=2.663344e+02
+bottom heat flux= 2.228646
