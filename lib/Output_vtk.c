@@ -969,19 +969,20 @@ void write_pvd(struct All_variables *E, int cycles)
     fclose(fp);
 }
 
-static void vtk_tracer_extraq(struct All_variables *E, int idx_extraq, FILE *fp)
+static void vtk_tracer_extraq(struct All_variables *E, int idx_extraq, const int nselected_tracers, const int* tracer_list, FILE *fp)
 {
     int i, j;
     int tracers = 0;
-    float* floatextraq = malloc (E->trace.ntracers[1]*sizeof(float)); // caps_per_proc != 1
+    //TODO: double properties output ... will change test results
+    float* floatextraq = malloc (nselected_tracers*sizeof(float)); // caps_per_proc != 1
 
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Tracer Quantity %d\" format=\"%s\">\n", idx_extraq, E->output.vtk_format);
 
     for(j=1; j<=E->sphere.caps_per_proc; j++) {
-        for(i=1; i<=E->trace.ntracers[j]; i++) {
-            floatextraq[tracers+i-1] = (float) (E->trace.extraq[j][idx_extraq][i]);
+        for(i=1; i<=nselected_tracers; i++) {
+            floatextraq[tracers+i-1] = (float) (E->trace.extraq[j][idx_extraq][tracer_list[i]]);
         }
-        tracers += E->trace.ntracers[j];
+        tracers += nselected_tracers;
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0)
@@ -994,24 +995,24 @@ static void vtk_tracer_extraq(struct All_variables *E, int idx_extraq, FILE *fp)
 }
 
 
-static void vtk_tracer_coord(struct All_variables *E, FILE *ft)
+static void vtk_tracer_coord(struct All_variables *E, const int nselected_tracers, const int* tracer_list, FILE *ft)
 {
     /* Output Cartesian coordinates as most VTK visualization softwares
        assume it. Currently just working for caps_per_proc == 1*/
     int i, j;
     int tracers = 0;
-    double* pos = malloc (E->trace.ntracers[1]*3*sizeof(double)); // caps_per_proc != 1
+    double* pos = malloc (nselected_tracers*3*sizeof(double)); // caps_per_proc != 1
 
     fputs("      <Points>\n", ft);
     fprintf(ft, "        <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"%s\">\n", E->output.vtk_format);
 
     for(j=1; j<=E->sphere.caps_per_proc; j++) {
-        for(i=1; i<=E->trace.ntracers[j]; i++){
-                pos[(i-1)*3] = E->trace.basicq[j][3][i];
-	        pos[(i-1)*3+1]= E->trace.basicq[j][4][i];
-	        pos[(i-1)*3+2]= E->trace.basicq[j][5][i];
+        for(i=1; i<=nselected_tracers; i++){
+                pos[(i-1)*3] = E->trace.basicq[j][3][tracer_list[i]];
+	        pos[(i-1)*3+1]= E->trace.basicq[j][4][tracer_list[i]];
+	        pos[(i-1)*3+2]= E->trace.basicq[j][5][tracer_list[i]];
         }
-    tracers += E->trace.ntracers[j];
+    tracers += nselected_tracers;
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0)
@@ -1024,12 +1025,70 @@ static void vtk_tracer_coord(struct All_variables *E, FILE *ft)
     return;
 }
 
+int select_all_tracers(const struct TRACE *trace, const int j, const int kk)
+{
+    return 1;
+}
+
+int select_hotspot_track_tracers(const struct TRACE *trace, const int j, const int kk)
+{
+    if (trace->extraq[j][1][kk] > D_EPS)
+        return 1;
+    return 0;
+}
+
+/*
+ * This function accepts a pointer to an int array, empties it, fills with all
+ * the tracer numbers that match a selection criterion function and outputs the
+ * number of selected tracers. The array is resized to this number.
+ */
+int select_tracer_list(const struct TRACE *trace, const int selection_crit, int* tracer_list, const int j)
+{
+    int kk;
+    int i = 0;
+    int (*select_tracer)(const struct TRACE *trace, const int, const int);
+
+    switch (selection_crit)
+        {
+        case 0:
+            select_tracer = select_all_tracers;
+            break;
+        case 1:
+            select_tracer = select_hotspot_track_tracers;
+            break;
+        default:
+            fprintf(stderr, "Error: No hotspot selection criterion chosen. Terminating.");
+            fflush(stderr);
+            parallel_process_termination();
+            break;
+        }
+
+    for (kk = 1; kk <=trace->ntracers[j];kk++)
+    {
+        if (select_tracer(trace,j,kk))
+        {
+            tracer_list[i+1] = kk;
+            i++;
+        }
+    }
+
+    return i;
+}
+
 void write_tracer_file(struct All_variables *E, int cycles)
 {
     FILE *ft;
     char vtp_file[255];
     char header[1024];
     int i;
+    int* tracer_list = malloc(E->trace.ntracers[1] * sizeof(int));
+
+    //TODO: selection_crit as input parameter
+    // this only works for E->sphere.caps_per_proc == 1
+    int nselected_tracers = select_tracer_list(&E->trace,E->output.tracer_output_selection,tracer_list,1);
+
+    fprintf(stderr,"Number of output tracers:%d",nselected_tracers); //Passed
+
     snprintf(vtp_file, 255, "%s.tracer_file.%d.%d.vtp",
     E->control.data_file,E->parallel.me,cycles);
 
@@ -1038,34 +1097,34 @@ void write_tracer_file(struct All_variables *E, int cycles)
             "<VTKFile type=\"PolyData\" version=\"0.1\" compressor=\"vtkZLibDataCompressor\" byte_order=\"LittleEndian\">\n"
             "  <PolyData>\n"
             "    <Piece NumberOfPoints=\"%d\" NumberOfVerts=\"%d\" NumberOfLines=\"0\" NumberOfStrips=\"0\" NumberOfPolys=\"0\">\n"
-            "      <PointData Scalars=\"Composition\">\n", E->trace.ntracers[1],E->trace.ntracers[1]);
+            "      <PointData Scalars=\"Composition\">\n", nselected_tracers,nselected_tracers);
 
     for (i = 0; i<E->trace.number_of_extra_quantities;i++)
-    	vtk_tracer_extraq(E,i,ft);
+    	vtk_tracer_extraq(E,i,nselected_tracers,tracer_list,ft);
 
     vtk_point_data_trailer(E,ft);
 
     /* write element-based field */
     vtk_cell_data_header(E,ft);
     vtk_cell_data_trailer(E,ft);
-    vtk_tracer_coord(E,ft);
+    vtk_tracer_coord(E,nselected_tracers,tracer_list,ft);
 
     fputs("    <Verts>\n",ft);
     fputs("      <DataArray type=\"Int32\" Name=\"connectivity\" format=\"binary\">\n",ft);
 
     int *index = malloc(sizeof(int)*(E->trace.ntracers[1]));
-    for (i=0;i<E->trace.ntracers[1];i++){
+    for (i=0;i<nselected_tracers;i++){
         //fprintf(ft,"%d ",i);
         index[i] = i;}
 
-    write_int_binary_array(E->trace.ntracers[1],index,ft);
+    write_int_binary_array(nselected_tracers,index,ft);
     //fputs("\n",ft);
     fputs("      </DataArray>\n",ft);
     fputs("      <DataArray type=\"Int32\" Name=\"offsets\" format=\"binary\">\n",ft);
-    for (i=1;i<=E->trace.ntracers[1];i++){
+    for (i=1;i<=nselected_tracers;i++){
         index[i-1] = i;}
       //  fprintf(ft,"%d ",i);}
-    write_int_binary_array(E->trace.ntracers[1],index,ft);
+    write_int_binary_array(nselected_tracers,index,ft);
     //fputs("\n",ft);
     fputs("      </DataArray>\n",ft);
     fputs("    </Verts>\n",ft);
@@ -1076,6 +1135,8 @@ void write_tracer_file(struct All_variables *E, int cycles)
     fclose(ft);
 
     if(E->parallel.me == 0) write_pvtp(E, cycles);
+
+    free(tracer_list);
 
 }
 

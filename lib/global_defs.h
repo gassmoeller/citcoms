@@ -662,6 +662,7 @@ struct Output {
     int coord_bin;    /* whether to output coordinates in binary format */
     int tracer;       /* whether to output number of tracers per element */
     int write_tracer_file;  /* whether to output tracer details */
+    int tracer_output_selection; /* which criterion to select tracers for output */
     int tracer_file_written; /* whether tracer details are already written */
     float tracer_file_time;
     int comp_el;      /* whether to output composition at elements */

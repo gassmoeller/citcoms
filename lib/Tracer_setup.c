@@ -2175,6 +2175,7 @@ void mark_hotspot_tracks(struct All_variables *E)
             if (tracer_in_hotspot_region(E,j,kk) &&
                     tracer_in_melting_region(E,j,kk) &&
                     tracer_not_yet_hotspot_chain(E,j,kk))
+                // TODO: how to get right index if tracer_origin is activated also?
                 E->trace.extraq[j][1][kk] = E->monitor.elapsed_time;
 
         }

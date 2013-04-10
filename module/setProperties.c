@@ -313,6 +313,7 @@ PyObject * pyCitcom_Output_set_properties(PyObject *self, PyObject *args)
     getStringProperty(properties, "output_optional", E->output.optional, fp);
     getStringProperty(properties, "vtk_format", E->output.vtk_format, fp);
     getFloatProperty(properties, "tracer_file_time", E->output.tracer_file_time, fp);
+    getIntProperty(properties, "tracer_output_selection", E->output.tracer_output_selection, fp);
 
     getIntProperty(properties, "steps", E->output.steps, fp);
 

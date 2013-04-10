@@ -70,6 +70,7 @@ void output_common_input(struct All_variables *E)
 
     E->output.tracer_file_written = 0;
     input_float("tracer_file_time",&(E->output.tracer_file_time),"0.0",m);
+    input_int("tracer_output_selection",&(E->output.tracer_output_selection),"0",m);
 
     /* gzdir type of I/O */
     E->output.gzdir.vtk_io = 0;

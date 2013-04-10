@@ -56,6 +56,7 @@ class Output(CitcomComponent):
         output_optional = inv.str("output_optional",
                                   default="surf,botm,tracer")
         tracer_file_time = inv.float("tracer_file_time", default=0.0)
+        tracer_output_selection = inv.int("tracer_output_selection", default=0)
 
         vtk_format = inv.str("vtk_format", default="ascii",
                              validator=inv.choice(["binary", "ascii"]))
