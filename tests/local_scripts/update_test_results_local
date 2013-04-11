@@ -7,6 +7,8 @@ citcom_folder=`dirname $citcom_folder`
 if [ "$1" == "" ]; then
 read -p "This will overwrite ALL your current reference test results, are you sure? ('Yes' to proceed):" answer
 
+$reference_tests="../automated_integration_tests"
+
 if [ "$answer" == "Yes" ]; then
 for testcase in `ls $reference_tests`
 do
