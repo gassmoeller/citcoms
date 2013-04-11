@@ -36,6 +36,7 @@
 #include "material_properties.h"
 #include "material_properties_perplex.h"
 #include "parallel_related.h"
+#include "output.h"
 
 void allocate_perplex_refstate(struct All_variables *E)
 {
@@ -84,9 +85,9 @@ void allocate_perplex_refstate(struct All_variables *E)
 
 void read_perplexfile(struct All_variables *E)
 {
-    FILE *fp;
+    FILE *fp = NULL;
     int i,j,k;
-    char buffer[255];
+    char* buffer = malloc(255*sizeof(char));
     char refstate_file[255];
     double not_used1, not_used2, not_used3;
 
@@ -118,13 +119,18 @@ void read_perplexfile(struct All_variables *E)
     }
     /* skip these lines, which belong to other processors */
     for(i=1; i<=E->composition.pressure_oversampling*(E->lmesh.nzs-1)*E->composition.ntdeps*(E->composition.ncomp+1); i++) {
-        fgets(buffer, 255, fp);
+        buffer = fgets(buffer, 255, fp);
+        if (buffer == NULL){
+            fprintf(stderr, "Perplex file is too short or problem with processor number: %s\n",
+                    "perplex.dat");
+            parallel_process_termination();
+        }
     }
 
     for(j=1; j<=E->composition.pressure_oversampling*(E->lmesh.noz-1)+1; j++) {
         for(k=1; k<=E->composition.ntdeps; k++){
             for(i=1; i<=E->composition.ncomp+1; i++){
-                fgets(buffer, 255, fp);
+                buffer = fgets(buffer, 255, fp);
                 if(sscanf(buffer, "%lf %lf %lf %lf %lf\n",&(E->refstate.tab_density[j][k][i]),&(E->refstate.tab_thermal_expansivity[j][k][i]), &(E->refstate.tab_heat_capacity[j][k][i]), &(E->refstate.tab_seismic_vp[j][k][i]), &(E->refstate.tab_seismic_vs[j][k][i]))!=5){
                     fprintf(stderr,"Error while reading file perplex.dat\n");
                     exit(8);
@@ -222,30 +228,30 @@ const double get_radheat_nd_perplex(const struct All_variables *E, const int m,c
 const double get_cp_nd_perplex(const struct All_variables *E, const int m, const int nn)
 {
     const int temperature_accurate = 0;
-    return get_property_nd_perplex(E,E->refstate.tab_heat_capacity,m,nn,temperature_accurate);
+    return get_property_nd_perplex(E,(const double ***)E->refstate.tab_heat_capacity,m,nn,temperature_accurate);
 }
 
 const double get_alpha_nd_perplex(const struct All_variables *E, const int m, const int nn)
 {
     const int temperature_accurate = 0;
-    return get_property_nd_perplex(E,E->refstate.tab_thermal_expansivity,m,nn,temperature_accurate);
+    return get_property_nd_perplex(E,(const double ***)E->refstate.tab_thermal_expansivity,m,nn,temperature_accurate);
 }
 
 const double get_rho_nd_perplex(const struct All_variables *E, const int m, const int nn)
 {
     const int temperature_accurate = 1;
-    return get_property_nd_perplex(E,E->refstate.tab_density,m,nn,temperature_accurate);
+    return get_property_nd_perplex(E,(const double ***)E->refstate.tab_density,m,nn,temperature_accurate);
 }
 
 const double get_vs_nd_perplex(const struct All_variables *E, const int m, const int nn)
 {
 	const int temperature_accurate = 0;
-        return get_property_nd_perplex(E,E->refstate.tab_seismic_vs,m,nn,temperature_accurate);
+        return get_property_nd_perplex(E,(const double ***)E->refstate.tab_seismic_vs,m,nn,temperature_accurate);
 }
 
 const double get_vp_nd_perplex(const struct All_variables *E, const int m, const int nn)
 {
 	const int temperature_accurate = 0;
-	return get_property_nd_perplex(E,E->refstate.tab_seismic_vp,m,nn,temperature_accurate);
+	return get_property_nd_perplex(E,(const double ***)E->refstate.tab_seismic_vp,m,nn,temperature_accurate);
 }
 

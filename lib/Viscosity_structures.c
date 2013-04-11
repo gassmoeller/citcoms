@@ -35,6 +35,7 @@
 #include "element_definitions.h"
 #include "global_defs.h"
 #include "parsing.h"
+#include "material_properties.h"
 
 
 void myerror(struct All_variables *,char *);
@@ -1040,8 +1041,18 @@ void visc_from_T(E,EEta,propogate)
                         temp += min(TT[kk],one) * E->N.vpt[GNVINDEX(kk,jj)];
                     }
                     iz = (i-1) % E->lmesh.elz + 1;
-                    EEta[m][ (i-1)*vpts + jj ] = 0.5*(E->refstate.rad_viscosity[iz]+E->refstate.rad_viscosity[iz+1])*exp(-1.0*0.5*(E->refstate.free_enthalpy[iz]+E->refstate.free_enthalpy[iz+1]) *(temp-E->Have.T[iz])/(0.5*(E->refstate.stress_exp[iz]+E->refstate.stress_exp[iz+1])*8.314*0.5*(E->refstate.Tadi[iz]+E->refstate.Tadi[iz+1])*(temp+E->control.surface_temp)));
                     
+                    const double Tabs = temp + E->control.surface_temp;
+                    const double adi_correction = 0.5 * (get_adiabatic_correction(E,iz) + get_adiabatic_correction(E,iz+1));
+
+                    const double eta_el = 0.5 * (E->refstate.rad_viscosity[iz] + E->refstate.rad_viscosity[iz + 1]);
+                    const double h_el = 0.5 * (E->refstate.free_enthalpy[iz]+E->refstate.free_enthalpy[iz + 1]);
+                    const double n = 0.5*(E->refstate.stress_exp[iz]+E->refstate.stress_exp[iz+1]);
+                    const double Tadi_el = 0.5*(E->refstate.Tadi[iz]+E->refstate.Tadi[iz+1]);
+                    const double Tadi_el_prime = Tadi_el / E->data.ref_temperature;
+
+                    EEta[m][ (i-1)*vpts + jj ] = eta_el * exp(-1.0 * h_el *(temp-E->Have.T[iz])/(n * 8.314 * Tadi_el* Tabs));
+
 		}}
 		break;
 
@@ -1050,6 +1061,8 @@ void visc_from_T(E,EEta,propogate)
 	// relative to adiabatic temperature
 
             compute_horiz_avg(E);
+
+            const double R = 8.314;
 
         for(m=1;m<=E->sphere.caps_per_proc;m++)
             for(i=1;i<=nel;i++)   {
@@ -1067,10 +1080,22 @@ void visc_from_T(E,EEta,propogate)
                         temp += min(TT[kk],one) * E->N.vpt[GNVINDEX(kk,jj)];
                     }
                     iz = (i-1) % E->lmesh.elz + 1;
-                    EEta[m][ (i-1)*vpts + jj ] = 0.5*(E->refstate.rad_viscosity[iz]+E->refstate.rad_viscosity[iz+1])*exp(-1.0*0.5*(E->refstate.free_enthalpy[iz]+E->refstate.free_enthalpy[iz+1]) *(temp-0.5*(E->refstate.Tadi[iz]+E->refstate.Tadi[iz+1])/E->data.ref_temperature + E->control.surface_temp)/(0.5*(E->refstate.stress_exp[iz]+E->refstate.stress_exp[iz+1])*8.314*0.5*(E->refstate.Tadi[iz]+E->refstate.Tadi[iz+1])*(temp+E->control.surface_temp)));
-                    
-		}}
-		break;
+
+                    const double Tabs = temp + E->control.surface_temp;
+                    const double adi_correction = 0.5 * (get_adiabatic_correction(E,iz) + get_adiabatic_correction(E,iz+1));
+
+                    const double eta_el = 0.5 * (E->refstate.rad_viscosity[iz] + E->refstate.rad_viscosity[iz + 1]);
+                    const double h_el = 0.5 * (E->refstate.free_enthalpy[iz]+E->refstate.free_enthalpy[iz + 1]);
+                    const double n = 0.5*(E->refstate.stress_exp[iz]+E->refstate.stress_exp[iz+1]);
+                    const double Tadi_el = 0.5*(E->refstate.Tadi[iz]+E->refstate.Tadi[iz+1]);
+                    const double Tadi_el_prime = Tadi_el / E->data.ref_temperature;
+
+                    EEta[m][(i - 1) * vpts + jj] = eta_el * exp(-1.0 * h_el * ( Tabs + adi_correction - Tadi_el_prime)
+                            / (n * R * Tadi_el * Tabs));
+
+                }
+            }
+        break;
 
     default:
         /* unknown option */
@@ -1308,7 +1333,7 @@ void strain_rate_2_inv(E,m,EEDOT,SQRT)
     double theta;
     double ba[9][9][4][7];
     float VV[4][9], Vxyz[7][9], dilation[9];
-    
+
     int e, i, j, p, q, n;
 
     const int nel = E->lmesh.nel;
@@ -1349,8 +1374,8 @@ void strain_rate_2_inv(E,m,EEDOT,SQRT)
 
         if ((E->control.precise_strain_rate) || (theta < 0.09) || (theta > 3.05)) {
             /* When the element is close to the poles, use a more
-             * precise method to compute the strain rate. 
-	     
+             * precise method to compute the strain rate.
+
 	     if precise_strain_rate=on, will always choose this option
 
 	    */

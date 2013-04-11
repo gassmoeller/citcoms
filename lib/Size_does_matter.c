@@ -27,9 +27,9 @@
  */
 #include <math.h>
 #include <sys/types.h>
-#include "material_properties.h"
 #include "element_definitions.h"
 #include "global_defs.h"
+#include "material_properties.h"
 
 #ifdef ALLOW_ELLIPTICAL
 double theta_g(double , struct All_variables *);

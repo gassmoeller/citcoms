@@ -27,9 +27,9 @@
  */
 #include <stdio.h>
 #include <math.h>
-#include "material_properties.h"
 #include "element_definitions.h"
 #include "global_defs.h"
+#include "material_properties.h"
 
 void myerror(char *,struct All_variables *);
 void sphere_expansion(struct All_variables *, float **, float *, float *);
