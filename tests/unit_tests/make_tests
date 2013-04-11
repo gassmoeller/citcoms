@@ -1,0 +1,5 @@
+# This is a Makefile for the unit tests
+
+test: unit_tests.c ../../lib/Material_properties.c ../../lib/Viscosity_structures.c
+	mpicc unit_tests.c ../../lib/Material_properties.c ../../lib/Material_properties_perplex.c ../../lib/Viscosity_structures.c -lm -lcunit -lz
+

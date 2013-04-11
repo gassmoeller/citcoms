@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <CUnit/Basic.h>
-#include "../lib/material_properties.h"
-#include "../lib/output.h"
-#include "../lib/parallel_related.h"
+#include "../../lib/global_defs.h"
+#include "../../lib/material_properties.h"
+#include "../../lib/output.h"
+#include "../../lib/parallel_related.h"
 
 
 
@@ -16,6 +17,11 @@ int layers_r(struct All_variables *E,float a)
 FILE* output_open(char* refstate_file, char* a)
 {
 	return 0;
+}
+
+void parallel_process_termination()
+{
+
 }
 
 
@@ -60,6 +66,7 @@ void testidxTemp(void)
       CU_ASSERT(9 == idxTemp(20.0, 2.0, 10));
 }
 
+/*
 void testCompressorString(void)
 {
 	char compressor_string[128];
@@ -69,7 +76,7 @@ void testCompressorString(void)
 	get_compressor_string(0,compressor_string);
     CU_ASSERT(0 == strcmp(compressor_string," compressor=\"vtkZLibDataCompressor\" byte_order=\"LittleEndian\""));
 
-}
+}*/
 
 
 /* The main() function for setting up and running the tests.

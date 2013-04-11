@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd `dirname $0`
+citcom_folder=`pwd`
+citcom_folder=`dirname $citcom_folder`
+citcom_folder=`dirname $citcom_folder`
+
+model_folder=`dirname $1`
+model=`basename $1`
+
+echo start "$1"
+cd $model_folder/$model/configuration/ 
+$citcom_folder/bin/citcoms $model.cfg

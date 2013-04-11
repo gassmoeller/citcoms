@@ -23,9 +23,11 @@ fi
 else
 read -p "This will overwrite your current reference test results for test $1, are you sure? ('Yes' to proceed):" answer
 
+test_folder=`dirname $1`/`basename $1`
+
 if [ "$answer" == "Yes" ]; then
-reference_data=$1reference_data
-test_data=$1data
+reference_data=$test_folder/reference_data
+test_data=$test_folder/data
 
 cp -r $test_data/* $reference_data/
 svn info $citcom_folder | grep Revision > $reference_data/revision.log

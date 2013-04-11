@@ -2,7 +2,7 @@
 
 cd `dirname $0`
 
-test_folder="automated_integration_tests"
+test_folder="../automated_integration_tests"
 
 for testcase in `ls $test_folder`
 do
