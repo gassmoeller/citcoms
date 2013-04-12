@@ -343,6 +343,10 @@ const double get_dimensionalT(const double dimensionlessT, const double dimensio
 	return (dimensionlessT + dimensionlessT_surf) * refT;
 }
 
+/*
+ * Returns the dimensional adiabatic correction Temperature. This is the temperature rise
+ * that is missing  in the Temperature equation when using the Boussinesq approximation.
+ */
 const double get_adiabatic_correction(const struct All_variables *E, const int nz)
 {
     if (E->control.disptn_number <= F_EPS)

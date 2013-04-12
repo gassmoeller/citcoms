@@ -1082,7 +1082,7 @@ void visc_from_T(E,EEta,propogate)
                     iz = (i-1) % E->lmesh.elz + 1;
 
                     const double Tabs = temp + E->control.surface_temp;
-                    const double adi_correction = 0.5 * (get_adiabatic_correction(E,iz) + get_adiabatic_correction(E,iz+1));
+                    const double adi_correction_prime = 0.5 * (get_adiabatic_correction(E,iz) + get_adiabatic_correction(E,iz+1)) / E->data.ref_temperature;
 
                     const double eta_el = 0.5 * (E->refstate.rad_viscosity[iz] + E->refstate.rad_viscosity[iz + 1]);
                     const double h_el = 0.5 * (E->refstate.free_enthalpy[iz]+E->refstate.free_enthalpy[iz + 1]);
@@ -1090,7 +1090,7 @@ void visc_from_T(E,EEta,propogate)
                     const double Tadi_el = 0.5*(E->refstate.Tadi[iz]+E->refstate.Tadi[iz+1]);
                     const double Tadi_el_prime = Tadi_el / E->data.ref_temperature;
 
-                    EEta[m][(i - 1) * vpts + jj] = eta_el * exp(-1.0 * h_el * ( Tabs + adi_correction - Tadi_el_prime)
+                    EEta[m][(i - 1) * vpts + jj] = eta_el * exp(-1.0 * h_el * ( Tabs + adi_correction_prime - Tadi_el_prime)
                             / (n * R * Tadi_el * Tabs));
 
                 }
