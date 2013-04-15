@@ -254,7 +254,7 @@ static void read_continent_position(struct All_variables *E)
             if((j>=E->parallel.me_loc[1]*E->lmesh.elx) && (j<=(E->parallel.me_loc[1]+1)*E->lmesh.elx)){ // in x-Range
                 if((k>=E->parallel.me_loc[2]*E->lmesh.ely) && (k<=(E->parallel.me_loc[2]+1)*E->lmesh.ely)){
                     if(sscanf(buffer, "%d",&(E->refstate.cont_position[(j + E->parallel.me_loc[1])%E->lmesh.nox + 1][(k + E->parallel.me_loc[2])%E->lmesh.noy + 1]))!=1){
-                        fprintf(stderr,"Error while reading file '%s'\n", E->refstate.densityfilename);
+                        fprintf(stderr,"Error while reading continent file\n");
                         exit(8);
                     }
                 }
