@@ -671,9 +671,8 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
     getDoubleProperty(properties, "hotspot_delta_temperature", E->trace.hotspot_delta_temperature, fp);
 
 
-    getIntProperty(properties, "tdep_buoyancy", E->composition.tdep_buoyancy, fp);
     getIntProperty(properties, "pressure_oversampling", E->composition.pressure_oversampling, fp);
-    if(E->composition.tdep_buoyancy==1){
+    if(E->refstate.choice == 3){
          getFloatProperty(properties, "start_temp", E->composition.start_temp, fp);
          getFloatProperty(properties, "end_temp", E->composition.end_temp, fp);
          getIntProperty(properties, "ntdeps", E->composition.ntdeps, fp);
@@ -760,11 +759,6 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
         getIntProperty(properties, "continents", E->composition.continents, fp);
         getIntProperty(properties, "hotspot_tracks", E->trace.hotspot_tracks, fp);
 
-        getIntProperty(properties, "zdep_buoyancy", E->composition.zdep_buoyancy, fp);
-
-        if(E->composition.zdep_buoyancy==1){
-            getStringProperty(properties, "density_file", E->refstate.densityfilename, fp);
-        }
     }
 
 

@@ -85,9 +85,6 @@ void composition_input(struct All_variables *E)
 
     }
 
-    input_int("zdep_buoyancy", &(E->composition.zdep_buoyancy),"1,0,nomax",m);
-    input_int("tdep_buoyancy", &(E->composition.tdep_buoyancy),"1,0,nomax",m);
-
 
     input_int("continents",&(E->composition.continents),"1,0,nomax",m);
 

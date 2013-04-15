@@ -475,7 +475,7 @@ void read_initial_settings(struct All_variables *E)
   input_string("temp_bound_file",E->control.temperature_boundary_file,"",m);
 
   input_int("reference_state",&(E->refstate.choice),"1",m);
-  if(E->refstate.choice == 0) {
+  if((E->refstate.choice == 0) || (E->refstate.choice == 3)) {
       input_string("refstate_file",E->refstate.filename,"refstate.dat",m);
   }
 
@@ -728,8 +728,7 @@ void read_initial_settings(struct All_variables *E)
   tic_input(E);
 
   input_int("pressure_oversampling",&(E->composition.pressure_oversampling),"1,1,nomax",m);
-  input_int("tdep_buoyancy",&(E->composition.tdep_buoyancy),"0,0,nomax",m);
-  if(E->composition.tdep_buoyancy == 1){
+  if(E->refstate.choice == 3){
       input_float("start_temp",&(E->composition.start_temp),"0,0,nomax",m);
       input_float("end_temp",&(E->composition.end_temp),"1,0,nomax",m);
       input_int("ntdeps",&(E->composition.ntdeps),"1000,0,nomax",m);

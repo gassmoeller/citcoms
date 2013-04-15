@@ -554,7 +554,6 @@ struct CONTROL {
 struct REF_STATE {
     int choice;
     char filename[200];
-    char densityfilename[200];
     double ***tab_density;
     double ***tab_thermal_expansivity;
     double ***tab_heat_capacity;
@@ -692,8 +691,6 @@ struct COMPOSITION {
     int on;
 
     int ibuoy_type;
-    int zdep_buoyancy;
-    int tdep_buoyancy;
     int continents;
     int chemical_changes;
 
