@@ -37,6 +37,7 @@
 #include <sys/errno.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <time.h>
 #include "element_definitions.h"
 #include "global_defs.h"
 
@@ -1641,6 +1642,13 @@ static void expand_str(char *src, size_t max_size,
     }
 }
 
+void get_time_string(char *time_string, const char *format_specifier)
+{
+    time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+    strftime(time_string,20,format_specifier,tm);
+}
+
 static void expand_datadir(struct All_variables *E, char *datadir)
 {
     char *found, *err;
@@ -1651,6 +1659,8 @@ static void expand_datadir(struct All_variables *E, char *datadir)
     const char str2[] = "%RANK";
     const char str3[] = "%DATADIR";
     const char str3_prog[] = "citcoms_datadir";
+    const char str4[] = "%DATE";
+    const char str5[] = "%TIME";
 
     /* expand str1 by machine's hostname */
     found = strstr(datadir, str1);
@@ -1679,6 +1689,24 @@ static void expand_datadir(struct All_variables *E, char *datadir)
 	    parallel_process_termination();
 	}
     }
+
+    /* expand str4 by current date*/
+    found = strstr(datadir, str4);
+    if (found) {
+        char* time_string = malloc (10 * sizeof(char));
+        get_time_string(time_string,"%F");
+        expand_str(datadir, 150, str4, time_string);
+        free(time_string);
+    }
+
+    /* expand str5 by current time */
+    found = strstr(datadir, str5);
+    if (found) {
+        char* time_string = malloc (10 * sizeof(char));
+        get_time_string(time_string,"%H_%M");
+        expand_str(datadir, 150, str5, time_string);
+        free(time_string);
+    }
 }
 
 
@@ -1701,7 +1729,7 @@ void output_init(struct  All_variables *E)
     expand_datadir(E, E->control.data_dir);
     mkdatadir(E->control.data_dir);
     snprintf(E->control.data_file, 200, "%s/%s", E->control.data_dir,
-	     E->control.data_prefix);
+            E->control.data_prefix);
 
     if (E->control.restart || E->control.post_p ||
         (E->convection.tic_method == -1) ||
