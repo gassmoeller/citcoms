@@ -1,0 +1,1 @@
+This is for testing the geoid calculation. No topography is calculated or considered so the geoid result looks strange only considering the density anomalies. Anyway this tests the calculation of spherical harmonics out of buoyancy in the code and the vtk output.
