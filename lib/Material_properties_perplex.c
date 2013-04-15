@@ -170,6 +170,10 @@ void read_perplexfile(struct All_variables *E)
     return;
 }
 
+/*
+ * Returns the identifier of the field that is described by
+ * field_name. Returns -1 if no field is recognized.
+ */
 int get_field_id(char* field_name)
 {
     if (strstr(field_name,"T(K)") != NULL)
@@ -191,16 +195,28 @@ int get_field_id(char* field_name)
     return -1;
 }
 
+/* Reads the order of the properties in the perplex data file
+ * and saves the identifier of the ith field in input_fields_ids[i]
+ * See get_field_id for description of identifiers
+ */
 void read_field_order(char* bufline, int nfields, int *input_field_ids)
 {
 
-    int i;
+    int i, field_id;
     input_field_ids = realloc(input_field_ids, nfields*sizeof(int));
     char* field_name;
     for (i=0;i<nfields;i++)
     {
         field_name = strtok(bufline, " ");
-        input_field_ids[i] = get_field_id(field_name);
+        field_id = get_field_id(field_name);
+        if (field_id == -1)
+        {
+            fprintf(stderr, "Error in parsing field order of perplex file. Possibly data file"
+                    "format has changed or file is corrupted?");
+            parallel_process_termination();
+        }
+        input_field_ids[i] = field_id;
+
     }
     free(field_name);
 }
@@ -251,11 +267,9 @@ void read_perplex_header (struct All_variables *E, FILE *perplex_file,
     read = getline (&bufline, len, perplex_file);
     sscanf (bufline, "%d\n",&(perplex_table->nfields));
 
-
     // Read in fields and order
     read = getline (&bufline, len, perplex_file);
     read_field_order(bufline, perplex_table->nfields,perplex_table->input_field_ids);
-
 
     free(bufline);
     free(field_name);
@@ -284,8 +298,8 @@ void read_perplex_body(struct All_variables *E, double ***perplex_data, FILE *pe
 void allocate_perplex_data (double ***perplex_data, struct table_properties *perplex_table)
 {
     int i,j;
-    perplex_data = (double ***) malloc(sizeof(double**) * perplex_table->size[0]);
 
+    perplex_data = (double ***) malloc(sizeof(double**) * perplex_table->size[0]);
     for(i=0;i<perplex_table->size[0];i++){
         perplex_data[i] = (double **) malloc(sizeof(double*) * perplex_table->size[1]);
         for(j=0;j<perplex_table->size[1];j++){
@@ -361,8 +375,8 @@ void calculate_refstate_data (struct All_variables *E, struct table_properties *
                pressure[k]= pressure[k-1] + 0.5*(E->refstate.gravity[k-1]+E->refstate.gravity[k])*E->data.grav_acc*delta_depth_m*0.5*(E->refstate.tab_density[k-1][idTold][0]*E->data.density + perplex_data[idP][idT][0])/1e5;
                idP = idxPress(pressure[k]-start_press,delta_press,npdeps);
            }
-              // printf("Tadi:%f pressure:%f k:%d\n",Tadi[k],pressure[k],k);
-       //    printf("\n");
+           printf("Tadi:%f pressure:%f k:%d\n",Tadi[k],pressure[k],k);
+           printf("\n");
        }
        depth_index = npdeps;
        if (limittoTm)
@@ -512,7 +526,6 @@ void read_perplex_data (struct All_variables *E, char* perplex_filename,int idx_
 void read_error()
 {
     fputs("Error while reading perplex file\n",stderr);
-    fflush(stderr);
     parallel_process_termination();
 }
 
