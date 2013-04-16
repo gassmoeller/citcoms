@@ -407,12 +407,15 @@ static void add_layer(struct All_variables *E)
 {
     int m, i;
     double r1;
+    double trans;
+    const double half_width = 0.015;
 
     for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=E->lmesh.nno; i++){
             r1 = E->sx[m][3][i];
-            if (r1 <= E->trace.z_interface[1]){
-                E->T[m][i] += E->convection.blob_dT;
+            if (r1 <= E->trace.z_interface[1]+half_width){
+                trans = 0.5 * (1.0 + tanh((E->trace.z_interface[1]-r1) / half_width));
+                E->T[m][i] += trans * E->convection.blob_dT;
                 E->T[m][i] = max(1.0,E->T[m][i]);
             }}
     return;
