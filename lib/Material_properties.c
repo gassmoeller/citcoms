@@ -38,8 +38,8 @@
 #include "material_properties_perplex.h"
 #include "parallel_related.h"
 
+
 static void read_refstate(struct All_variables *E);
-static void read_densityfile(struct All_variables *E);
 static void read_continent_position(struct All_variables *E);
 static void adams_williamson_eos(struct All_variables *E);
 static void new_eos(struct All_variables *E);
@@ -47,7 +47,7 @@ const double get_alpha_nd_refstate(const struct All_variables *E, const int m, c
 const double get_rho_nd_refstate(const struct All_variables *E, const int m, const int nn);
 const double get_cp_nd_refstate(const struct All_variables *E, const int m, const int nn);
 const double get_radheat_nd_refstate(const struct All_variables *E, const int m, const int nn);
-
+const int use_full_gravity(const int,const int);
 
 int layers_r(struct All_variables *,float);
 
@@ -63,7 +63,12 @@ void allocate_refstate(struct All_variables *E)
     E->refstate.rho = (double *) malloc((noz+1)*sizeof(double));
 
     /* reference profile of gravity */
-    E->refstate.gravity = (double *) malloc((noz+1)*sizeof(double));
+    /* in certain cases we need the full gravity profile, i.e. */
+    /* to integrate the adiabatic profile */
+    if (use_full_gravity(E->parallel.me,E->refstate.choice))
+        E->refstate.gravity = (double *) malloc((E->mesh.noz+1)*sizeof(double));
+    else
+        E->refstate.gravity = (double *) malloc((noz+1)*sizeof(double));
 
     /* reference profile of coefficient of thermal expansion */
     E->refstate.thermal_expansivity = (double *) malloc((noz+1)*sizeof(double));
@@ -235,6 +240,33 @@ static void read_refstate(struct All_variables *E)
             }
         }
     }
+
+    if (use_full_gravity(E->parallel.me,E->refstate.choice))
+    {
+        for(i=0; i<E->composition.pressure_oversampling*(E->mesh.noz-E->lmesh.noz)+1; i++){
+            fgets(buffer, 255, fp);
+            if (i%E->composition.pressure_oversampling == 0) {
+                j++;
+                double not_used;
+                if(sscanf(buffer, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
+                        &(not_used),
+                        &(E->refstate.gravity[j]),
+                        &(not_used),
+                        &(not_used),
+                        &(not_used),
+                        &(not_used),
+                        &(not_used),
+                        &(not_used),
+                        &(not_used),
+                        &(not_used),
+                        &(not_used)) != 11) {
+                    fprintf(stderr,"Error while reading file '%s'\n", E->refstate.filename);
+                    exit(8);
+                }
+            }
+        }
+    }
+
     fclose(fp);
     return;
 }
@@ -459,3 +491,10 @@ const double get_radheat_nd_refstate(const struct All_variables *E, const int m,
     return E->control.Q0 * get_rho_nd_refstate(E,m,nn);
 }
 
+const int use_full_gravity(const int me, const int refstate_choice)
+{
+    if ((me == 1) && refstate_choice == 4)
+        return 1;
+    else
+        return 0;
+}
