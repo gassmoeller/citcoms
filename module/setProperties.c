@@ -367,7 +367,7 @@ PyObject * pyCitcom_Param_set_properties(PyObject *self, PyObject *args)
     PUTS(("[CitcomS.solver.param]\n"));
 
     getIntProperty(properties, "reference_state", E->refstate.choice, fp);
-    if(E->refstate.choice == 0 || E->refstate.choice == 3) {
+    if(E->refstate.choice == 0 || E->refstate.choice == 3 || E->refstate.choice == 4) {
         getStringProperty(properties, "refstate_file", E->refstate.filename, fp);
     }
 
