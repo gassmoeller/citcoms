@@ -1016,7 +1016,7 @@ void visc_from_T(E,EEta,propogate)
 	// Bernhards Viscosity profile with consistent Temperature Dependency
 	// relative to horizontal average
 
-    	if ((E->refstate.choice != 3) && (E->refstate.choice != 0))
+    	if ((E->refstate.choice != 3) && (E->refstate.choice != 0) && (E->refstate.choice != 4))
     	{
     		fprintf(stderr, "Error, Viscosity 104 needs refstate variables that are not provided in this refstate!!!\n");
     		fflush(stderr);

@@ -475,7 +475,7 @@ void read_initial_settings(struct All_variables *E)
   input_string("temp_bound_file",E->control.temperature_boundary_file,"",m);
 
   input_int("reference_state",&(E->refstate.choice),"1",m);
-  if((E->refstate.choice == 0) || (E->refstate.choice == 3)) {
+  if((E->refstate.choice == 0) || (E->refstate.choice == 3) || (E->refstate.choice == 4)) {
       input_string("refstate_file",E->refstate.filename,"refstate.dat",m);
   }
 

@@ -40,19 +40,6 @@
 #include "parallel_related.h"
 #include "output.h"
 
-struct table_properties
-        {
-    int size[2];
-    double start_value[2];
-    double end_value[2];
-    double delta_value[2];
-    int nfields;
-    int temperature_field;
-    int pressure_field;
-    int *input_field_ids;
-        };
-
-
 void allocate_perplex_refstate(struct All_variables *E)
 {
 
@@ -170,6 +157,12 @@ void read_perplexfile(struct All_variables *E)
     return;
 }
 
+void read_error()
+{
+    fputs("Error while reading perplex file\n",stderr);
+    parallel_process_termination();
+}
+
 /*
  * Returns the identifier of the field that is described by
  * field_name. Returns -1 if no field is recognized.
@@ -177,21 +170,21 @@ void read_perplexfile(struct All_variables *E)
 int get_field_id(char* field_name)
 {
     if (strstr(field_name,"T(K)") != NULL)
-        return -1;
-    else if (strstr(field_name,"P(bar)") != NULL)
-        return -1;
-    else if (strstr(field_name,"rho,kg/m3") != NULL)
         return 0;
-    else if (strstr(field_name,"alpha,1/K") != NULL)
+    else if (strstr(field_name,"P(bar)") != NULL)
         return 1;
-    else if (strstr(field_name,"cp,J/K/kg") != NULL)
+    else if (strstr(field_name,"rho,kg/m3") != NULL)
         return 2;
-    else if (strstr(field_name,"vp,km/s") != NULL)
+    else if (strstr(field_name,"alpha,1/K") != NULL)
         return 3;
-    else if (strstr(field_name,"vs,km/s") != NULL)
+    else if (strstr(field_name,"cp,J/K/kg") != NULL)
         return 4;
-    else if (strstr(field_name,"h,J/kg") != NULL)
+    else if (strstr(field_name,"vp,km/s") != NULL)
         return 5;
+    else if (strstr(field_name,"vs,km/s") != NULL)
+        return 6;
+    else if (strstr(field_name,"h,J/kg") != NULL)
+        return 7;
     return -1;
 }
 
@@ -199,123 +192,143 @@ int get_field_id(char* field_name)
  * and saves the identifier of the ith field in input_fields_ids[i]
  * See get_field_id for description of identifiers
  */
-void read_field_order(char* bufline, int nfields, int *input_field_ids)
+struct IDs* read_field_order(char* bufline, int input_fields, struct IDs *field_ids)
 {
 
     int i, field_id;
-    input_field_ids = realloc(input_field_ids, nfields*sizeof(int));
+    int *input_field_ids = (int *) malloc(8*sizeof(int));
+    memset(input_field_ids,-1,8*sizeof(int));
+
     char* field_name;
-    for (i=0;i<nfields;i++)
+
+    field_name = strtok(bufline, " ");
+    for (i=0;i<input_fields;i++)
     {
-        field_name = strtok(bufline, " ");
         field_id = get_field_id(field_name);
+
         if (field_id == -1)
         {
             fprintf(stderr, "Error in parsing field order of perplex file. Possibly data file"
-                    "format has changed or file is corrupted?");
+                    "format has changed or file is corrupted?\n");
             parallel_process_termination();
         }
-        input_field_ids[i] = field_id;
-
+        input_field_ids[field_id] = i;
+        field_name = strtok(NULL, " ");
     }
-    free(field_name);
+
+    for (i=3;i<6;i++)
+        if (input_field_ids[i] == -1)
+        {
+            fprintf(stderr, "Error, necessary fields not found in perplex file. Possibly data file"
+                    "format has changed or file is corrupted?\n");
+            parallel_process_termination();
+        }
+
+    field_ids->rho = input_field_ids[2];
+    field_ids->alpha = input_field_ids[3];
+    field_ids->cp = input_field_ids[4];
+    field_ids->vp = input_field_ids[5];
+    field_ids->vs = input_field_ids[6];
+    field_ids->h = input_field_ids[7];
+
+    free(input_field_ids);
+
+    return field_ids;
 }
 
-void read_perplex_header (struct All_variables *E, FILE *perplex_file,
-        struct table_properties *perplex_table)
+void read_perplex_header (FILE *perplex_file, struct table_properties *perplex_table)
 {
     int i;
-    size_t *len;
-    ssize_t read;
-    char* bufline;
-    char* field_name;
+    const int buffer_size = 255;
+    char* bufline = malloc(buffer_size * sizeof(char));
 
     // First lines, version of perplex and filename
     // Potential version check should be included here
     for (i = 0; i < 3; i++)
     {
-        read = getline (&bufline, len, perplex_file);
+        bufline = fgets (bufline, buffer_size, perplex_file);
     }
 
     // Read in independent variables Temperature, Pressure
     // in arbitrary order (Depends on Perplex input)
     for (i = 0; i < 2; i++)
     {
-        read = getline (&bufline, len, perplex_file);
+        bufline = fgets (bufline, buffer_size, perplex_file);
         if (strstr(bufline,"T(K)") != NULL)
         {
-            perplex_table->temperature_field = i;
+            perplex_table->field_ids.T = i;
         }
         else if (strstr(bufline,"P(bar)") != NULL)
         {
-            perplex_table->pressure_field = i;
+            perplex_table->field_ids.P = i;
         }
+        else read_error();
 
-        read = getline (&bufline, len, perplex_file);
-        sscanf (bufline, "%lf\n", &(perplex_table->start_value[i]));
+        bufline = fgets (bufline, buffer_size, perplex_file);
+        sscanf (bufline, "%lf\n", &(perplex_table->TP[i].start));
 
-        read = getline (&bufline, len, perplex_file);
-        sscanf (bufline, "%lf\n", &(perplex_table->delta_value[i]));
+        bufline = fgets (bufline, buffer_size, perplex_file);
+        sscanf (bufline, "%lf\n", &(perplex_table->TP[i].delta));
 
-        read = getline (&bufline, len, perplex_file);
-        sscanf (bufline, "%d\n", &(perplex_table->size[i]));
+        bufline = fgets (bufline, buffer_size, perplex_file);
+        sscanf (bufline, "%d\n", &(perplex_table->TP[i].ndeps));
 
-        perplex_table->end_value[i] = perplex_table->start_value[i] + (perplex_table->size[i]-1) * perplex_table->delta_value[i];
+        perplex_table->TP[i].end = perplex_table->TP[i].start + (perplex_table->TP[i].ndeps-1) * perplex_table->TP[i].delta;
     }
 
     // Read in number of fields
-    read = getline (&bufline, len, perplex_file);
-    sscanf (bufline, "%d\n",&(perplex_table->nfields));
+    bufline = fgets (bufline, buffer_size, perplex_file);
+    sscanf (bufline, "%d\n",&(perplex_table->ninput_fields));
 
     // Read in fields and order
-    read = getline (&bufline, len, perplex_file);
-    read_field_order(bufline, perplex_table->nfields,perplex_table->input_field_ids);
+    bufline = fgets (bufline, buffer_size, perplex_file);
+    perplex_table->field_ids = *(read_field_order(bufline, perplex_table->ninput_fields, &(perplex_table->field_ids)));
 
     free(bufline);
-    free(field_name);
 }
 
-void read_perplex_body(struct All_variables *E, double ***perplex_data, FILE *perplex_file, struct table_properties* perplex_table)
+void read_perplex_body(double ****perplex_data, FILE *perplex_file, struct table_properties* perplex_table)
 {
     int i,j,k;
-    size_t *len;
-    ssize_t read;
-    char* bufline;
+    int buffer_size = 255;
+    char* bufline = malloc(buffer_size * sizeof(char));
     char* bufval;
 
-    for (i=0;i<perplex_table->size[1];i++)
-        for (j=0;j<perplex_table->size[0];j++)
+    for (i=0;i<perplex_table->TP[1].ndeps;i++)
+        for (j=0;j<perplex_table->TP[0].ndeps;j++)
         {
-            read = getline (&bufline, len, perplex_file);
-            for (k=0;i<perplex_table->nfields;i++)
+            bufline = fgets (bufline, buffer_size, perplex_file);
+            bufval = strtok(bufline, " ");
+
+            for (k=0;k<perplex_table->ninput_fields;k++)
             {
-                bufval = strtok(bufline, " ");
-                sscanf (bufline, "%lg\n", &(perplex_data[i][j][k]));
+                sscanf (bufval, "%le", &((*perplex_data)[i][j][k]));
+                bufval = strtok(NULL, " ");
             }
         }
 }
 
-void allocate_perplex_data (double ***perplex_data, struct table_properties *perplex_table)
+double ***allocate_perplex_data (struct table_properties *perplex_table, double *** perplex_data)
 {
     int i,j;
 
-    perplex_data = (double ***) malloc(sizeof(double**) * perplex_table->size[0]);
-    for(i=0;i<perplex_table->size[0];i++){
-        perplex_data[i] = (double **) malloc(sizeof(double*) * perplex_table->size[1]);
-        for(j=0;j<perplex_table->size[1];j++){
-            perplex_data[i][j] = (double *) malloc(sizeof(double)*perplex_table->nfields);
+    perplex_data = (double ***) malloc(sizeof(double**) * perplex_table->TP[1].ndeps);
+    for(i=0;i<perplex_table->TP[1].ndeps;i++){
+        perplex_data[i] = (double **) malloc(sizeof(double*) * perplex_table->TP[0].ndeps);
+        for(j=0;j<perplex_table->TP[0].ndeps;j++){
+            perplex_data[i][j] = (double *) malloc(sizeof(double) * perplex_table->ninput_fields);
         }
     }
+    return perplex_data;
 }
 
-int idxPress (double refpress, double deltapress, int maxn)
+int idxPress (double refpress, double deltapress, int max)
 {
-    int npress;
-    npress = min(max((int)((refpress)/deltapress),0),maxn-1);
+    const int npress = min(max((int)(refpress/deltapress),0),max-1);
     return npress;
 }
 
-double get_depth_km (struct All_variables *E, int k)
+double get_depth_km (const struct All_variables *E, int k)
 {
     double max_depth_km = E->data.radius_km * (E->sphere.ro - E->sphere.ri);
 
@@ -325,95 +338,150 @@ double get_depth_km (struct All_variables *E, int k)
     int iz = ((k-1) / E->composition.pressure_oversampling) + 1;
     double weight =  ((double) ((k-1) % E->composition.pressure_oversampling) / (double) E->composition.pressure_oversampling);
 
-    return  (1-weight) * E->sx[1][3][iz] + weight * E->sx[1][3][iz+1];
+    //fprintf(stderr,"weight: %f\n",weight);
+    return  (E->sphere.ro - ((1-weight) * E->sx[1][3][iz] + weight * E->sx[1][3][iz+1])) * E->data.radius_km;
 }
 
+/*
+ * Calculates the next step of a adiabatic profile. Assumes that node index k+1 already is computed
+ * and computes the temperature and pressure of k according to the data present in perplex_data.
+ * The dimensions and field ordering of perplex_data are described in perplex_table
+ */
+void calc_adiabatic_conditions(
+        const struct table_properties *table,
+        const double ***data,
+        const int k,
+        const double delta_depth_m,
+        const double midpoint_gravity,
+        double *Padi,
+        double *Tadi)
+{
+    int TPidx[2];
+    const struct IDs *id = &(table->field_ids);
+    const struct field *TP = table->TP;
+
+    // calc old indices
+    TPidx[id->T] = idxTemp(Tadi[k+1]-TP[id->T].start,TP[id->T].delta,TP[id->T].ndeps);
+    TPidx[id->P] = idxPress(Padi[k+1]-TP[id->P].start,TP[id->P].delta,TP[id->P].ndeps);
+
+    // calc old properties
+    double density = data[TPidx[0]][TPidx[1]][id->rho];
+    double alpha = data[TPidx[0]][TPidx[1]][id->alpha];
+    double cp = data[TPidx[0]][TPidx[1]][id->cp];
+
+    //TODO: dh switch (see above)
+   //double dHdp,dHdT;
+    //dHdp = (perplex_data[pn][i][5] - perplex_data[pp][i][idH]) / (dp*TP[id.P]->delta*1e5);
+    //dHdT = (perplex_data[idP][Tn][5] - perplex_data[idP][Tp][idH])/(dT*TP[id->T].start);
+    //alpha = (1-data[idP][i][0]*dHdp)/((TP[id.T].start + i*TP[id->T].start)*E->data.therm_exp);
+    //cp = dHdT/E->data.Cp;
+
+
+        Tadi[k] = Tadi[k+1] * (1 + alpha * midpoint_gravity * delta_depth_m / cp);
+        Padi[k]= Padi[k+1] + midpoint_gravity * delta_depth_m * density / 1e5;
+
+        int i;
+        double temperature;
+
+        for(i=1;i<11;i++){
+            TPidx[id->T] = idxTemp(Tadi[k+1]-TP[id->T].start,TP[id->T].delta,TP[id->T].ndeps);
+            TPidx[id->P] = idxPress(Padi[k]-TP[id->P].start,TP[id->P].delta,TP[id->P].ndeps);
+
+            density = 0.5*(density + data[TPidx[0]][TPidx[1]][id->rho]);
+            alpha =  0.5*(alpha+data[TPidx[0]][TPidx[1]][id->alpha]);
+            cp = 0.5*(cp+data[TPidx[0]][TPidx[1]][id->cp]);
+            temperature = 0.5*(Tadi[k+1]+Tadi[k]);
+
+            Tadi[k] = Tadi[k+1] + temperature * alpha * midpoint_gravity * delta_depth_m / cp;
+            Padi[k]= Padi[k+1] + midpoint_gravity * delta_depth_m * density / 1e5;
+        }
+
+        printf("Tadi:%f pressure:%f k:%d density:%f delta_m:%f Tidx:%d Pidx:%d \n",Tadi[k],Padi[k],k, density, delta_depth_m,TPidx[id->T],TPidx[id->P]);
+    }
 
 void calculate_refstate_data (struct All_variables *E, struct table_properties *perplex_table, double ***perplex_data, const int idx_field)
 {
-    const int nodes = (E->mesh.elz*E->composition.pressure_oversampling)+1; // 1 times more property nodes
-    const int start_temp = perplex_table->start_value[perplex_table->temperature_field];
-    const int delta_temp = perplex_table->delta_value[perplex_table->temperature_field];
-    const int start_press = perplex_table->start_value[perplex_table->pressure_field];
-    const int delta_press = perplex_table->delta_value[perplex_table->pressure_field];
-    const int npdeps = perplex_table->size[perplex_table->pressure_field];
-    const int ntdeps = perplex_table->size[perplex_table->pressure_field];
+
+    const struct IDs *id = &(perplex_table->field_ids);
+    const struct field *TP = perplex_table->TP;
+
+
+    //TODO: Input parameter to switch H calculation on/off
+    //id->h = perplex_table->input_field_ids[5]
+
     const int limittoTm = 0;
 
+    int TPidx[2];
+
+    int maxnT;
+    int i,k,l;
+    double dHdp,dHdT;
+
+
+    // Calculate adiabatic reference profile
+    const int nodes = (E->mesh.noz-1) *E->composition.pressure_oversampling + 1;
     double Tadi[nodes];
-    double pressure[nodes];
+    double Padi[nodes];
 
-    FILE *ofile;
-    char *bufline, bufname1[400],bufname2[400];
-    float depth_km,delta_depth_m;
-    int i_depth_km;
-    int depth_index,maxnT;
-    int i,k,l,idTold,idPold;
-    float temp1,temp2;
-    bufline = (char*) malloc (200*sizeof(char));
-    //float borders[7][2] = {{2.0,0.8},{5.0,-5.0},{5.0,0.5},{15.0,4.5},{8.5,3.5},{5.0,-5.0},{5.0,0.5}};
-    float borders[7][2] = {{2.0,0.8},{1.5,0.1},{1.5,0.5},{15.0,4.5},{8.5,3.5},{5.0,-5.0},{5.0,0.5}};
+    Tadi[nodes] = E->control.adiabaticT0 * E->data.ref_temperature;
+    Padi[nodes] = 1.0;
+    double delta_depth_m,midpoint_gravity;
 
-   Tadi[0] = E->control.adiabaticT0 * E->data.ref_temperature;
-   pressure[0] = 1.0;
-   int idT = idxTemp(Tadi[0]-start_temp,delta_temp,ntdeps);
-   int idP = idxPress(pressure[0],delta_press,npdeps);
-
-   for (k=nodes;k>0;k--){
-       depth_km = get_depth_km(E,k);
-       delta_depth_m = 1000*depth_km;
-       if (k>0){
-           Tadi[k] = Tadi[k-1] * (1+E->refstate.tab_thermal_expansivity[k-1][idTold][1]*E->refstate.gravity[k]*E->data.therm_exp*E->data.grav_acc*delta_depth_m/(E->refstate.tab_heat_capacity[k-1][idTold][2]*E->data.Cp));
-           idT = idxTemp(Tadi[k]-start_temp,delta_temp,ntdeps);
-
-           pressure[k]= pressure[k-1] + E->refstate.gravity[k]*E->data.grav_acc*delta_depth_m*E->refstate.tab_density[k-1][idT][0]*E->data.density/1e5;
-           idP = idxPress(pressure[k]-start_press,delta_press,npdeps);
-
-           for(i=1;i<11;i++){
-               Tadi[k] = Tadi[k-1] + 0.5*(Tadi[k-1]+Tadi[k]) * 0.5*(E->refstate.tab_thermal_expansivity[k-1][idTold][1]*E->data.therm_exp+perplex_data[idP][idT][1])*0.5*(E->refstate.gravity[k-1]+E->refstate.gravity[k])*E->data.grav_acc*delta_depth_m/(0.5*(E->refstate.tab_heat_capacity[k-1][idTold][2]*E->data.Cp+perplex_data[npdeps][idT][2]));
-               idT = idxTemp(Tadi[k-1]-start_temp,delta_temp,ntdeps);
-               pressure[k]= pressure[k-1] + 0.5*(E->refstate.gravity[k-1]+E->refstate.gravity[k])*E->data.grav_acc*delta_depth_m*0.5*(E->refstate.tab_density[k-1][idTold][0]*E->data.density + perplex_data[idP][idT][0])/1e5;
-               idP = idxPress(pressure[k]-start_press,delta_press,npdeps);
-           }
-           printf("Tadi:%f pressure:%f k:%d\n",Tadi[k],pressure[k],k);
-           printf("\n");
-       }
-       depth_index = npdeps;
-       if (limittoTm)
-         maxnT = ((int) E->refstate.Tm[k] - start_temp)/delta_temp;
-       else
-         maxnT = ntdeps;
-
-       int pp, pn, Tp,Tn,dp,dT;
-       double dHdp,dHdT;
-       for (l=0;l<ntdeps;l++){
-         i = min(l,maxnT);  // Limit index lower than T melt
-         Tp = max(0,i-1);
-         Tn = min(ntdeps-1,i+1);
-         dT = Tn-Tp;
-         pp = max(0,depth_index-1);
-         pn = min(npdeps-1,depth_index+1);
-         dp = pn-pp;
-
-         dHdp = (perplex_data[pn][i][5] - perplex_data[pp][i][5]) / (dp*delta_press*1e5);
-         dHdT = (perplex_data[depth_index][Tn][5] - perplex_data[depth_index][Tp][5])/(dT*delta_temp);
-         E->refstate.tab_density[k][l][0] = perplex_data[depth_index][i][0]/E->data.density;
-         E->refstate.tab_thermal_expansivity[k][l][1] = perplex_data[depth_index][i][1]/E->data.therm_exp;
-         //E->refstate[k][l][1] = (1-perplex_data[depth_index][i][0]*dHdp)/((start_temp + i*delta_temp)*E->data.therm_exp);
-         E->refstate.tab_heat_capacity[k][l][2] = perplex_data[depth_index][i][2]/E->data.Cp;
-         //E->refstate[k][l][2] = dHdT/E->data.Cp;
-         E->refstate.tab_seismic_vp[k][l][3] = perplex_data[depth_index][i][3];
-         E->refstate.tab_seismic_vs[k][l][4] = perplex_data[depth_index][i][4];
-         //E->refstate[k][l][5] = perplex_data[depth_index][i][5];
-
+    for (k=nodes-1;k>0;k--){
+        delta_depth_m = 1000*(get_depth_km(E,k-1)-get_depth_km(E,k));
+        midpoint_gravity = 0.5 * (E->refstate.gravity[k+1]+E->refstate.gravity[k]) * E->data.grav_acc;
+        calc_adiabatic_conditions(perplex_table,(const double ***) perplex_data,k,delta_depth_m,midpoint_gravity,Padi,Tadi);
     }
-    idTold = idT;
-    idPold = idP;
-}
 
+
+    // In local refstate range: fill refstate variables
+    const int local_nodes = (E->lmesh.noz-1)*E->composition.pressure_oversampling + 1;
+    const int start_node = E->composition.pressure_oversampling*(E->lmesh.nzs-1);
+    const int end_node = start_node + local_nodes;
+    for (k=start_node;k<end_node;k++)
+    {
+        if (limittoTm)
+            maxnT = ((int) E->refstate.Tm[k] - TP[id->T].start)/TP[id->T].delta;
+        else
+            maxnT = TP[id->T].ndeps;
+
+        int Tp,Tn,dT;
+        int pp,pn,dp;
+
+        TPidx[id->P] = idxPress(Padi[k],TP[id->P].delta,TP[id->P].ndeps);
+        pp = max(0,TPidx[id->P]-1);
+        pn = min(TP[id->P].ndeps-1,TPidx[id->P]+1);
+        dp = pn-pp;
+
+        for (l=1;l<=TP[id->T].ndeps;l++){
+
+            i = min(l,maxnT);  // Limit index lower than T melt
+
+            TPidx[id->T] = i;
+            Tp = max(0,i-1);
+            Tn = min(TP[id->T].ndeps-1,i+1);
+            dT = Tn-Tp;
+            fprintf(stderr,"Test\n");
+
+            //TODO: dh switch (see above)
+            //dHdp = (perplex_data[pn][i][5] - perplex_data[pp][i][idH]) / (dp*TP[id.P]->delta*1e5);
+            //dHdT = (perplex_data[idP][Tn][5] - perplex_data[idP][Tp][idH])/(dT*delta_temp);
+            //E->refstate[k][l][1] = (1-perplex_data[idP][i][0]*dHdp)/((start_temp + i*delta_temp)*E->data.therm_exp);
+            //E->refstate[k][l][2] = dHdT/E->data.Cp;
+            //E->refstate[k][l][5] = perplex_data[id[0]][id[1]][idH];
+
+            E->refstate.tab_density[k][l][0] = perplex_data[TPidx[0]][TPidx[1]][id->rho]/E->data.density;
+            E->refstate.tab_thermal_expansivity[k][l][1] = perplex_data[TPidx[0]][TPidx[1]][id->alpha]/E->data.therm_exp;
+            E->refstate.tab_heat_capacity[k][l][2] = perplex_data[TPidx[0]][TPidx[1]][id->cp]/E->data.Cp;
+            E->refstate.tab_seismic_vp[k][l][3] = perplex_data[TPidx[0]][TPidx[1]][id->vp];
+            E->refstate.tab_seismic_vs[k][l][4] = perplex_data[TPidx[0]][TPidx[1]][id->vs];
+        }
+    }
 
 // interpolate
-//border_field (E->refstate,borders,nodes,ntdeps,5);
+//float borders[7][2] = {{2.0,0.8},{5.0,-5.0},{5.0,0.5},{15.0,4.5},{8.5,3.5},{5.0,-5.0},{5.0,0.5}};
+//float borders[7][2] = {{2.0,0.8},{1.5,0.1},{1.5,0.5},{15.0,4.5},{8.5,3.5},{5.0,-5.0},{5.0,0.5}};
+//border_field (E->refstate,borders,nodes,TP[id-T]->ndeps,5);
 /*
     for (k=0;k<nodes;k++){
         for (i=0;i<numtemp;i++){
@@ -456,8 +524,8 @@ border_field (c_morb,borders,nodes,numtemp,5);
 
     float*** temp = (float ***) malloc(sizeof(float**) * nodes);
     for(i=0;i<nodes;i++){
-        temp[i] = (float **) malloc(sizeof(float*) * ntdeps);
-        for(k=0;k<ntdeps;k++){
+        temp[i] = (float **) malloc(sizeof(float*) * TP[id->T].ndeps);
+        for(k=0;k<TP[id->T].ndeps;k++){
             temp[i][k] = (float *) malloc(sizeof(float)*5);
         }
     }
@@ -500,33 +568,37 @@ border_field (c_morb,borders,nodes,numtemp,5);
 void read_perplex_data (struct All_variables *E, char* perplex_filename,int idx_field)
 {
 
-    double not_used;
-    double start_press,end_press,delta_press;
-    int npdeps,nfields;
-    double ***fields;
-    struct table_properties perplex_table;
+    struct table_properties *perplex_table = (struct table_properties*) malloc (sizeof(struct table_properties));
+    double ****perplex_data = (double ****) malloc(sizeof(double***));
 
-    double ***perplex_data;
+    fprintf (stderr, "Zero\n");
 
     FILE* perplex_file = fopen(perplex_filename,"r");
 
     // Get information about size of table, stored in perplex_table
-    read_perplex_header(E,perplex_file,&perplex_table);
+    read_perplex_header(perplex_file,perplex_table);
+
+    fprintf (stderr, "One\n");
 
     // Get perplex data stored in perplex_data
-    allocate_perplex_data(perplex_data,&perplex_table);
-    read_perplex_body(E,perplex_data,perplex_file,&perplex_table);
+    *perplex_data = allocate_perplex_data(perplex_table, *perplex_data);
+
+    fprintf (stderr, " OneandHalf \n");
+
+    read_perplex_body(perplex_data,perplex_file,perplex_table);
+
+    fclose(perplex_file);
+
+    fprintf (stderr, "Two\n");
 
     // Transform to CitcomS data
-    allocate_perplex_refstate(E);
-    calculate_refstate_data(E,&perplex_table,perplex_data,idx_field);
+    fprintf (stderr, "Three\n");
 
-}
 
-void read_error()
-{
-    fputs("Error while reading perplex file\n",stderr);
-    parallel_process_termination();
+    calculate_refstate_data(E,perplex_table,*perplex_data,idx_field);
+
+    fprintf (stderr, "Four\n");
+
 }
 
 const double get_property_nd_perplex(const struct All_variables *E, const double*** property, const int m, const int nn, const int temperature_accurate)

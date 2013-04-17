@@ -44,6 +44,35 @@ const double get_vp_nd_perplex(const struct All_variables *E, const int m, const
 const double get_vs_nd_perplex(const struct All_variables *E, const int m, const int nn);
 const double get_radheat_nd_perplex(const struct All_variables *E, const int m, const int nn);
 
+struct IDs
+    {
+int T;
+int P;
+int rho;
+int alpha;
+int cp;
+int vp;
+int vs;
+int h;
+    };
+
+struct field
+    {
+double start;
+double end;
+double delta;
+int ndeps;
+    };
+
+struct table_properties
+    {
+int ninput_fields;
+
+struct IDs field_ids;
+struct field TP[2];
+    };
+
+
 #ifdef __cplusplus
 }
 #endif

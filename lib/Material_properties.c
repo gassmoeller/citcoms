@@ -107,7 +107,7 @@ void allocate_refstate(struct All_variables *E)
 void mat_prop_allocate(struct All_variables *E)
 {
 	allocate_refstate(E);
-	if (E->refstate.choice == 3)
+	if (E->refstate.choice == 3 || E->refstate.choice == 4)
 		allocate_perplex_refstate(E);
 }
 
@@ -157,6 +157,11 @@ void reference_state(struct All_variables *E)
         /* read from a file */
     	read_refstate(E);
         read_perplexfile(E);
+        break;
+    case 4:
+        read_refstate(E);
+        for (i = 0; i < E->trace.nflavors;i++)
+            read_perplex_data(E,"pyrolite.tab",i);
         break;
     default:
         if (E->parallel.me) {
