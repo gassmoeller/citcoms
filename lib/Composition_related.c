@@ -86,7 +86,7 @@ void composition_input(struct All_variables *E)
     }
 
 
-    input_int("continents",&(E->composition.continents),"1,0,nomax",m);
+    input_int("continents",&(E->composition.continents),"0,0,nomax",m);
 
     if(E->control.tracer_enriched){
         E->control.Q0ER = (float*) malloc(E->composition.ncomp
