@@ -741,8 +741,6 @@ void read_initial_settings(struct All_variables *E)
   E->composition.delta_temp = (E->composition.end_temp - E->composition.start_temp)
                                      / (float) (E->composition.ntdeps-1);
 
-  input_int("continents",&(E->composition.continents),"0,0,nomax",m);
-
 
   tracer_input(E);
 
