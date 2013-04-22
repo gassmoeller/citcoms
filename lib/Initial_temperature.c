@@ -134,6 +134,7 @@ void tic_input(struct All_variables *E)
     }
 
     input_float("half_space_age", &(E->convection.half_space_age), "40.0,1e-3,nomax", m);
+    input_double("layer_depth", &(E->convection.layer_depth), "0.0,0.0,nomax", m);
     input_float("mantle_temp",&(E->control.mantle_temp),"1.0",m);
 
     
@@ -424,7 +425,7 @@ static void add_layer(struct All_variables *E)
     for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=E->lmesh.nno; i++){
             r1 = E->sx[m][3][i];
-            E->T[m][i] += (r1 <= E->trace.z_interface[1]) ? E->convection.blob_dT : 0.0;
+            E->T[m][i] += (r1 <= E->convection.layer_depth) ? E->convection.blob_dT : 0.0;
                     //add_layer_point(E->trace.z_interface[1],r1,half_width,E->convection.blob_dT);
             E->T[m][i] = min(1.0,E->T[m][i]);
             }
@@ -551,8 +552,8 @@ static void add_quasi_bottom_tbl(struct All_variables *E, double age_in_myrs, do
                 for(k=1; k<=noz; k++) {
                     node = k + (j-1)*noz + (i-1)*nox*noz;
                     r1 = E->sx[m][3][node];
-                    if (r1 >= E->trace.z_interface[1])
-                        E->T[m][node] += dT * erfc(tmp * (r1 - E->trace.z_interface[1]));
+                    if (r1 >= E->convection.layer_depth)
+                        E->T[m][node] += dT * erfc(tmp * (r1 - E->convection.layer_depth));
                 }
 
     return;

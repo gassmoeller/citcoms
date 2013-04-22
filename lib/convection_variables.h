@@ -31,6 +31,7 @@ struct CONVECTION { /* information controlling convection problems */
 
     int tic_method;
     float half_space_age;
+    double layer_depth;
 
 #define PERTURB_MAX_LAYERS 255
     int number_of_perturbations;

@@ -269,6 +269,7 @@ PyObject * pyCitcom_IC_set_properties(PyObject *self, PyObject *args)
                            num_perturb, fp);
 
     getFloatProperty(properties, "half_space_age", E->convection.half_space_age, fp);
+    getDoubleProperty(properties, "layer_depth", E->convection.layer_depth, fp);
     getFloatProperty(properties, "mantle_temp", E->control.mantle_temp, fp);
 
     getFloatVectorProperty(properties, "blob_center", E->convection.blob_center, 6, fp);
@@ -761,6 +762,8 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
 
     }
 
+
+    E->composition.icompositional_rheology = 0;
 
     if(E->parallel.nprocxy == 12) {
 

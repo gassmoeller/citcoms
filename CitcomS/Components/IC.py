@@ -129,6 +129,8 @@ class IC(CitcomComponent):
         # for tic_method=1 or 2
         half_space_age = pyre.inventory.float("half_space_age", default=40,
                               validator=pyre.inventory.greater(1e-3))
+        layer_depth = pyre.inventory.float("layer_depth", default=0.0,
+                                            validator=pyre.inventory.greater(-1e-3))
         mantle_temp = pyre.inventory.float("mantle_temp", default=1.0)
 
         # for tic_method=2
