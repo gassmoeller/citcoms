@@ -424,7 +424,8 @@ static void add_layer(struct All_variables *E)
     for(m=1; m<=E->sphere.caps_per_proc; m++)
         for(i=1; i<=E->lmesh.nno; i++){
             r1 = E->sx[m][3][i];
-            E->T[m][i] += add_layer_point(E->trace.z_interface[1],r1,half_width,E->convection.blob_dT);
+            E->T[m][i] += (r1 <= E->trace.z_interface[1]) ? E->convection.blob_dT : 0.0;
+                    //add_layer_point(E->trace.z_interface[1],r1,half_width,E->convection.blob_dT);
             E->T[m][i] = min(1.0,E->T[m][i]);
             }
     return;
