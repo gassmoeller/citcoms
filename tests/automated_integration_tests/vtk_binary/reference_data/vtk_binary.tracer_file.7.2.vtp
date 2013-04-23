@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<VTKFile type="PolyData" version="0.1" compressor="vtkZLibDataCompressor" byte_order="LittleEndian">
+  <PolyData>
+    <Piece NumberOfPoints="48" NumberOfVerts="48" NumberOfLines="0" NumberOfStrips="0" NumberOfPolys="0">
+      <PointData Scalars="Composition">
+        <DataArray type="Float32" Name="Tracer Quantity 0" format="binary">
+AQAAAMAAAADAAAAADAAAAA==eJxjYBjaAAAAwAAB
+        </DataArray>
+        <DataArray type="Float32" Name="Tracer Quantity 1" format="binary">
+AQAAAMAAAADAAAAAIwAAAA==eJwrP6NtVA7Hq5HYMD66GDa8Go9+Qmah6yXWTggGAOYRVAE=
+        </DataArray>
+      </PointData>
+      <CellData>
+      </CellData>
+      <Points>
+        <DataArray type="Float32" Name="coordinate" NumberOfComponents="3" format="binary">
+AQAAAEACAABAAgAASAIAAA==eJwNy30s1HEcB/Duru46NEtMHq5U2rSwPK1x+bzlDud+d07HliwtMbmUZqZGD4yysGXWWiXLP7JdamXRyu/7zbSZVetBWVMT1x9cjpXCeSpXr/9fn8UkBIfLcFNewx47TAg8s0JuqueiwzsDS+operElmw9VG+FfrMBJdR1L/AXk3JGi9YmZRx8yw2Fy0eT5Yn7sUzKOD8ySVWXgsaPx6DwtRXXfNPNd1iOyQoGOzd48YUyPE/ectCOsnFn3ahCftUhVEjeef8QIhf472ULq2cgBM+Z8ZHCNWXjsWQ0cke5YmMrjkWVJkL5x0lK9sSeiNBHl2XIoPOP50f93eWGaZEPF/H2RDo0blZh50Ma+XDChMG+Ovo3peFmtAeNSBaxx3WxxuxatA/P02r6BOdv2w69FgokCOxvemQX/tHkKoCrxbrYRzU0y2LSVrGQGsGxTItY5wZpCD0LTtUiTed6s7ZoON/Ll0H418MlGPXZXusPaH8Aj0pPRvdZFH1Q+/GWfAV3nbHRr9BkLNadgpmSORoybeFqngN7cWVoflskTbguwqRXISTZw14KAp4U/KL+iga0rScX9DA+suKv4x0EBotpBMaf8mK+vAUXtCljsOTxOk4qt7+TwWj3Mu6xaWDx/08W/+3hzowkdf+wk1LSLwb0C9lyyUdTVIOYVY0CdxwT9DI4WA/szkVswTWtK+8S3tSaEXx+noJEiXm5JQcOuVVJGD7PByzq8SneRKuQha5kXwKIksNZcEZNWBTxSrlCISdLzD/puA68=
+        </DataArray>
+      </Points>
+    <Verts>
+      <DataArray type="Int32" Name="connectivity" format="binary">
+AQAAAMAAAADAAAAAVQAAAA==eJwNw4kSgVAAAMDnliNXRUQ5c4T//7t2ZzaEEDp27dl34NCRYyMnTp05N3bh0pVrNyamZm7dmbv3YOHRk6WVZy9evXn3Ye3Tl28/Nn79+bcFIK8EaQ==
+      </DataArray>
+      <DataArray type="Int32" Name="offsets" format="binary">
+AQAAAMAAAADAAAAAVQAAAA==eJwNwwUSgkAAAMAzEQOwUCzExPb/r2N3ZlshhLYdu/bsGzkwdujIsRMTUzOnzpy7cGnuyrWFG7fu3Huw9GjlybMXr968W/vw6cu3H7/+/NsAMw8EmQ==
+      </DataArray>
+    </Verts>
+  </Piece>
+  </PolyData>
+</VTKFile>
