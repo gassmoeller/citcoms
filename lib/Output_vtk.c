@@ -41,8 +41,8 @@
 #define CHUNK 16384
 
 static void write_binary_array_double(int nn, double* array, FILE * f);
-static void write_binary_array(int nn, float* array, FILE * f);
-static void write_int_binary_array(int nn, int* array, FILE * f);
+static void write_binary_array_float(int nn, float* array, FILE * f);
+static void write_binary_array_int(int nn, int* array, FILE * f);
 static void write_ascii_array_float(int nn, int perLine, float *array, FILE *fp);
 static void write_ascii_array_double(int nn, int perLine, double *array, FILE *fp);
 static void write_ascii_array(int nn, int perLine, int ascii_precision, double *array, FILE *fp);
@@ -472,7 +472,7 @@ static void vtk_output_visc(struct All_variables *E, FILE *fp)
 
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"viscosity\" format=\"%s\">\n", E->output.vtk_format);
         if (strcmp(E->output.vtk_format, "binary") == 0) {
-            write_binary_array(nodes,&E->VI[lev][1][1],fp);
+            write_binary_array_float(nodes,&E->VI[lev][1][1],fp);
         } else {
             write_ascii_array_float(nodes,1,&E->VI[lev][1][1],fp);
         }
@@ -525,7 +525,7 @@ static void vtk_output_tracer(struct All_variables *E, FILE *fp)
 
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"numtracer\" format=\"%s\">\n", E->output.vtk_format);
         if (strcmp(E->output.vtk_format, "binary") == 0) {
-            write_binary_array(nodes,floattracer,fp);
+            write_binary_array_float(nodes,floattracer,fp);
         } else {
             write_ascii_array_float(nodes,1,floattracer,fp);
         }
@@ -582,7 +582,7 @@ static void vtk_output_stress(struct All_variables *E, FILE *fp)
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"stress\" NumberOfComponents=\"6\" format=\"%s\">\n", E->output.vtk_format);
 
     if (strcmp(E->output.vtk_format, "binary") == 0) {
-        write_binary_array(nodes*6,&E->gstress[1][1],fp);
+        write_binary_array_float(nodes*6,&E->gstress[1][1],fp);
     } else {
         write_ascii_array_float(nodes*6,6,&E->gstress[1][1],fp);
     }
@@ -671,7 +671,7 @@ void vtk_output_surf_botm(struct All_variables *E,  FILE *fp, int cycles)
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0)
-        write_binary_array(nodes,floattopo,fp);
+        write_binary_array_float(nodes,floattopo,fp);
     else
         write_ascii_array_float(nodes,1,floattopo,fp);
 
@@ -690,7 +690,7 @@ void vtk_output_surf_botm(struct All_variables *E,  FILE *fp, int cycles)
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0)
-        write_binary_array(nodes,floatheating,fp);
+        write_binary_array_float(nodes,floatheating,fp);
     else
         write_ascii_array_float(nodes,1,floatheating,fp);
 
@@ -986,7 +986,7 @@ static void vtk_tracer_extraq(struct All_variables *E, int idx_extraq, const int
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0)
-        write_binary_array(tracers,floatextraq,fp);
+        write_binary_array_float(tracers,floatextraq,fp);
     else
         write_ascii_array_float(tracers,1,floatextraq,fp);
     fputs("        </DataArray>\n", fp);
@@ -1099,33 +1099,44 @@ void write_tracer_file(struct All_variables *E, int cycles)
             "    <Piece NumberOfPoints=\"%d\" NumberOfVerts=\"%d\" NumberOfLines=\"0\" NumberOfStrips=\"0\" NumberOfPolys=\"0\">\n"
             "      <PointData Scalars=\"Composition\">\n", nselected_tracers,nselected_tracers);
 
-    for (i = 0; i<E->trace.number_of_extra_quantities;i++)
-    	vtk_tracer_extraq(E,i,nselected_tracers,tracer_list,ft);
+    if (nselected_tracers)
+    {
+        for (i = 0; i<E->trace.number_of_extra_quantities;i++)
+            vtk_tracer_extraq(E,i,nselected_tracers,tracer_list,ft);
+    }
 
     vtk_point_data_trailer(E,ft);
 
     /* write element-based field */
     vtk_cell_data_header(E,ft);
     vtk_cell_data_trailer(E,ft);
-    vtk_tracer_coord(E,nselected_tracers,tracer_list,ft);
+
+    if (nselected_tracers)
+    {
+        vtk_tracer_coord(E,nselected_tracers,tracer_list,ft);
+    }
 
     fputs("    <Verts>\n",ft);
     fputs("      <DataArray type=\"Int32\" Name=\"connectivity\" format=\"binary\">\n",ft);
 
-    int *index = malloc(sizeof(int)*(E->trace.ntracers[1]));
-    for (i=0;i<nselected_tracers;i++){
-        //fprintf(ft,"%d ",i);
-        index[i] = i;}
-
-    write_int_binary_array(nselected_tracers,index,ft);
-    //fputs("\n",ft);
+    if (nselected_tracers)
+    {
+        int *tracer_index = malloc(sizeof(int)*nselected_tracers);
+        for (i=0;i<nselected_tracers;i++){
+            tracer_index[i] = i;}
+        write_binary_array_int(nselected_tracers,tracer_index,ft);
+        free(tracer_index);
+    }
     fputs("      </DataArray>\n",ft);
     fputs("      <DataArray type=\"Int32\" Name=\"offsets\" format=\"binary\">\n",ft);
-    for (i=1;i<=nselected_tracers;i++){
-        index[i-1] = i;}
-      //  fprintf(ft,"%d ",i);}
-    write_int_binary_array(nselected_tracers,index,ft);
-    //fputs("\n",ft);
+    if (nselected_tracers)
+    {
+        int *tracer_index = malloc(sizeof(int)*nselected_tracers);
+        for (i=1;i<=nselected_tracers;i++){
+            tracer_index[i-1] = i;}
+        write_binary_array_int(nselected_tracers,tracer_index,ft);
+        free(tracer_index);
+    }
     fputs("      </DataArray>\n",ft);
     fputs("    </Verts>\n",ft);
     fputs("  </Piece>\n",ft);
@@ -1137,7 +1148,6 @@ void write_tracer_file(struct All_variables *E, int cycles)
     if(E->parallel.me == 0) write_pvtp(E, cycles);
 
     free(tracer_list);
-
 }
 
 static void write_ascii_array_float(int nn, int perLine, float *array, FILE *fp)
@@ -1387,72 +1397,65 @@ void write_vtsarray(int nn, unsigned char * array, FILE * f)
     fprintf (f,"\n");
 }
 
-static void write_int_binary_array(int nn, int* array, FILE * f)
+void write_binary_array(unsigned char* chararray, int chararraylength,
+        FILE* f)
 {
-    /* writes vtk-data array of floats and performs zip and base64 encoding */
-    int chararraylength=4*nn;	/* nn floats -> 4*nn unsigned chars */
-    unsigned char * chararray = malloc (chararraylength * sizeof(unsigned char));
-    IntToUnsignedChar(array,nn,chararray);
-
     int compressedarraylength = 0;
-    unsigned char * compressedarray;
-    unsigned char ** pointertocompressedarray= &compressedarray;
-
+    unsigned char* compressedarray;
+    unsigned char** pointertocompressedarray = &compressedarray;
     /* compression routine */
-    zlibcompress(chararray,chararraylength,pointertocompressedarray,&compressedarraylength);
-
+    zlibcompress(chararray,chararraylength,pointertocompressedarray,
+            &compressedarraylength);
     /* special header for zip compressed and bas64 encoded data
-    header needs 4 int32 = 16 byte -> 24 byte due to base64 (4*16/3) */
-    int base64plusheadlength = 24 + 4*ceil((double) compressedarraylength/3.0);
-    unsigned char * base64plusheadarray= malloc(sizeof(unsigned char)* base64plusheadlength);
-
+     header needs 4 int32 = 16 byte -> 24 byte due to base64 (4*16/3) */
+    int base64plusheadlength = 24
+            + 4 * ceil((double) compressedarraylength / 3.0);
+    unsigned char* base64plusheadarray = malloc(
+            sizeof(unsigned char) * base64plusheadlength);
     /* fills base64plusheadarray with everything ready for simple writing */
-    base64plushead(compressedarray,compressedarraylength, chararraylength, base64plusheadarray);
-	
-    write_vtsarray(base64plusheadlength, base64plusheadarray, f);
-    free(chararray);
+    base64plushead(compressedarray,compressedarraylength,chararraylength,
+            base64plusheadarray);
+    write_vtsarray(base64plusheadlength,base64plusheadarray,f);
     free(base64plusheadarray);
     free(compressedarray);
 }
 
+static void write_binary_array_int(int nn, int* array, FILE * f)
+{
+    /* writes vtk-data array of ints and performs zip and base64 encoding */
+    int chararraylength=4*nn;	/* nn floats -> 4*nn unsigned chars */
+    unsigned char * chararray = malloc (chararraylength * sizeof(unsigned char));
+    IntToUnsignedChar(array,nn,chararray);
+
+    write_binary_array(chararray,chararraylength,f);
+
+    free(chararray);
+}
+
 static void write_binary_array_double(int nn, double* array, FILE * f)
 {
+    /* writes vtk-data array of doubles and performs zip and base64 encoding */
+
 	int i;
 	float* float_array = malloc(nn * sizeof(float));
 
 	for (i=0;i<nn;i++) float_array[i] = (float) array [i];
 
-	write_binary_array(nn,float_array,f);
+	write_binary_array_float(nn,float_array,f);
 	free(float_array);
 }
 
-
-static void write_binary_array(int nn, float* array, FILE * f)
+static void write_binary_array_float(int nn, float* array, FILE * f)
 {
     /* writes vtk-data array of floats and performs zip and base64 encoding */
-    int chararraylength=4*nn;	/* nn floats -> 4*nn unsigned chars */
+    int chararraylength=4*nn;   /* nn floats -> 4*nn unsigned chars */
     unsigned char * chararray = malloc (chararraylength * sizeof(unsigned char));
     FloatToUnsignedChar(array,nn,chararray);
 
-    int compressedarraylength = 0;
-    unsigned char * compressedarray;
-    unsigned char ** pointertocompressedarray= &compressedarray;
+    write_binary_array(chararray,chararraylength,f);
 
-    /* compression routine */
-    zlibcompress(chararray,chararraylength,pointertocompressedarray,&compressedarraylength);
-
-    /* special header for zip compressed and bas64 encoded data
-    header needs 4 int32 = 16 byte -> 24 byte due to base64 (4*16/3) */
-    int base64plusheadlength = 24 + 4*ceil((double) compressedarraylength/3.0);
-    unsigned char * base64plusheadarray= malloc(sizeof(unsigned char)* base64plusheadlength);
-
-    /* fills base64plusheadarray with everything ready for simple writing */
-    base64plushead(compressedarray,compressedarraylength, chararraylength, base64plusheadarray);
-	
-    write_vtsarray(base64plusheadlength, base64plusheadarray, f);
     free(chararray);
-    free(base64plusheadarray);
-    free(compressedarray);
+
 }
 
 /**********************************************************************/
