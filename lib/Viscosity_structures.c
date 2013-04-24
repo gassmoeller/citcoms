@@ -280,6 +280,25 @@ void visc_from_mat(E,EEta)
     return;
 }
 
+const float visc_from_steinberger_calderwood(struct All_variables *E, const int i,const double temp)
+{
+    const double R = 8.314;
+
+    const int iz = (i-1) % E->lmesh.noz + 1;
+
+    const double Tabs = temp + E->control.surface_temp;
+    const double adi_correction_prime = get_adiabatic_correction(E,iz) / E->data.ref_temperature;
+
+    const double eta_el = E->refstate.rad_viscosity[iz];
+    const double h_el = E->refstate.free_enthalpy[iz];
+    const double n = E->refstate.stress_exp[iz];
+    const double Tadi_el = E->refstate.Tadi[iz];
+    const double Tadi_el_prime = Tadi_el / E->data.ref_temperature;
+
+    return eta_el * exp(-1.0 * h_el * ( Tabs + adi_correction_prime - Tadi_el_prime)
+            / (n * R * Tadi_el * Tabs));
+}
+
 void visc_from_T(E,EEta,propogate)
      struct All_variables *E;
      float **EEta;
@@ -1062,36 +1081,24 @@ void visc_from_T(E,EEta,propogate)
 
             compute_horiz_avg(E);
 
-            const double R = 8.314;
 
         for(m=1;m<=E->sphere.caps_per_proc;m++)
             for(i=1;i<=nel;i++)   {
-                l = E->mat[m][i] - 1;
+                double visc[ends+1];
 
                 for(kk=1;kk<=ends;kk++) {
-                    TT[kk] = E->T[m][E->ien[m][i].node[kk]];
-                    zz[kk] = (1.-E->sx[m][3][E->ien[m][i].node[kk]]);
+                    temp = max(E->T[m][E->ien[m][i].node[kk]],zero);
+                    temp = min(temp,one);
+                    visc[kk] = visc_from_steinberger_calderwood(E,E->ien[m][i].node[kk],temp) ;
                 }
 
                 for(jj=1;jj<=vpts;jj++) {
-                    temp=0.0;
+                    float visco = 0.0;
                     for(kk=1;kk<=ends;kk++)   {
-                        TT[kk]=max(TT[kk],zero);
-                        temp += min(TT[kk],one) * E->N.vpt[GNVINDEX(kk,jj)];
+                        visco += visc[kk] * E->N.vpt[GNVINDEX(kk,jj)];
                     }
-                    iz = (i-1) % E->lmesh.elz + 1;
 
-                    const double Tabs = temp + E->control.surface_temp;
-                    const double adi_correction_prime = 0.5 * (get_adiabatic_correction(E,iz) + get_adiabatic_correction(E,iz+1)) / E->data.ref_temperature;
-
-                    const double eta_el = 0.5 * (E->refstate.rad_viscosity[iz] + E->refstate.rad_viscosity[iz + 1]);
-                    const double h_el = 0.5 * (E->refstate.free_enthalpy[iz]+E->refstate.free_enthalpy[iz + 1]);
-                    const double n = 0.5*(E->refstate.stress_exp[iz]+E->refstate.stress_exp[iz+1]);
-                    const double Tadi_el = 0.5*(E->refstate.Tadi[iz]+E->refstate.Tadi[iz+1]);
-                    const double Tadi_el_prime = Tadi_el / E->data.ref_temperature;
-
-                    EEta[m][(i - 1) * vpts + jj] = eta_el * exp(-1.0 * h_el * ( Tabs + adi_correction_prime - Tadi_el_prime)
-                            / (n * R * Tadi_el * Tabs));
+                    EEta[m][(i - 1) * vpts + jj] = visco;
 
                 }
             }

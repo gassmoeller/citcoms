@@ -64,7 +64,7 @@ void get_compressor_string(int is_not_binary, int string_length, char* compresso
 		snprintf (compressor_string,string_length,"");
 }
 
-static void vts_file_header(struct All_variables *E, FILE *fp)
+static void vts_file_header(struct All_variables *E, FILE *fp, const int *borders)
 {
 
     const char format[] =
@@ -76,9 +76,9 @@ static void vts_file_header(struct All_variables *E, FILE *fp)
     char extent[64], compressor_string[128], header[1024];
 
     snprintf(extent, 64, "%d %d %d %d %d %d",
-             E->lmesh.ezs, E->lmesh.ezs + E->lmesh.elz,
-             E->lmesh.exs, E->lmesh.exs + E->lmesh.elx,
-             E->lmesh.eys, E->lmesh.eys + E->lmesh.ely);
+            borders[0],borders[1],
+            borders[2],borders[3],
+            borders[4],borders[5]);
 
     get_compressor_string (strcmp(E->output.vtk_format,"binary"),128,compressor_string);
 
@@ -1075,6 +1075,108 @@ int select_tracer_list(const struct TRACE *trace, const int selection_crit, int*
     return i;
 }
 
+void write_viscosity_table_csv(struct All_variables *E)
+{
+    const float visc_from_steinberger_calderwood(struct All_variables *E,int i,double temp);
+
+    FILE *fv;
+        char vtv_file[255];
+        int iT,iz;
+
+        fprintf(stderr,"Printing viscosity table\n"); //Passed
+
+        snprintf(vtv_file, 255, "viscosity_table_%d.csv",E->parallel.me);
+
+        fv = output_open(vtv_file, "w");
+
+
+            for (iT = 1; iT<= E->lmesh.noz;iT++)
+
+            {
+                double temp = (double) (iT-1) / (double)(E->lmesh.noz-1);
+
+                for (iz = E->lmesh.noz; iz>0;iz--)
+                {
+                    float visc = visc_from_steinberger_calderwood(E,iz,temp);
+                    visc = min(max(visc,E->viscosity.min_value),E->viscosity.max_value);
+                    visc = E->data.ref_viscosity * visc;
+                    fprintf(fv,"%e ",visc);
+                }
+
+                fprintf(fv,"\n");
+            }
+        fclose(fv);
+}
+
+
+void write_viscosity_table_vtk(struct All_variables *E)
+{
+    const float visc_from_steinberger_calderwood(struct All_variables *E,int i,double temp);
+
+    FILE *fv;
+    char vtv_file[255];
+    int iT,iz;
+
+    fprintf(stderr,"Printing viscosity table\n"); //Passed
+
+    snprintf(vtv_file, 255, "%s.viscosity.vts",E->control.data_file);
+
+    fv = output_open(vtv_file, "w");
+
+    const int borders[6]  = {E->lmesh.ezs, E->lmesh.ezs + E->lmesh.elz,
+             E->lmesh.exs, E->lmesh.exs + E->lmesh.elx,
+             0, 0};
+
+    vts_file_header(E, fv,borders);
+    /* write node-based field */
+    vtk_point_data_header(E, fv);
+
+    fprintf(fv, "        <DataArray type=\"Float32\" Name=\"Viscosity\" format=\"%s\">\n", E->output.vtk_format);
+
+    for (iT = 1; iT<= E->lmesh.noz;iT++)
+    {
+        double temp = (double) (iT-1) / (double)(E->lmesh.noz-1);
+
+        for (iz = E->lmesh.noz; iz>0;iz--)
+        {
+            float visc = visc_from_steinberger_calderwood(E,iz,temp);
+            visc = min(max(visc,E->viscosity.min_value),E->viscosity.max_value);
+            visc = E->data.ref_viscosity * visc;
+            fprintf(fv,"%e ",visc);
+        }
+    }
+
+    fputs("        </DataArray>\n", fv);
+
+    vtk_point_data_trailer(E,fv);
+
+    vtk_cell_data_header(E, fv);
+
+    vtk_cell_data_trailer(E, fv);
+
+    /* write coordinate */
+    fputs("      <Points>\n", fv);
+    fprintf(fv, "        <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"%s\">\n", E->output.vtk_format);
+
+    for (iT = 1; iT<= E->lmesh.noz;iT++)
+    {
+        double temp = (double) (iT-1) / (double)(E->lmesh.noz-1);
+
+        for (iz = E->lmesh.noz; iz>0;iz--)
+        {
+            double depth = (double)(E->lmesh.noz - iz) / (double) E->lmesh.noz;
+            fprintf(fv,"%f %f %f ", depth, temp, 0.0);
+        }
+    }
+
+    fputs("        </DataArray>\n", fv);
+    fputs("      </Points>\n", fv);
+
+    vts_file_trailer(E, fv);
+
+    fclose(fv);
+}
+
 void write_tracer_file(struct All_variables *E, int cycles)
 {
     FILE *ft;
@@ -1473,7 +1575,11 @@ void vtk_output(struct All_variables *E, int cycles)
     fp = output_open(output_file, "w");
 
     /* first, write volume data to vts file */
-    vts_file_header(E, fp);
+    const int borders[6]  = {E->lmesh.ezs, E->lmesh.ezs + E->lmesh.elz,
+             E->lmesh.exs, E->lmesh.exs + E->lmesh.elx,
+             E->lmesh.eys, E->lmesh.eys + E->lmesh.ely};
+
+    vts_file_header(E, fp, borders);
 
     /* write node-based field */
     vtk_point_data_header(E, fp);
@@ -1532,6 +1638,8 @@ void vtk_output(struct All_variables *E, int cycles)
     /* then, write other type of data */   
 
     fclose(fp);
+
+    if ((E->parallel.me == 0) && (cycles == 0) && (E->viscosity.RHEOL == 105)) write_viscosity_table_vtk(E);
 
     /* if processor is first of cap write summary for simple reading */
     if (E->parallel.me%procs_per_cap == 0) write_pvts(E, cycles);
