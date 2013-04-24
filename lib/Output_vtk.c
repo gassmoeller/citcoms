@@ -1281,7 +1281,7 @@ static void write_ascii_array_seismic(int nn, int perLine, double *array, FILE *
 
     for (i=0;i<nn;i++) zeroed[i] = (array [i] > 1e-7) ? array[i] : 0;
 
-    write_ascii_array(nn,perLine,4,array,fp);
+    write_ascii_array(nn,perLine,4,zeroed,fp);
     free(zeroed);
 }
 
