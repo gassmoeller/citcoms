@@ -45,6 +45,7 @@ static void write_binary_array_float(int nn, float* array, FILE * f);
 static void write_binary_array_int(int nn, int* array, FILE * f);
 static void write_ascii_array_float(int nn, int perLine, float *array, FILE *fp);
 static void write_ascii_array_double(int nn, int perLine, double *array, FILE *fp);
+static void write_ascii_array_seismic(int nn, int perLine, double *array, FILE *fp);
 static void write_ascii_array(int nn, int perLine, int ascii_precision, double *array, FILE *fp);
 double modified_plgndr_a(int, int, double);
 
@@ -416,13 +417,13 @@ void vtk_output_seismic(struct All_variables *E, int cycles, FILE *fp)
         fputs("        </DataArray>\n", fp);
     }else {
         fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Rho\" format=\"%s\">\n", E->output.vtk_format);
-        write_ascii_array_double(nodes-1,1,output_rho,fp);
+        write_ascii_array_seismic(nodes-1,1,output_rho,fp);
         fputs("        </DataArray>\n", fp);
         fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vp\" format=\"%s\">\n", E->output.vtk_format);
-        write_ascii_array_double(nodes-1,1,output_vp,fp);
+        write_ascii_array_seismic(nodes-1,1,output_vp,fp);
         fputs("        </DataArray>\n", fp);
         fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vs\" format=\"%s\">\n", E->output.vtk_format);
-        write_ascii_array_double(nodes-1,1,output_vs,fp);
+        write_ascii_array_seismic(nodes-1,1,output_vs,fp);
         fputs("        </DataArray>\n", fp);
     }
 
@@ -1254,18 +1255,34 @@ void write_tracer_file(struct All_variables *E, int cycles)
 
 static void write_ascii_array_float(int nn, int perLine, float *array, FILE *fp)
 {
-	int i;
-		double* double_array = malloc(nn * sizeof(double));
+    int i;
+    double* double_array = malloc(nn * sizeof(double));
 
-		for (i=0;i<nn;i++) double_array[i] = (double) array [i];
+    for (i=0;i<nn;i++) double_array[i] = (double) array [i];
 
-		write_ascii_array(nn,perLine,4,double_array,fp);
-		free(double_array);
+    write_ascii_array(nn,perLine,4,double_array,fp);
+    free(double_array);
 }
 
 static void write_ascii_array_double(int nn, int perLine, double *array, FILE *fp)
 {
 	write_ascii_array(nn,perLine,6,array,fp);
+}
+
+/*
+ * This function is a special case for the seismic output. Its field is double
+ * but calculated with a lot of floats and polynomial extensions (PREM) so
+ * it's outputted accuracy need to be reduced to get reproducible results
+ */
+static void write_ascii_array_seismic(int nn, int perLine, double *array, FILE *fp)
+{
+    int i;
+    double* zeroed = malloc(nn * sizeof(double));
+
+    for (i=0;i<nn;i++) zeroed[i] = (array [i] > 1e-7) ? array[i] : 0;
+
+    write_ascii_array(nn,perLine,4,array,fp);
+    free(zeroed);
 }
 
 
