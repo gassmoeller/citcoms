@@ -1,0 +1,1 @@
+Test model that uses all features of the CMB1000 reference model but in a lower resolution and smaller number of tracers. Is intended to run in a few minutes on typical desktop computers and still do regression testing for all relevant features.
