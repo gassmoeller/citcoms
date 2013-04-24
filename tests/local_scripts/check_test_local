@@ -2,8 +2,10 @@
 
 cd `dirname $0`
 
-reference_data=$1reference_data
-test_data=$1data
+model_folder=`dirname $1`/`basename $1`
+
+reference_data=$model_folder/reference_data
+test_data=$model_folder/data
 
 status="passed"
 if [ "`ls $test_data | grep diff`" != "" ]
