@@ -641,18 +641,48 @@ static void set_non_perplex_eos(struct All_variables *E, const int idx_field)
         fprintf(stderr,"Adams-Williamson EOS\n");
     }
 
+    fprintf(stderr,"Using buoyancy ratio:%lf idx_field:%d\n",E->composition.buoyancy_ratio[idx_field-2],idx_field);
     beta = E->control.disptn_number * E->control.inv_gruneisen;
 
     for (k=1;k<=(E->lmesh.noz-1)*E->composition.pressure_oversampling+1;k++)
     {
         z = 1 - r;
         for (l=1;l<=E->composition.ntdeps;l++){
-            E->refstate.tab_density[idx_field][k][l] = E->refstate.tab_density[1][k][l] + E->composition.buoyancy_ratio[idx_field] * E->data.therm_exp * E->data.ref_temperature;
+            E->refstate.tab_density[idx_field][k][l] = E->refstate.tab_density[1][k][l] + E->composition.buoyancy_ratio[idx_field-2] * E->data.therm_exp * E->data.ref_temperature;
             E->refstate.tab_thermal_expansivity[idx_field][k][l] = E->refstate.tab_thermal_expansivity[1][k][l];
             E->refstate.tab_heat_capacity[idx_field][k][l] = E->refstate.tab_heat_capacity[1][k][l];
 
             E->refstate.tab_seismic_vp[idx_field][k][l] = E->refstate.tab_seismic_vp[1][k][l];
             E->refstate.tab_seismic_vs[idx_field][k][l] = E->refstate.tab_seismic_vs[1][k][l];
+        }
+    }
+
+    return;
+}
+
+static void set_test_perplex_data(struct All_variables *E, const int idx_field)
+{
+    int k,l;
+    double r, z, beta;
+
+    if(E->parallel.me == 0) {
+        fprintf(stderr,"Adams-Williamson EOS\n");
+    }
+
+    fprintf(stderr,"Using buoyancy ratio:%lf idx_field:%d\n",E->composition.buoyancy_ratio[idx_field-2],idx_field);
+    beta = E->control.disptn_number * E->control.inv_gruneisen;
+
+    for (k=1;k<=(E->lmesh.noz-1)*E->composition.pressure_oversampling+1;k++)
+    {
+        z = 1 - r;
+        for (l=1;l<=E->composition.ntdeps;l++){
+            E->refstate.tab_density[idx_field][k][l] = 1.0 - l*E->composition.delta_temp*E->data.therm_exp;
+            E->refstate.tab_thermal_expansivity[idx_field][k][l] = E->refstate.thermal_expansivity[k/E->composition.pressure_oversampling];
+            E->refstate.tab_heat_capacity[idx_field][k][l] = E->refstate.heat_capacity[k/E->composition.pressure_oversampling];
+
+            //TODO: How to calculate this in test case? There is a function in Mineral_physics_model.c
+            E->refstate.tab_seismic_vp[idx_field][k][l] = 0.0;
+            E->refstate.tab_seismic_vs[idx_field][k][l] = 0.0;
         }
     }
 
