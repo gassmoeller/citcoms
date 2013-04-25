@@ -13,7 +13,8 @@ Number of Extra Quantities: 1
 Total Number of Tracer Quantities: 13
 Active Tracers
 Ratio Method
-Tracer initialization takes 0.000080 seconds.
+Tracer initialization takes 0.000101 seconds.
 
 Generating 81920 Tracers
 Physical size of tracer arrays (max_ntracers): 102400
+Sum of Tracers: 81920

@@ -1,603 +1,603 @@
 Problem has 9 x 9 x 9 nodes per cap, 6930 nodes and 6144 elements in total
 Momentum equation force 1.418458674e+01
- *  residual (041) = 1.034e-03 from 1.418e+01 to 1.418e-03 in  0.01 secs 
-(000)   0.0 s v=2.082429e+00 p=0.000000e+00 div/v=4.12e+00 dv/v=1.00e+00 dp/p=1.00e+00 step 0
- *  residual (035) = 1.360e-03 from 1.280e+01 to 1.418e-03 in  0.01 secs 
-(001)   0.0 s v=1.869494e+00 p=2.572412e+01 div/v=6.57e-01 dv/v=5.09e-01 dp/p=1.00e+00 step 0
- *  residual (020) = 9.613e-04 from 2.307e+00 to 1.418e-03 in  0.01 secs 
-(002)   0.0 s v=1.857098e+00 p=2.603302e+01 div/v=6.18e-02 dv/v=4.83e-02 dp/p=1.45e-01 step 0
- *  residual (015) = 1.222e-03 from 2.370e-01 to 1.418e-03 in  0.00 secs 
-(003)   0.0 s v=1.859766e+00 p=2.602739e+01 div/v=9.54e-03 dv/v=9.16e-03 dp/p=1.39e-02 step 0
- *  residual (005) = 1.350e-03 from 3.459e-02 to 1.418e-03 in  0.00 secs 
-(004)   0.0 s v=1.859789e+00 p=2.602960e+01 div/v=1.77e-03 dv/v=6.09e-04 dp/p=2.30e-03 step 0
- *  residual (003) = 1.002e-03 from 5.411e-03 to 1.418e-03 in  0.00 secs 
-(005)   0.0 s v=1.859785e+00 p=2.602679e+01 div/v=7.81e-04 dv/v=1.32e-04 dp/p=5.34e-04 step 0
- *  residual (002) = 6.954e-04 from 2.323e-03 to 1.418e-03 in  0.00 secs 
-(006)   0.0 s v=1.859778e+00 p=2.602506e+01 div/v=5.33e-04 dv/v=6.17e-05 dp/p=3.57e-04 step 0
+ *  residual (041) = 1.034e-03 from 1.418e+01 to 1.418e-03 in  0.17 secs 
+(000)   0.2 s v=2.082429e+00 p=0.000000e+00 div/v=4.12e+00 dv/v=1.00e+00 dp/p=1.00e+00 step 0
+ *  residual (035) = 1.360e-03 from 1.280e+01 to 1.418e-03 in  0.15 secs 
+(001)   0.3 s v=1.869494e+00 p=2.572412e+01 div/v=6.57e-01 dv/v=5.09e-01 dp/p=1.00e+00 step 0
+ *  residual (020) = 9.613e-04 from 2.307e+00 to 1.418e-03 in  0.09 secs 
+(002)   0.4 s v=1.857098e+00 p=2.603302e+01 div/v=6.18e-02 dv/v=4.83e-02 dp/p=1.45e-01 step 0
+ *  residual (015) = 1.222e-03 from 2.370e-01 to 1.418e-03 in  0.07 secs 
+(003)   0.5 s v=1.859766e+00 p=2.602739e+01 div/v=9.54e-03 dv/v=9.16e-03 dp/p=1.39e-02 step 0
+ *  residual (005) = 1.350e-03 from 3.459e-02 to 1.418e-03 in  0.02 secs 
+(004)   0.5 s v=1.859789e+00 p=2.602960e+01 div/v=1.77e-03 dv/v=6.09e-04 dp/p=2.30e-03 step 0
+ *  residual (003) = 1.002e-03 from 5.411e-03 to 1.418e-03 in  0.01 secs 
+(005)   0.5 s v=1.859785e+00 p=2.602679e+01 div/v=7.81e-04 dv/v=1.32e-04 dp/p=5.34e-04 step 0
+ *  residual (002) = 6.954e-04 from 2.323e-03 to 1.418e-03 in  0.01 secs 
+(006)   0.6 s v=1.859778e+00 p=2.602506e+01 div/v=5.33e-04 dv/v=6.17e-05 dp/p=3.57e-04 step 0
  *  residual (001) = 8.592e-04 from 1.670e-03 to 1.418e-03 in  0.00 secs 
-(007)   0.0 s v=1.859775e+00 p=2.602304e+01 div/v=4.75e-04 dv/v=3.50e-05 dp/p=3.18e-04 step 0
- *  residual (001) = 1.144e-03 from 2.264e-03 to 1.418e-03 in  0.00 secs 
-(008)   0.0 s v=1.859773e+00 p=2.602119e+01 div/v=4.11e-04 dv/v=2.46e-05 dp/p=3.10e-04 step 0
+(007)   0.6 s v=1.859775e+00 p=2.602304e+01 div/v=4.75e-04 dv/v=3.50e-05 dp/p=3.18e-04 step 0
+ *  residual (001) = 1.144e-03 from 2.264e-03 to 1.418e-03 in  0.01 secs 
+(008)   0.6 s v=1.859773e+00 p=2.602119e+01 div/v=4.11e-04 dv/v=2.46e-05 dp/p=3.10e-04 step 0
  *  residual (001) = 1.125e-03 from 2.017e-03 to 1.418e-03 in  0.00 secs 
-(009)   0.0 s v=1.859772e+00 p=2.602035e+01 div/v=3.54e-04 dv/v=2.13e-05 dp/p=2.89e-04 step 0
- *  residual (001) = 8.528e-04 from 1.484e-03 to 1.418e-03 in  0.00 secs 
-(010)   0.0 s v=1.859772e+00 p=2.602015e+01 div/v=2.80e-04 dv/v=1.95e-05 dp/p=2.42e-04 step 0
+(009)   0.6 s v=1.859772e+00 p=2.602035e+01 div/v=3.54e-04 dv/v=2.13e-05 dp/p=2.89e-04 step 0
+ *  residual (001) = 8.528e-04 from 1.484e-03 to 1.418e-03 in  0.01 secs 
+(010)   0.6 s v=1.859772e+00 p=2.602015e+01 div/v=2.80e-04 dv/v=1.95e-05 dp/p=2.42e-04 step 0
  *  residual (001) = 5.888e-04 from 1.020e-03 to 1.418e-03 in  0.00 secs 
-(011)   0.0 s v=1.859771e+00 p=2.602002e+01 div/v=2.56e-04 dv/v=1.70e-05 dp/p=2.14e-04 step 0
+(011)   0.6 s v=1.859771e+00 p=2.602002e+01 div/v=2.56e-04 dv/v=1.70e-05 dp/p=2.14e-04 step 0
  *  residual (001) = 6.072e-04 from 1.235e-03 to 1.418e-03 in  0.00 secs 
-(012)   0.0 s v=1.859771e+00 p=2.602025e+01 div/v=1.96e-04 dv/v=1.24e-05 dp/p=1.78e-04 step 0
+(012)   0.6 s v=1.859771e+00 p=2.602025e+01 div/v=1.96e-04 dv/v=1.24e-05 dp/p=1.78e-04 step 0
  *  residual (001) = 5.026e-04 from 8.426e-04 to 1.418e-03 in  0.00 secs 
-(013)   0.0 s v=1.859771e+00 p=2.602044e+01 div/v=1.36e-04 dv/v=1.01e-05 dp/p=1.24e-04 step 0
- *  residual (001) = 3.205e-04 from 7.533e-04 to 1.418e-03 in  0.00 secs 
-(014)   0.0 s v=1.859771e+00 p=2.602057e+01 div/v=8.62e-05 dv/v=6.11e-06 dp/p=7.48e-05 step 0
+(013)   0.6 s v=1.859771e+00 p=2.602044e+01 div/v=1.36e-04 dv/v=1.01e-05 dp/p=1.24e-04 step 0
+ *  residual (001) = 3.205e-04 from 7.533e-04 to 1.418e-03 in  0.01 secs 
+(014)   0.6 s v=1.859771e+00 p=2.602057e+01 div/v=8.62e-05 dv/v=6.11e-06 dp/p=7.48e-05 step 0
 Angular momentum: rot=7.053469e-08 tr=9.067506e+01 fr=2.663344e+02
 Momentum equation force 1.415978697e+01
- *  residual (021) = 1.254e-03 from 6.558e-01 to 1.416e-03 in  0.01 secs 
-(000)   0.0 s v=1.935670e+00 p=2.602057e+01 div/v=1.84e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 1
- *  residual (016) = 1.226e-03 from 5.798e-01 to 1.416e-03 in  0.01 secs 
-(001)   0.0 s v=1.936849e+00 p=2.675984e+01 div/v=3.44e-02 dv/v=2.08e-02 dp/p=3.93e-02 step 1
- *  residual (012) = 1.090e-03 from 1.532e-01 to 1.416e-03 in  0.00 secs 
-(002)   0.0 s v=1.936343e+00 p=2.678192e+01 div/v=2.61e-03 dv/v=2.15e-03 dp/p=7.66e-03 step 1
- *  residual (007) = 9.592e-04 from 1.308e-02 to 1.416e-03 in  0.00 secs 
-(003)   0.0 s v=1.936446e+00 p=2.678285e+01 div/v=6.75e-04 dv/v=3.63e-04 dp/p=6.21e-04 step 1
- *  residual (002) = 8.274e-04 from 2.287e-03 to 1.416e-03 in  0.00 secs 
-(004)   0.0 s v=1.936450e+00 p=2.678346e+01 div/v=4.60e-04 dv/v=4.99e-05 dp/p=2.53e-04 step 1
- *  residual (001) = 8.485e-04 from 1.602e-03 to 1.416e-03 in  0.00 secs 
-(005)   0.0 s v=1.936452e+00 p=2.678374e+01 div/v=5.48e-04 dv/v=3.27e-05 dp/p=3.56e-04 step 1
+ *  residual (021) = 1.254e-03 from 6.558e-01 to 1.416e-03 in  0.08 secs 
+(000)   0.1 s v=1.935670e+00 p=2.602057e+01 div/v=1.84e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 1
+ *  residual (016) = 1.226e-03 from 5.798e-01 to 1.416e-03 in  0.07 secs 
+(001)   0.2 s v=1.936849e+00 p=2.675984e+01 div/v=3.44e-02 dv/v=2.08e-02 dp/p=3.93e-02 step 1
+ *  residual (012) = 1.090e-03 from 1.532e-01 to 1.416e-03 in  0.06 secs 
+(002)   0.2 s v=1.936343e+00 p=2.678192e+01 div/v=2.61e-03 dv/v=2.15e-03 dp/p=7.66e-03 step 1
+ *  residual (007) = 9.592e-04 from 1.308e-02 to 1.416e-03 in  0.04 secs 
+(003)   0.3 s v=1.936446e+00 p=2.678285e+01 div/v=6.75e-04 dv/v=3.63e-04 dp/p=6.21e-04 step 1
+ *  residual (002) = 8.274e-04 from 2.287e-03 to 1.416e-03 in  0.01 secs 
+(004)   0.3 s v=1.936450e+00 p=2.678346e+01 div/v=4.60e-04 dv/v=4.99e-05 dp/p=2.53e-04 step 1
+ *  residual (001) = 8.485e-04 from 1.602e-03 to 1.416e-03 in  0.01 secs 
+(005)   0.3 s v=1.936452e+00 p=2.678374e+01 div/v=5.48e-04 dv/v=3.27e-05 dp/p=3.56e-04 step 1
  *  residual (001) = 1.149e-03 from 2.601e-03 to 1.416e-03 in  0.00 secs 
-(006)   0.0 s v=1.936452e+00 p=2.678380e+01 div/v=6.50e-04 dv/v=3.13e-05 dp/p=5.94e-04 step 1
- *  residual (002) = 1.359e-03 from 2.664e-03 to 1.416e-03 in  0.00 secs 
-(007)   0.0 s v=1.936451e+00 p=2.678333e+01 div/v=6.50e-04 dv/v=5.28e-05 dp/p=5.00e-04 step 1
- *  residual (002) = 1.264e-03 from 5.457e-03 to 1.416e-03 in  0.00 secs 
-(008)   0.0 s v=1.936450e+00 p=2.678315e+01 div/v=3.86e-04 dv/v=3.18e-05 dp/p=2.86e-04 step 1
+(006)   0.3 s v=1.936452e+00 p=2.678380e+01 div/v=6.50e-04 dv/v=3.13e-05 dp/p=5.94e-04 step 1
+ *  residual (002) = 1.359e-03 from 2.664e-03 to 1.416e-03 in  0.01 secs 
+(007)   0.3 s v=1.936451e+00 p=2.678333e+01 div/v=6.50e-04 dv/v=5.28e-05 dp/p=5.00e-04 step 1
+ *  residual (002) = 1.264e-03 from 5.457e-03 to 1.416e-03 in  0.02 secs 
+(008)   0.3 s v=1.936450e+00 p=2.678315e+01 div/v=3.86e-04 dv/v=3.18e-05 dp/p=2.86e-04 step 1
  *  residual (001) = 1.005e-03 from 2.668e-03 to 1.416e-03 in  0.00 secs 
-(009)   0.0 s v=1.936450e+00 p=2.678328e+01 div/v=3.84e-04 dv/v=1.41e-05 dp/p=1.79e-04 step 1
- *  residual (001) = 1.011e-03 from 2.318e-03 to 1.416e-03 in  0.00 secs 
-(010)   0.0 s v=1.936450e+00 p=2.678356e+01 div/v=4.05e-04 dv/v=1.63e-05 dp/p=1.92e-04 step 1
- *  residual (001) = 1.223e-03 from 2.470e-03 to 1.416e-03 in  0.00 secs 
-(011)   0.0 s v=1.936450e+00 p=2.678387e+01 div/v=5.20e-04 dv/v=1.84e-05 dp/p=3.36e-04 step 1
- *  residual (011) = 1.408e-03 from 2.744e-03 to 1.416e-03 in  0.00 secs 
-(012)   0.0 s v=1.936445e+00 p=2.678388e+01 div/v=5.03e-04 dv/v=9.32e-05 dp/p=3.70e-05 step 1
- *  residual (003) = 1.379e-03 from 4.965e-03 to 1.416e-03 in  0.00 secs 
-(013)   0.0 s v=1.936445e+00 p=2.678381e+01 div/v=3.71e-04 dv/v=2.14e-05 dp/p=1.23e-04 step 1
+(009)   0.3 s v=1.936450e+00 p=2.678328e+01 div/v=3.84e-04 dv/v=1.41e-05 dp/p=1.79e-04 step 1
+ *  residual (001) = 1.011e-03 from 2.318e-03 to 1.416e-03 in  0.01 secs 
+(010)   0.3 s v=1.936450e+00 p=2.678356e+01 div/v=4.05e-04 dv/v=1.63e-05 dp/p=1.92e-04 step 1
+ *  residual (001) = 1.223e-03 from 2.470e-03 to 1.416e-03 in  0.01 secs 
+(011)   0.3 s v=1.936450e+00 p=2.678387e+01 div/v=5.20e-04 dv/v=1.84e-05 dp/p=3.36e-04 step 1
+ *  residual (011) = 1.408e-03 from 2.744e-03 to 1.416e-03 in  0.05 secs 
+(012)   0.4 s v=1.936445e+00 p=2.678388e+01 div/v=5.03e-04 dv/v=9.32e-05 dp/p=3.70e-05 step 1
+ *  residual (003) = 1.379e-03 from 4.965e-03 to 1.416e-03 in  0.01 secs 
+(013)   0.4 s v=1.936445e+00 p=2.678381e+01 div/v=3.71e-04 dv/v=2.14e-05 dp/p=1.23e-04 step 1
  *  residual (001) = 1.353e-03 from 4.681e-03 to 1.416e-03 in  0.00 secs 
-(014)   0.0 s v=1.936444e+00 p=2.678369e+01 div/v=2.72e-04 dv/v=7.60e-06 dp/p=9.01e-05 step 1
- *  residual (001) = 9.668e-04 from 2.774e-03 to 1.416e-03 in  0.00 secs 
-(015)   0.0 s v=1.936445e+00 p=2.678358e+01 div/v=2.85e-04 dv/v=6.70e-06 dp/p=6.99e-05 step 1
+(014)   0.4 s v=1.936444e+00 p=2.678369e+01 div/v=2.72e-04 dv/v=7.60e-06 dp/p=9.01e-05 step 1
+ *  residual (001) = 9.668e-04 from 2.774e-03 to 1.416e-03 in  0.01 secs 
+(015)   0.4 s v=1.936445e+00 p=2.678358e+01 div/v=2.85e-04 dv/v=6.70e-06 dp/p=6.99e-05 step 1
 Angular momentum: rot=1.999023e-07 tr=9.030083e+01 fr=9.135589e+01
 Momentum equation force 1.424182282e+01
- *  residual (033) = 1.261e-03 from 1.261e+00 to 1.424e-03 in  0.01 secs 
-(000)   0.0 s v=2.092193e+00 p=2.678358e+01 div/v=3.40e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 2
- *  residual (031) = 1.092e-03 from 1.105e+00 to 1.424e-03 in  0.01 secs 
-(001)   0.0 s v=2.093565e+00 p=2.835237e+01 div/v=6.42e-02 dv/v=3.95e-02 dp/p=7.41e-02 step 2
- *  residual (023) = 1.405e-03 from 3.080e-01 to 1.424e-03 in  0.01 secs 
-(002)   0.0 s v=2.092320e+00 p=2.839435e+01 div/v=5.74e-03 dv/v=6.13e-03 dp/p=1.45e-02 step 2
- *  residual (018) = 1.319e-03 from 2.849e-02 to 1.424e-03 in  0.01 secs 
-(003)   0.0 s v=2.092611e+00 p=2.839486e+01 div/v=1.52e-03 dv/v=2.35e-03 dp/p=1.21e-03 step 2
- *  residual (002) = 1.334e-03 from 6.521e-03 to 1.424e-03 in  0.00 secs 
-(004)   0.0 s v=2.092621e+00 p=2.839668e+01 div/v=1.40e-03 dv/v=9.25e-05 dp/p=6.40e-04 step 2
- *  residual (015) = 1.341e-03 from 3.724e-03 to 1.424e-03 in  0.00 secs 
-(005)   0.0 s v=2.092674e+00 p=2.839738e+01 div/v=1.01e-03 dv/v=5.39e-04 dp/p=2.05e-04 step 2
- *  residual (002) = 1.221e-03 from 6.039e-03 to 1.424e-03 in  0.00 secs 
-(006)   0.0 s v=2.092677e+00 p=2.839799e+01 div/v=4.84e-04 dv/v=4.16e-05 dp/p=2.81e-04 step 2
- *  residual (001) = 1.011e-03 from 2.420e-03 to 1.424e-03 in  0.00 secs 
-(007)   0.0 s v=2.092676e+00 p=2.839757e+01 div/v=5.07e-04 dv/v=2.43e-05 dp/p=2.24e-04 step 2
- *  residual (002) = 9.845e-04 from 2.391e-03 to 1.424e-03 in  0.00 secs 
-(008)   0.0 s v=2.092673e+00 p=2.839721e+01 div/v=4.80e-04 dv/v=3.13e-05 dp/p=1.52e-04 step 2
- *  residual (001) = 1.354e-03 from 3.813e-03 to 1.424e-03 in  0.00 secs 
-(009)   0.0 s v=2.092672e+00 p=2.839692e+01 div/v=4.03e-04 dv/v=1.62e-05 dp/p=1.92e-04 step 2
+ *  residual (033) = 1.261e-03 from 1.261e+00 to 1.424e-03 in  0.14 secs 
+(000)   0.1 s v=2.092193e+00 p=2.678358e+01 div/v=3.40e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 2
+ *  residual (031) = 1.092e-03 from 1.105e+00 to 1.424e-03 in  0.14 secs 
+(001)   0.3 s v=2.093565e+00 p=2.835237e+01 div/v=6.42e-02 dv/v=3.95e-02 dp/p=7.41e-02 step 2
+ *  residual (023) = 1.405e-03 from 3.080e-01 to 1.424e-03 in  0.10 secs 
+(002)   0.4 s v=2.092320e+00 p=2.839435e+01 div/v=5.74e-03 dv/v=6.13e-03 dp/p=1.45e-02 step 2
+ *  residual (018) = 1.319e-03 from 2.849e-02 to 1.424e-03 in  0.08 secs 
+(003)   0.5 s v=2.092611e+00 p=2.839486e+01 div/v=1.52e-03 dv/v=2.35e-03 dp/p=1.21e-03 step 2
+ *  residual (002) = 1.334e-03 from 6.521e-03 to 1.424e-03 in  0.01 secs 
+(004)   0.5 s v=2.092621e+00 p=2.839668e+01 div/v=1.40e-03 dv/v=9.25e-05 dp/p=6.40e-04 step 2
+ *  residual (015) = 1.341e-03 from 3.724e-03 to 1.424e-03 in  0.07 secs 
+(005)   0.6 s v=2.092674e+00 p=2.839738e+01 div/v=1.01e-03 dv/v=5.39e-04 dp/p=2.05e-04 step 2
+ *  residual (002) = 1.221e-03 from 6.039e-03 to 1.424e-03 in  0.02 secs 
+(006)   0.6 s v=2.092677e+00 p=2.839799e+01 div/v=4.84e-04 dv/v=4.16e-05 dp/p=2.81e-04 step 2
+ *  residual (001) = 1.011e-03 from 2.420e-03 to 1.424e-03 in  0.01 secs 
+(007)   0.6 s v=2.092676e+00 p=2.839757e+01 div/v=5.07e-04 dv/v=2.43e-05 dp/p=2.24e-04 step 2
+ *  residual (002) = 9.845e-04 from 2.391e-03 to 1.424e-03 in  0.01 secs 
+(008)   0.6 s v=2.092673e+00 p=2.839721e+01 div/v=4.80e-04 dv/v=3.13e-05 dp/p=1.52e-04 step 2
+ *  residual (001) = 1.354e-03 from 3.813e-03 to 1.424e-03 in  0.01 secs 
+(009)   0.6 s v=2.092672e+00 p=2.839692e+01 div/v=4.03e-04 dv/v=1.62e-05 dp/p=1.92e-04 step 2
  *  residual (001) = 1.100e-03 from 2.206e-03 to 1.424e-03 in  0.00 secs 
-(010)   0.0 s v=2.092670e+00 p=2.839670e+01 div/v=4.34e-04 dv/v=1.88e-05 dp/p=1.90e-04 step 2
- *  residual (002) = 1.019e-03 from 2.890e-03 to 1.424e-03 in  0.00 secs 
-(011)   0.0 s v=2.092669e+00 p=2.839649e+01 div/v=4.12e-04 dv/v=2.10e-05 dp/p=1.46e-04 step 2
- *  residual (003) = 7.996e-04 from 4.073e-03 to 1.424e-03 in  0.00 secs 
-(012)   0.0 s v=2.092667e+00 p=2.839630e+01 div/v=3.66e-04 dv/v=1.95e-05 dp/p=1.06e-04 step 2
- *  residual (001) = 1.239e-03 from 3.868e-03 to 1.424e-03 in  0.00 secs 
-(013)   0.0 s v=2.092666e+00 p=2.839604e+01 div/v=3.41e-04 dv/v=9.79e-06 dp/p=1.11e-04 step 2
- *  residual (002) = 8.039e-04 from 3.138e-03 to 1.424e-03 in  0.00 secs 
-(014)   0.0 s v=2.092666e+00 p=2.839587e+01 div/v=2.71e-04 dv/v=1.13e-05 dp/p=6.82e-05 step 2
+(010)   0.6 s v=2.092670e+00 p=2.839670e+01 div/v=4.34e-04 dv/v=1.88e-05 dp/p=1.90e-04 step 2
+ *  residual (002) = 1.019e-03 from 2.890e-03 to 1.424e-03 in  0.02 secs 
+(011)   0.6 s v=2.092669e+00 p=2.839649e+01 div/v=4.12e-04 dv/v=2.10e-05 dp/p=1.46e-04 step 2
+ *  residual (003) = 7.996e-04 from 4.073e-03 to 1.424e-03 in  0.01 secs 
+(012)   0.7 s v=2.092667e+00 p=2.839630e+01 div/v=3.66e-04 dv/v=1.95e-05 dp/p=1.06e-04 step 2
+ *  residual (001) = 1.239e-03 from 3.868e-03 to 1.424e-03 in  0.01 secs 
+(013)   0.7 s v=2.092666e+00 p=2.839604e+01 div/v=3.41e-04 dv/v=9.79e-06 dp/p=1.11e-04 step 2
+ *  residual (002) = 8.039e-04 from 3.138e-03 to 1.424e-03 in  0.01 secs 
+(014)   0.7 s v=2.092666e+00 p=2.839587e+01 div/v=2.71e-04 dv/v=1.13e-05 dp/p=6.82e-05 step 2
  *  residual (001) = 1.354e-03 from 2.445e-03 to 1.424e-03 in  0.00 secs 
-(015)   0.0 s v=2.092666e+00 p=2.839571e+01 div/v=2.01e-04 dv/v=8.07e-06 dp/p=7.18e-05 step 2
+(015)   0.7 s v=2.092666e+00 p=2.839571e+01 div/v=2.01e-04 dv/v=8.07e-06 dp/p=7.18e-05 step 2
 Angular momentum: rot=7.741099e-07 tr=9.005769e+01 fr=9.048359e+01
 Momentum equation force 1.451994730e+01
- *  residual (025) = 1.285e-03 from 1.199e+00 to 1.452e-03 in  0.01 secs 
-(000)   0.0 s v=2.257530e+00 p=2.839571e+01 div/v=3.26e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 3
- *  residual (018) = 1.412e-03 from 1.029e+00 to 1.452e-03 in  0.01 secs 
-(001)   0.0 s v=2.259015e+00 p=3.016959e+01 div/v=6.21e-02 dv/v=3.79e-02 dp/p=7.22e-02 step 3
- *  residual (014) = 7.294e-04 from 3.258e-01 to 1.452e-03 in  0.00 secs 
-(002)   0.0 s v=2.257877e+00 p=3.020386e+01 div/v=4.71e-03 dv/v=3.86e-03 dp/p=1.43e-02 step 3
- *  residual (008) = 9.531e-04 from 2.702e-02 to 1.452e-03 in  0.00 secs 
-(003)   0.0 s v=2.258103e+00 p=3.020475e+01 div/v=1.01e-03 dv/v=6.73e-04 dp/p=1.14e-03 step 3
- *  residual (003) = 6.095e-04 from 3.890e-03 to 1.452e-03 in  0.00 secs 
-(004)   0.0 s v=2.258113e+00 p=3.020613e+01 div/v=3.76e-04 dv/v=7.37e-05 dp/p=2.93e-04 step 3
+ *  residual (025) = 1.285e-03 from 1.199e+00 to 1.452e-03 in  0.12 secs 
+(000)   0.1 s v=2.257530e+00 p=2.839571e+01 div/v=3.26e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 3
+ *  residual (018) = 1.412e-03 from 1.029e+00 to 1.452e-03 in  0.09 secs 
+(001)   0.2 s v=2.259015e+00 p=3.016959e+01 div/v=6.21e-02 dv/v=3.79e-02 dp/p=7.22e-02 step 3
+ *  residual (014) = 7.294e-04 from 3.258e-01 to 1.452e-03 in  0.07 secs 
+(002)   0.3 s v=2.257877e+00 p=3.020386e+01 div/v=4.71e-03 dv/v=3.86e-03 dp/p=1.43e-02 step 3
+ *  residual (008) = 9.531e-04 from 2.702e-02 to 1.452e-03 in  0.05 secs 
+(003)   0.4 s v=2.258103e+00 p=3.020475e+01 div/v=1.01e-03 dv/v=6.73e-04 dp/p=1.14e-03 step 3
+ *  residual (003) = 6.095e-04 from 3.890e-03 to 1.452e-03 in  0.02 secs 
+(004)   0.4 s v=2.258113e+00 p=3.020613e+01 div/v=3.76e-04 dv/v=7.37e-05 dp/p=2.93e-04 step 3
  *  residual (001) = 6.829e-04 from 9.741e-04 to 1.452e-03 in  0.00 secs 
-(005)   0.0 s v=2.258114e+00 p=3.020633e+01 div/v=7.53e-04 dv/v=3.67e-05 dp/p=5.50e-04 step 3
- *  residual (013) = 1.333e-03 from 4.338e-03 to 1.452e-03 in  0.00 secs 
-(006)   0.0 s v=2.258108e+00 p=3.020634e+01 div/v=6.97e-04 dv/v=1.88e-04 dp/p=7.19e-05 step 3
- *  residual (003) = 1.262e-03 from 9.635e-03 to 1.452e-03 in  0.00 secs 
-(007)   0.0 s v=2.258108e+00 p=3.020637e+01 div/v=4.23e-04 dv/v=2.76e-05 dp/p=2.02e-04 step 3
+(005)   0.4 s v=2.258114e+00 p=3.020633e+01 div/v=7.53e-04 dv/v=3.67e-05 dp/p=5.50e-04 step 3
+ *  residual (013) = 1.333e-03 from 4.338e-03 to 1.452e-03 in  0.07 secs 
+(006)   0.5 s v=2.258108e+00 p=3.020634e+01 div/v=6.97e-04 dv/v=1.88e-04 dp/p=7.19e-05 step 3
+ *  residual (003) = 1.262e-03 from 9.635e-03 to 1.452e-03 in  0.02 secs 
+(007)   0.5 s v=2.258108e+00 p=3.020637e+01 div/v=4.23e-04 dv/v=2.76e-05 dp/p=2.02e-04 step 3
  *  residual (001) = 1.307e-03 from 5.205e-03 to 1.452e-03 in  0.00 secs 
-(008)   0.0 s v=2.258108e+00 p=3.020640e+01 div/v=3.59e-04 dv/v=9.76e-06 dp/p=1.04e-04 step 3
- *  residual (002) = 8.668e-04 from 3.107e-03 to 1.452e-03 in  0.00 secs 
-(009)   0.0 s v=2.258107e+00 p=3.020644e+01 div/v=2.94e-04 dv/v=1.23e-05 dp/p=6.63e-05 step 3
- *  residual (002) = 6.189e-04 from 2.076e-03 to 1.452e-03 in  0.00 secs 
-(010)   0.0 s v=2.258106e+00 p=3.020646e+01 div/v=2.89e-04 dv/v=1.28e-05 dp/p=5.88e-05 step 3
+(008)   0.5 s v=2.258108e+00 p=3.020640e+01 div/v=3.59e-04 dv/v=9.76e-06 dp/p=1.04e-04 step 3
+ *  residual (002) = 8.668e-04 from 3.107e-03 to 1.452e-03 in  0.01 secs 
+(009)   0.5 s v=2.258107e+00 p=3.020644e+01 div/v=2.94e-04 dv/v=1.23e-05 dp/p=6.63e-05 step 3
+ *  residual (002) = 6.189e-04 from 2.076e-03 to 1.452e-03 in  0.02 secs 
+(010)   0.5 s v=2.258106e+00 p=3.020646e+01 div/v=2.89e-04 dv/v=1.28e-05 dp/p=5.88e-05 step 3
 Angular momentum: rot=1.385853e-06 tr=9.011314e+01 fr=9.035349e+01
 Momentum equation force 1.498262197e+01
- *  residual (033) = 1.294e-03 from 1.182e+00 to 1.498e-03 in  0.01 secs 
-(000)   0.0 s v=2.436395e+00 p=3.020646e+01 div/v=3.21e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 4
- *  residual (031) = 1.128e-03 from 9.921e-01 to 1.498e-03 in  0.01 secs 
-(001)   0.0 s v=2.438079e+00 p=3.221000e+01 div/v=6.15e-02 dv/v=3.82e-02 dp/p=7.18e-02 step 4
- *  residual (024) = 1.337e-03 from 3.486e-01 to 1.498e-03 in  0.01 secs 
-(002)   0.0 s v=2.436627e+00 p=3.224089e+01 div/v=4.76e-03 dv/v=4.35e-03 dp/p=1.43e-02 step 4
- *  residual (008) = 1.331e-03 from 2.883e-02 to 1.498e-03 in  0.00 secs 
-(003)   0.0 s v=2.436871e+00 p=3.224000e+01 div/v=1.36e-03 dv/v=7.16e-04 dp/p=1.22e-03 step 4
- *  residual (003) = 1.097e-03 from 4.429e-03 to 1.498e-03 in  0.00 secs 
-(004)   0.0 s v=2.436894e+00 p=3.224451e+01 div/v=1.38e-03 dv/v=1.44e-04 dp/p=7.14e-04 step 4
- *  residual (011) = 1.496e-03 from 2.495e-03 to 1.498e-03 in  0.00 secs 
-(005)   0.0 s v=2.436856e+00 p=3.224464e+01 div/v=1.05e-03 dv/v=5.14e-04 dp/p=1.72e-04 step 4
- *  residual (003) = 1.073e-03 from 5.515e-03 to 1.498e-03 in  0.00 secs 
-(006)   0.0 s v=2.436851e+00 p=3.224374e+01 div/v=3.61e-04 dv/v=5.54e-05 dp/p=2.87e-04 step 4
+ *  residual (033) = 1.294e-03 from 1.182e+00 to 1.498e-03 in  0.13 secs 
+(000)   0.1 s v=2.436395e+00 p=3.020646e+01 div/v=3.21e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 4
+ *  residual (031) = 1.128e-03 from 9.921e-01 to 1.498e-03 in  0.13 secs 
+(001)   0.3 s v=2.438079e+00 p=3.221000e+01 div/v=6.15e-02 dv/v=3.82e-02 dp/p=7.18e-02 step 4
+ *  residual (024) = 1.337e-03 from 3.486e-01 to 1.498e-03 in  0.14 secs 
+(002)   0.4 s v=2.436627e+00 p=3.224089e+01 div/v=4.76e-03 dv/v=4.35e-03 dp/p=1.43e-02 step 4
+ *  residual (008) = 1.331e-03 from 2.883e-02 to 1.498e-03 in  0.05 secs 
+(003)   0.5 s v=2.436871e+00 p=3.224000e+01 div/v=1.36e-03 dv/v=7.16e-04 dp/p=1.22e-03 step 4
+ *  residual (003) = 1.097e-03 from 4.429e-03 to 1.498e-03 in  0.02 secs 
+(004)   0.5 s v=2.436894e+00 p=3.224451e+01 div/v=1.38e-03 dv/v=1.44e-04 dp/p=7.14e-04 step 4
+ *  residual (011) = 1.496e-03 from 2.495e-03 to 1.498e-03 in  0.05 secs 
+(005)   0.5 s v=2.436856e+00 p=3.224464e+01 div/v=1.05e-03 dv/v=5.14e-04 dp/p=1.72e-04 step 4
+ *  residual (003) = 1.073e-03 from 5.515e-03 to 1.498e-03 in  0.02 secs 
+(006)   0.6 s v=2.436851e+00 p=3.224374e+01 div/v=3.61e-04 dv/v=5.54e-05 dp/p=2.87e-04 step 4
  *  residual (001) = 1.186e-03 from 2.361e-03 to 1.498e-03 in  0.00 secs 
-(007)   0.0 s v=2.436850e+00 p=3.224354e+01 div/v=2.92e-04 dv/v=1.73e-05 dp/p=1.39e-04 step 4
- *  residual (001) = 1.380e-03 from 1.818e-03 to 1.498e-03 in  0.00 secs 
-(008)   0.0 s v=2.436849e+00 p=3.224330e+01 div/v=2.10e-04 dv/v=1.48e-05 dp/p=1.17e-04 step 4
- *  residual (001) = 6.733e-04 from 1.207e-03 to 1.498e-03 in  0.00 secs 
-(009)   0.0 s v=2.436848e+00 p=3.224274e+01 div/v=2.18e-04 dv/v=1.15e-05 dp/p=1.22e-04 step 4
+(007)   0.6 s v=2.436850e+00 p=3.224354e+01 div/v=2.92e-04 dv/v=1.73e-05 dp/p=1.39e-04 step 4
+ *  residual (001) = 1.380e-03 from 1.818e-03 to 1.498e-03 in  0.01 secs 
+(008)   0.6 s v=2.436849e+00 p=3.224330e+01 div/v=2.10e-04 dv/v=1.48e-05 dp/p=1.17e-04 step 4
+ *  residual (001) = 6.733e-04 from 1.207e-03 to 1.498e-03 in  0.01 secs 
+(009)   0.6 s v=2.436848e+00 p=3.224274e+01 div/v=2.18e-04 dv/v=1.15e-05 dp/p=1.22e-04 step 4
  *  residual (001) = 6.059e-04 from 8.026e-04 to 1.498e-03 in  0.00 secs 
-(010)   0.0 s v=2.436847e+00 p=3.224096e+01 div/v=3.72e-04 dv/v=1.84e-05 dp/p=3.07e-04 step 4
- *  residual (005) = 1.418e-03 from 1.923e-03 to 1.498e-03 in  0.00 secs 
-(011)   0.0 s v=2.436847e+00 p=3.224059e+01 div/v=3.89e-04 dv/v=3.88e-05 dp/p=8.01e-05 step 4
- *  residual (014) = 1.420e-03 from 4.172e-03 to 1.498e-03 in  0.00 secs 
-(012)   0.0 s v=2.436852e+00 p=3.224054e+01 div/v=3.81e-04 dv/v=6.71e-05 dp/p=2.94e-05 step 4
+(010)   0.6 s v=2.436847e+00 p=3.224096e+01 div/v=3.72e-04 dv/v=1.84e-05 dp/p=3.07e-04 step 4
+ *  residual (005) = 1.418e-03 from 1.923e-03 to 1.498e-03 in  0.03 secs 
+(011)   0.6 s v=2.436847e+00 p=3.224059e+01 div/v=3.89e-04 dv/v=3.88e-05 dp/p=8.01e-05 step 4
+ *  residual (014) = 1.420e-03 from 4.172e-03 to 1.498e-03 in  0.07 secs 
+(012)   0.7 s v=2.436852e+00 p=3.224054e+01 div/v=3.81e-04 dv/v=6.71e-05 dp/p=2.94e-05 step 4
 Angular momentum: rot=2.050628e-06 tr=9.009634e+01 fr=9.026362e+01
 Momentum equation force 1.561194740e+01
- *  residual (033) = 1.282e-03 from 1.194e+00 to 1.561e-03 in  0.01 secs 
-(000)   0.0 s v=2.629374e+00 p=3.224054e+01 div/v=3.18e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 5
- *  residual (031) = 1.215e-03 from 9.802e-01 to 1.561e-03 in  0.01 secs 
-(001)   0.0 s v=2.631182e+00 p=3.447422e+01 div/v=6.10e-02 dv/v=3.82e-02 dp/p=7.16e-02 step 5
- *  residual (014) = 1.401e-03 from 3.743e-01 to 1.561e-03 in  0.00 secs 
-(002)   0.0 s v=2.629800e+00 p=3.450397e+01 div/v=4.74e-03 dv/v=3.85e-03 dp/p=1.43e-02 step 5
- *  residual (008) = 1.209e-03 from 3.008e-02 to 1.561e-03 in  0.00 secs 
-(003)   0.0 s v=2.630076e+00 p=3.450386e+01 div/v=1.20e-03 dv/v=7.22e-04 dp/p=1.19e-03 step 5
- *  residual (003) = 9.352e-04 from 4.622e-03 to 1.561e-03 in  0.00 secs 
-(004)   0.0 s v=2.630094e+00 p=3.450721e+01 div/v=9.10e-04 dv/v=1.09e-04 dp/p=5.02e-04 step 5
+ *  residual (033) = 1.282e-03 from 1.194e+00 to 1.561e-03 in  0.13 secs 
+(000)   0.1 s v=2.629374e+00 p=3.224054e+01 div/v=3.18e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 5
+ *  residual (031) = 1.215e-03 from 9.802e-01 to 1.561e-03 in  0.13 secs 
+(001)   0.3 s v=2.631182e+00 p=3.447422e+01 div/v=6.10e-02 dv/v=3.82e-02 dp/p=7.16e-02 step 5
+ *  residual (014) = 1.401e-03 from 3.743e-01 to 1.561e-03 in  0.07 secs 
+(002)   0.3 s v=2.629800e+00 p=3.450397e+01 div/v=4.74e-03 dv/v=3.85e-03 dp/p=1.43e-02 step 5
+ *  residual (008) = 1.209e-03 from 3.008e-02 to 1.561e-03 in  0.04 secs 
+(003)   0.4 s v=2.630076e+00 p=3.450386e+01 div/v=1.20e-03 dv/v=7.22e-04 dp/p=1.19e-03 step 5
+ *  residual (003) = 9.352e-04 from 4.622e-03 to 1.561e-03 in  0.02 secs 
+(004)   0.4 s v=2.630094e+00 p=3.450721e+01 div/v=9.10e-04 dv/v=1.09e-04 dp/p=5.02e-04 step 5
  *  residual (001) = 1.414e-03 from 1.822e-03 to 1.561e-03 in  0.00 secs 
-(005)   0.0 s v=2.630098e+00 p=3.451027e+01 div/v=2.69e-03 dv/v=1.25e-04 dp/p=3.14e-03 step 5
- *  residual (019) = 1.379e-03 from 1.817e-02 to 1.561e-03 in  0.01 secs 
-(006)   0.0 s v=2.630090e+00 p=3.451035e+01 div/v=2.62e-03 dv/v=3.84e-04 dp/p=1.16e-04 step 5
- *  residual (019) = 1.335e-03 from 4.463e-02 to 1.561e-03 in  0.01 secs 
-(007)   0.0 s v=2.630083e+00 p=3.451039e+01 div/v=2.61e-03 dv/v=3.64e-04 dp/p=1.16e-04 step 5
- *  residual (019) = 1.414e-03 from 7.093e-02 to 1.561e-03 in  0.01 secs 
-(008)   0.0 s v=2.630076e+00 p=3.451040e+01 div/v=2.63e-03 dv/v=3.34e-04 dp/p=1.19e-04 step 5
- *  residual (019) = 1.386e-03 from 9.561e-02 to 1.561e-03 in  0.01 secs 
-(009)   0.1 s v=2.630069e+00 p=3.451036e+01 div/v=2.68e-03 dv/v=2.92e-04 dp/p=1.24e-04 step 5
- *  residual (019) = 1.546e-03 from 1.177e-01 to 1.561e-03 in  0.01 secs 
-(010)   0.1 s v=2.630061e+00 p=3.451029e+01 div/v=2.72e-03 dv/v=2.34e-04 dp/p=1.31e-04 step 5
- *  residual (020) = 1.211e-03 from 1.354e-01 to 1.561e-03 in  0.01 secs 
-(011)   0.1 s v=2.630055e+00 p=3.451018e+01 div/v=2.75e-03 dv/v=1.61e-04 dp/p=1.37e-04 step 5
- *  residual (020) = 1.338e-03 from 1.458e-01 to 1.561e-03 in  0.01 secs 
-(012)   0.1 s v=2.630049e+00 p=3.451004e+01 div/v=2.73e-03 dv/v=7.51e-05 dp/p=1.40e-04 step 5
- *  residual (007) = 1.526e-03 from 1.465e-01 to 1.561e-03 in  0.00 secs 
-(013)   0.1 s v=2.630047e+00 p=3.450989e+01 div/v=2.70e-03 dv/v=2.15e-05 dp/p=1.39e-04 step 5
- *  residual (020) = 1.392e-03 from 1.400e-01 to 1.561e-03 in  0.01 secs 
-(014)   0.1 s v=2.630045e+00 p=3.450974e+01 div/v=2.60e-03 dv/v=1.03e-04 dp/p=1.33e-04 step 5
- *  residual (021) = 1.237e-03 from 1.218e-01 to 1.561e-03 in  0.01 secs 
-(015)   0.1 s v=2.630044e+00 p=3.450958e+01 div/v=2.46e-03 dv/v=1.73e-04 dp/p=1.23e-04 step 5
- *  residual (021) = 1.256e-03 from 9.747e-02 to 1.561e-03 in  0.01 secs 
-(016)   0.1 s v=2.630045e+00 p=3.450944e+01 div/v=2.32e-03 dv/v=2.23e-04 dp/p=1.13e-04 step 5
- *  residual (021) = 1.137e-03 from 7.084e-02 to 1.561e-03 in  0.01 secs 
-(017)   0.1 s v=2.630047e+00 p=3.450931e+01 div/v=2.18e-03 dv/v=2.56e-04 dp/p=1.03e-04 step 5
- *  residual (021) = 9.466e-04 from 4.488e-02 to 1.561e-03 in  0.01 secs 
-(018)   0.1 s v=2.630051e+00 p=3.450920e+01 div/v=2.06e-03 dv/v=2.73e-04 dp/p=9.43e-05 step 5
- *  residual (020) = 1.236e-03 from 2.259e-02 to 1.561e-03 in  0.01 secs 
-(019)   0.1 s v=2.630056e+00 p=3.450910e+01 div/v=1.98e-03 dv/v=2.78e-04 dp/p=8.88e-05 step 5
- *  residual (020) = 1.045e-03 from 1.612e-02 to 1.561e-03 in  0.01 secs 
-(020)   0.1 s v=2.630062e+00 p=3.450902e+01 div/v=1.93e-03 dv/v=2.74e-04 dp/p=8.62e-05 step 5
- *  residual (020) = 9.919e-04 from 3.177e-02 to 1.561e-03 in  0.01 secs 
-(021)   0.1 s v=2.630069e+00 p=3.450896e+01 div/v=1.92e-03 dv/v=2.63e-04 dp/p=8.65e-05 step 5
- *  residual (020) = 1.094e-03 from 5.083e-02 to 1.561e-03 in  0.01 secs 
-(022)   0.1 s v=2.630077e+00 p=3.450892e+01 div/v=1.93e-03 dv/v=2.43e-04 dp/p=8.93e-05 step 5
- *  residual (019) = 1.546e-03 from 6.940e-02 to 1.561e-03 in  0.01 secs 
-(023)   0.1 s v=2.630087e+00 p=3.450889e+01 div/v=1.96e-03 dv/v=2.12e-04 dp/p=9.38e-05 step 5
- *  residual (020) = 1.227e-03 from 8.608e-02 to 1.561e-03 in  0.01 secs 
-(024)   0.2 s v=2.630097e+00 p=3.450889e+01 div/v=1.99e-03 dv/v=1.69e-04 dp/p=9.85e-05 step 5
- *  residual (020) = 1.373e-03 from 9.906e-02 to 1.561e-03 in  0.01 secs 
-(025)   0.2 s v=2.630107e+00 p=3.450890e+01 div/v=2.01e-03 dv/v=1.14e-04 dp/p=1.02e-04 step 5
- *  residual (020) = 1.424e-03 from 1.062e-01 to 1.561e-03 in  0.01 secs 
-(026)   0.2 s v=2.630115e+00 p=3.450893e+01 div/v=1.99e-03 dv/v=5.13e-05 dp/p=1.03e-04 step 5
- *  residual (009) = 1.262e-03 from 1.058e-01 to 1.561e-03 in  0.00 secs 
-(027)   0.2 s v=2.630118e+00 p=3.450898e+01 div/v=1.96e-03 dv/v=1.86e-05 dp/p=1.01e-04 step 5
- *  residual (020) = 1.472e-03 from 1.006e-01 to 1.561e-03 in  0.01 secs 
-(028)   0.2 s v=2.630122e+00 p=3.450903e+01 div/v=1.89e-03 dv/v=7.53e-05 dp/p=9.60e-05 step 5
- *  residual (020) = 1.406e-03 from 8.753e-02 to 1.561e-03 in  0.01 secs 
-(029)   0.2 s v=2.630125e+00 p=3.450909e+01 div/v=1.80e-03 dv/v=1.22e-04 dp/p=8.89e-05 step 5
- *  residual (020) = 1.377e-03 from 7.074e-02 to 1.561e-03 in  0.01 secs 
-(030)   0.2 s v=2.630125e+00 p=3.450915e+01 div/v=1.70e-03 dv/v=1.56e-04 dp/p=8.11e-05 step 5
- *  residual (020) = 1.334e-03 from 5.284e-02 to 1.561e-03 in  0.01 secs 
-(031)   0.2 s v=2.630124e+00 p=3.450922e+01 div/v=1.61e-03 dv/v=1.78e-04 dp/p=7.39e-05 step 5
- *  residual (020) = 1.217e-03 from 3.590e-02 to 1.561e-03 in  0.01 secs 
-(032)   0.2 s v=2.630121e+00 p=3.450927e+01 div/v=1.53e-03 dv/v=1.90e-04 dp/p=6.81e-05 step 5
- *  residual (020) = 1.084e-03 from 2.195e-02 to 1.561e-03 in  0.01 secs 
-(033)   0.2 s v=2.630117e+00 p=3.450933e+01 div/v=1.47e-03 dv/v=1.94e-04 dp/p=6.44e-05 step 5
- *  residual (019) = 1.410e-03 from 1.605e-02 to 1.561e-03 in  0.01 secs 
-(034)   0.2 s v=2.630112e+00 p=3.450938e+01 div/v=1.44e-03 dv/v=1.93e-04 dp/p=6.28e-05 step 5
- *  residual (020) = 9.551e-04 from 2.263e-02 to 1.561e-03 in  0.01 secs 
-(035)   0.2 s v=2.630105e+00 p=3.450943e+01 div/v=1.42e-03 dv/v=1.87e-04 dp/p=6.33e-05 step 5
- *  residual (020) = 9.503e-04 from 3.439e-02 to 1.561e-03 in  0.01 secs 
-(036)   0.2 s v=2.630098e+00 p=3.450947e+01 div/v=1.43e-03 dv/v=1.76e-04 dp/p=6.55e-05 step 5
- *  residual (020) = 1.040e-03 from 4.706e-02 to 1.561e-03 in  0.01 secs 
-(037)   0.2 s v=2.630090e+00 p=3.450951e+01 div/v=1.45e-03 dv/v=1.56e-04 dp/p=6.89e-05 step 5
- *  residual (020) = 1.192e-03 from 5.904e-02 to 1.561e-03 in  0.01 secs 
-(038)   0.2 s v=2.630080e+00 p=3.450953e+01 div/v=1.47e-03 dv/v=1.27e-04 dp/p=7.27e-05 step 5
- *  residual (020) = 1.357e-03 from 6.880e-02 to 1.561e-03 in  0.01 secs 
-(039)   0.2 s v=2.630071e+00 p=3.450955e+01 div/v=1.48e-03 dv/v=8.83e-05 dp/p=7.57e-05 step 5
- *  residual (020) = 1.417e-03 from 7.466e-02 to 1.561e-03 in  0.01 secs 
-(040)   0.3 s v=2.630062e+00 p=3.450956e+01 div/v=1.47e-03 dv/v=4.39e-05 dp/p=7.68e-05 step 5
+(005)   0.4 s v=2.630098e+00 p=3.451027e+01 div/v=2.69e-03 dv/v=1.25e-04 dp/p=3.14e-03 step 5
+ *  residual (019) = 1.379e-03 from 1.817e-02 to 1.561e-03 in  0.10 secs 
+(006)   0.5 s v=2.630090e+00 p=3.451035e+01 div/v=2.62e-03 dv/v=3.84e-04 dp/p=1.16e-04 step 5
+ *  residual (019) = 1.335e-03 from 4.463e-02 to 1.561e-03 in  0.09 secs 
+(007)   0.6 s v=2.630083e+00 p=3.451039e+01 div/v=2.61e-03 dv/v=3.64e-04 dp/p=1.16e-04 step 5
+ *  residual (019) = 1.414e-03 from 7.093e-02 to 1.561e-03 in  0.08 secs 
+(008)   0.7 s v=2.630076e+00 p=3.451040e+01 div/v=2.63e-03 dv/v=3.34e-04 dp/p=1.19e-04 step 5
+ *  residual (019) = 1.386e-03 from 9.561e-02 to 1.561e-03 in  0.09 secs 
+(009)   0.8 s v=2.630069e+00 p=3.451036e+01 div/v=2.68e-03 dv/v=2.92e-04 dp/p=1.24e-04 step 5
+ *  residual (019) = 1.546e-03 from 1.177e-01 to 1.561e-03 in  0.08 secs 
+(010)   0.9 s v=2.630061e+00 p=3.451029e+01 div/v=2.72e-03 dv/v=2.34e-04 dp/p=1.31e-04 step 5
+ *  residual (020) = 1.211e-03 from 1.354e-01 to 1.561e-03 in  0.09 secs 
+(011)   1.0 s v=2.630055e+00 p=3.451018e+01 div/v=2.75e-03 dv/v=1.61e-04 dp/p=1.37e-04 step 5
+ *  residual (020) = 1.338e-03 from 1.458e-01 to 1.561e-03 in  0.09 secs 
+(012)   1.1 s v=2.630049e+00 p=3.451004e+01 div/v=2.73e-03 dv/v=7.51e-05 dp/p=1.40e-04 step 5
+ *  residual (007) = 1.526e-03 from 1.465e-01 to 1.561e-03 in  0.04 secs 
+(013)   1.1 s v=2.630047e+00 p=3.450989e+01 div/v=2.70e-03 dv/v=2.15e-05 dp/p=1.39e-04 step 5
+ *  residual (020) = 1.392e-03 from 1.400e-01 to 1.561e-03 in  0.08 secs 
+(014)   1.2 s v=2.630045e+00 p=3.450974e+01 div/v=2.60e-03 dv/v=1.03e-04 dp/p=1.33e-04 step 5
+ *  residual (021) = 1.237e-03 from 1.218e-01 to 1.561e-03 in  0.10 secs 
+(015)   1.3 s v=2.630044e+00 p=3.450958e+01 div/v=2.46e-03 dv/v=1.73e-04 dp/p=1.23e-04 step 5
+ *  residual (021) = 1.256e-03 from 9.747e-02 to 1.561e-03 in  0.09 secs 
+(016)   1.4 s v=2.630045e+00 p=3.450944e+01 div/v=2.32e-03 dv/v=2.23e-04 dp/p=1.13e-04 step 5
+ *  residual (021) = 1.137e-03 from 7.084e-02 to 1.561e-03 in  0.09 secs 
+(017)   1.5 s v=2.630047e+00 p=3.450931e+01 div/v=2.18e-03 dv/v=2.56e-04 dp/p=1.03e-04 step 5
+ *  residual (021) = 9.466e-04 from 4.488e-02 to 1.561e-03 in  0.10 secs 
+(018)   1.6 s v=2.630051e+00 p=3.450920e+01 div/v=2.06e-03 dv/v=2.73e-04 dp/p=9.43e-05 step 5
+ *  residual (020) = 1.236e-03 from 2.259e-02 to 1.561e-03 in  0.09 secs 
+(019)   1.7 s v=2.630056e+00 p=3.450910e+01 div/v=1.98e-03 dv/v=2.78e-04 dp/p=8.88e-05 step 5
+ *  residual (020) = 1.045e-03 from 1.612e-02 to 1.561e-03 in  0.09 secs 
+(020)   1.8 s v=2.630062e+00 p=3.450902e+01 div/v=1.93e-03 dv/v=2.74e-04 dp/p=8.62e-05 step 5
+ *  residual (020) = 9.919e-04 from 3.177e-02 to 1.561e-03 in  0.09 secs 
+(021)   1.9 s v=2.630069e+00 p=3.450896e+01 div/v=1.92e-03 dv/v=2.63e-04 dp/p=8.65e-05 step 5
+ *  residual (020) = 1.094e-03 from 5.083e-02 to 1.561e-03 in  0.09 secs 
+(022)   2.0 s v=2.630077e+00 p=3.450892e+01 div/v=1.93e-03 dv/v=2.43e-04 dp/p=8.93e-05 step 5
+ *  residual (019) = 1.546e-03 from 6.940e-02 to 1.561e-03 in  0.09 secs 
+(023)   2.0 s v=2.630087e+00 p=3.450889e+01 div/v=1.96e-03 dv/v=2.12e-04 dp/p=9.38e-05 step 5
+ *  residual (020) = 1.227e-03 from 8.608e-02 to 1.561e-03 in  0.09 secs 
+(024)   2.1 s v=2.630097e+00 p=3.450889e+01 div/v=1.99e-03 dv/v=1.69e-04 dp/p=9.85e-05 step 5
+ *  residual (020) = 1.373e-03 from 9.906e-02 to 1.561e-03 in  0.09 secs 
+(025)   2.2 s v=2.630107e+00 p=3.450890e+01 div/v=2.01e-03 dv/v=1.14e-04 dp/p=1.02e-04 step 5
+ *  residual (020) = 1.424e-03 from 1.062e-01 to 1.561e-03 in  0.09 secs 
+(026)   2.3 s v=2.630115e+00 p=3.450893e+01 div/v=1.99e-03 dv/v=5.13e-05 dp/p=1.03e-04 step 5
+ *  residual (009) = 1.262e-03 from 1.058e-01 to 1.561e-03 in  0.05 secs 
+(027)   2.4 s v=2.630118e+00 p=3.450898e+01 div/v=1.96e-03 dv/v=1.86e-05 dp/p=1.01e-04 step 5
+ *  residual (020) = 1.472e-03 from 1.006e-01 to 1.561e-03 in  0.09 secs 
+(028)   2.5 s v=2.630122e+00 p=3.450903e+01 div/v=1.89e-03 dv/v=7.53e-05 dp/p=9.60e-05 step 5
+ *  residual (020) = 1.406e-03 from 8.753e-02 to 1.561e-03 in  0.09 secs 
+(029)   2.6 s v=2.630125e+00 p=3.450909e+01 div/v=1.80e-03 dv/v=1.22e-04 dp/p=8.89e-05 step 5
+ *  residual (020) = 1.377e-03 from 7.074e-02 to 1.561e-03 in  0.09 secs 
+(030)   2.6 s v=2.630125e+00 p=3.450915e+01 div/v=1.70e-03 dv/v=1.56e-04 dp/p=8.11e-05 step 5
+ *  residual (020) = 1.334e-03 from 5.284e-02 to 1.561e-03 in  0.09 secs 
+(031)   2.7 s v=2.630124e+00 p=3.450922e+01 div/v=1.61e-03 dv/v=1.78e-04 dp/p=7.39e-05 step 5
+ *  residual (020) = 1.217e-03 from 3.590e-02 to 1.561e-03 in  0.09 secs 
+(032)   2.8 s v=2.630121e+00 p=3.450927e+01 div/v=1.53e-03 dv/v=1.90e-04 dp/p=6.81e-05 step 5
+ *  residual (020) = 1.084e-03 from 2.195e-02 to 1.561e-03 in  0.09 secs 
+(033)   2.9 s v=2.630117e+00 p=3.450933e+01 div/v=1.47e-03 dv/v=1.94e-04 dp/p=6.44e-05 step 5
+ *  residual (019) = 1.410e-03 from 1.605e-02 to 1.561e-03 in  0.08 secs 
+(034)   3.0 s v=2.630112e+00 p=3.450938e+01 div/v=1.44e-03 dv/v=1.93e-04 dp/p=6.28e-05 step 5
+ *  residual (020) = 9.551e-04 from 2.263e-02 to 1.561e-03 in  0.08 secs 
+(035)   3.1 s v=2.630105e+00 p=3.450943e+01 div/v=1.42e-03 dv/v=1.87e-04 dp/p=6.33e-05 step 5
+ *  residual (020) = 9.503e-04 from 3.439e-02 to 1.561e-03 in  0.08 secs 
+(036)   3.2 s v=2.630098e+00 p=3.450947e+01 div/v=1.43e-03 dv/v=1.76e-04 dp/p=6.55e-05 step 5
+ *  residual (020) = 1.040e-03 from 4.706e-02 to 1.561e-03 in  0.09 secs 
+(037)   3.3 s v=2.630090e+00 p=3.450951e+01 div/v=1.45e-03 dv/v=1.56e-04 dp/p=6.89e-05 step 5
+ *  residual (020) = 1.192e-03 from 5.904e-02 to 1.561e-03 in  0.09 secs 
+(038)   3.4 s v=2.630080e+00 p=3.450953e+01 div/v=1.47e-03 dv/v=1.27e-04 dp/p=7.27e-05 step 5
+ *  residual (020) = 1.357e-03 from 6.880e-02 to 1.561e-03 in  0.09 secs 
+(039)   3.5 s v=2.630071e+00 p=3.450955e+01 div/v=1.48e-03 dv/v=8.83e-05 dp/p=7.57e-05 step 5
+ *  residual (020) = 1.417e-03 from 7.466e-02 to 1.561e-03 in  0.09 secs 
+(040)   3.5 s v=2.630062e+00 p=3.450956e+01 div/v=1.47e-03 dv/v=4.39e-05 dp/p=7.68e-05 step 5
 Angular momentum: rot=2.769710e-06 tr=9.007241e+01 fr=9.024588e+01
 Momentum equation force 1.639538384e+01
- *  residual (033) = 1.414e-03 from 1.223e+00 to 1.640e-03 in  0.01 secs 
-(000)   0.0 s v=2.837691e+00 p=3.450956e+01 div/v=3.15e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 6
- *  residual (031) = 1.388e-03 from 9.893e-01 to 1.640e-03 in  0.01 secs 
-(001)   0.0 s v=2.839679e+00 p=3.695792e+01 div/v=6.15e-02 dv/v=4.24e-02 dp/p=7.14e-02 step 6
- *  residual (025) = 1.276e-03 from 3.979e-01 to 1.640e-03 in  0.01 secs 
-(002)   0.0 s v=2.838015e+00 p=3.700152e+01 div/v=7.73e-03 dv/v=1.03e-02 dp/p=1.43e-02 step 6
- *  residual (021) = 1.255e-03 from 4.492e-02 to 1.640e-03 in  0.01 secs 
-(003)   0.0 s v=2.838235e+00 p=3.699684e+01 div/v=1.66e-03 dv/v=3.91e-03 dp/p=1.53e-03 step 6
- *  residual (007) = 1.121e-03 from 1.074e-02 to 1.640e-03 in  0.00 secs 
-(004)   0.0 s v=2.838340e+00 p=3.699821e+01 div/v=7.35e-04 dv/v=2.44e-04 dp/p=4.53e-04 step 6
- *  residual (002) = 1.139e-03 from 2.492e-03 to 1.640e-03 in  0.00 secs 
-(005)   0.0 s v=2.838348e+00 p=3.699939e+01 div/v=1.16e-03 dv/v=8.83e-05 dp/p=6.46e-04 step 6
- *  residual (014) = 1.472e-03 from 3.726e-03 to 1.640e-03 in  0.00 secs 
-(006)   0.0 s v=2.838335e+00 p=3.699930e+01 div/v=1.02e-03 dv/v=3.26e-04 dp/p=1.05e-04 step 6
- *  residual (014) = 1.608e-03 from 8.174e-03 to 1.640e-03 in  0.00 secs 
-(007)   0.0 s v=2.838316e+00 p=3.699897e+01 div/v=9.61e-04 dv/v=2.66e-04 dp/p=1.08e-04 step 6
- *  residual (003) = 1.577e-03 from 1.269e-02 to 1.640e-03 in  0.00 secs 
-(008)   0.1 s v=2.838312e+00 p=3.699829e+01 div/v=6.49e-04 dv/v=2.93e-05 dp/p=1.60e-04 step 6
- *  residual (003) = 9.442e-04 from 7.433e-03 to 1.640e-03 in  0.00 secs 
-(009)   0.1 s v=2.838309e+00 p=3.699785e+01 div/v=5.86e-04 dv/v=2.49e-05 dp/p=1.13e-04 step 6
- *  residual (003) = 9.940e-04 from 5.300e-03 to 1.640e-03 in  0.00 secs 
-(010)   0.1 s v=2.838305e+00 p=3.699754e+01 div/v=7.04e-04 dv/v=2.93e-05 dp/p=1.39e-04 step 6
- *  residual (012) = 1.524e-03 from 4.929e-03 to 1.640e-03 in  0.00 secs 
-(011)   0.1 s v=2.838308e+00 p=3.699749e+01 div/v=6.25e-04 dv/v=1.51e-04 dp/p=6.14e-05 step 6
- *  residual (002) = 1.350e-03 from 3.235e-03 to 1.640e-03 in  0.00 secs 
-(012)   0.1 s v=2.838307e+00 p=3.699774e+01 div/v=7.48e-04 dv/v=4.07e-05 dp/p=3.90e-04 step 6
- *  residual (011) = 1.603e-03 from 3.976e-03 to 1.640e-03 in  0.00 secs 
-(013)   0.1 s v=2.838307e+00 p=3.699775e+01 div/v=7.16e-04 dv/v=1.42e-04 dp/p=4.90e-05 step 6
- *  residual (013) = 1.178e-03 from 5.779e-03 to 1.640e-03 in  0.00 secs 
-(014)   0.1 s v=2.838306e+00 p=3.699774e+01 div/v=7.13e-04 dv/v=1.35e-04 dp/p=4.93e-05 step 6
- *  residual (013) = 1.425e-03 from 8.926e-03 to 1.640e-03 in  0.00 secs 
-(015)   0.1 s v=2.838306e+00 p=3.699772e+01 div/v=7.27e-04 dv/v=1.17e-04 dp/p=5.48e-05 step 6
- *  residual (004) = 1.353e-03 from 1.223e-02 to 1.640e-03 in  0.00 secs 
-(016)   0.1 s v=2.838308e+00 p=3.699767e+01 div/v=5.93e-04 dv/v=1.89e-05 dp/p=8.55e-05 step 6
- *  residual (004) = 7.819e-04 from 9.461e-03 to 1.640e-03 in  0.00 secs 
-(017)   0.1 s v=2.838309e+00 p=3.699764e+01 div/v=5.42e-04 dv/v=1.60e-05 dp/p=6.68e-05 step 6
+ *  residual (033) = 1.414e-03 from 1.223e+00 to 1.640e-03 in  0.13 secs 
+(000)   0.1 s v=2.837691e+00 p=3.450956e+01 div/v=3.15e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 6
+ *  residual (031) = 1.388e-03 from 9.893e-01 to 1.640e-03 in  0.14 secs 
+(001)   0.3 s v=2.839679e+00 p=3.695792e+01 div/v=6.15e-02 dv/v=4.24e-02 dp/p=7.14e-02 step 6
+ *  residual (025) = 1.276e-03 from 3.979e-01 to 1.640e-03 in  0.12 secs 
+(002)   0.4 s v=2.838015e+00 p=3.700152e+01 div/v=7.73e-03 dv/v=1.03e-02 dp/p=1.43e-02 step 6
+ *  residual (021) = 1.255e-03 from 4.492e-02 to 1.640e-03 in  0.09 secs 
+(003)   0.5 s v=2.838235e+00 p=3.699684e+01 div/v=1.66e-03 dv/v=3.91e-03 dp/p=1.53e-03 step 6
+ *  residual (007) = 1.121e-03 from 1.074e-02 to 1.640e-03 in  0.04 secs 
+(004)   0.5 s v=2.838340e+00 p=3.699821e+01 div/v=7.35e-04 dv/v=2.44e-04 dp/p=4.53e-04 step 6
+ *  residual (002) = 1.139e-03 from 2.492e-03 to 1.640e-03 in  0.01 secs 
+(005)   0.5 s v=2.838348e+00 p=3.699939e+01 div/v=1.16e-03 dv/v=8.83e-05 dp/p=6.46e-04 step 6
+ *  residual (014) = 1.472e-03 from 3.726e-03 to 1.640e-03 in  0.06 secs 
+(006)   0.6 s v=2.838335e+00 p=3.699930e+01 div/v=1.02e-03 dv/v=3.26e-04 dp/p=1.05e-04 step 6
+ *  residual (014) = 1.608e-03 from 8.174e-03 to 1.640e-03 in  0.08 secs 
+(007)   0.7 s v=2.838316e+00 p=3.699897e+01 div/v=9.61e-04 dv/v=2.66e-04 dp/p=1.08e-04 step 6
+ *  residual (003) = 1.577e-03 from 1.269e-02 to 1.640e-03 in  0.02 secs 
+(008)   0.7 s v=2.838312e+00 p=3.699829e+01 div/v=6.49e-04 dv/v=2.93e-05 dp/p=1.60e-04 step 6
+ *  residual (003) = 9.442e-04 from 7.433e-03 to 1.640e-03 in  0.02 secs 
+(009)   0.7 s v=2.838309e+00 p=3.699785e+01 div/v=5.86e-04 dv/v=2.49e-05 dp/p=1.13e-04 step 6
+ *  residual (003) = 9.940e-04 from 5.300e-03 to 1.640e-03 in  0.02 secs 
+(010)   0.8 s v=2.838305e+00 p=3.699754e+01 div/v=7.04e-04 dv/v=2.93e-05 dp/p=1.39e-04 step 6
+ *  residual (012) = 1.524e-03 from 4.929e-03 to 1.640e-03 in  0.07 secs 
+(011)   0.8 s v=2.838308e+00 p=3.699749e+01 div/v=6.25e-04 dv/v=1.51e-04 dp/p=6.14e-05 step 6
+ *  residual (002) = 1.350e-03 from 3.235e-03 to 1.640e-03 in  0.01 secs 
+(012)   0.8 s v=2.838307e+00 p=3.699774e+01 div/v=7.48e-04 dv/v=4.07e-05 dp/p=3.90e-04 step 6
+ *  residual (011) = 1.603e-03 from 3.976e-03 to 1.640e-03 in  0.05 secs 
+(013)   0.9 s v=2.838307e+00 p=3.699775e+01 div/v=7.16e-04 dv/v=1.42e-04 dp/p=4.90e-05 step 6
+ *  residual (013) = 1.178e-03 from 5.779e-03 to 1.640e-03 in  0.06 secs 
+(014)   1.0 s v=2.838306e+00 p=3.699774e+01 div/v=7.13e-04 dv/v=1.35e-04 dp/p=4.93e-05 step 6
+ *  residual (013) = 1.425e-03 from 8.926e-03 to 1.640e-03 in  0.07 secs 
+(015)   1.0 s v=2.838306e+00 p=3.699772e+01 div/v=7.27e-04 dv/v=1.17e-04 dp/p=5.48e-05 step 6
+ *  residual (004) = 1.353e-03 from 1.223e-02 to 1.640e-03 in  0.02 secs 
+(016)   1.1 s v=2.838308e+00 p=3.699767e+01 div/v=5.93e-04 dv/v=1.89e-05 dp/p=8.55e-05 step 6
+ *  residual (004) = 7.819e-04 from 9.461e-03 to 1.640e-03 in  0.02 secs 
+(017)   1.1 s v=2.838309e+00 p=3.699764e+01 div/v=5.42e-04 dv/v=1.60e-05 dp/p=6.68e-05 step 6
 Angular momentum: rot=3.343417e-06 tr=9.007085e+01 fr=9.022668e+01
 Momentum equation force 1.732444534e+01
- *  residual (022) = 1.723e-03 from 1.280e+00 to 1.732e-03 in  0.01 secs 
-(000)   0.0 s v=3.062372e+00 p=3.699764e+01 div/v=3.14e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 7
- *  residual (018) = 1.640e-03 from 1.018e+00 to 1.732e-03 in  0.01 secs 
-(001)   0.0 s v=3.064407e+00 p=3.969454e+01 div/v=6.03e-02 dv/v=3.82e-02 dp/p=7.16e-02 step 7
- *  residual (014) = 8.326e-04 from 4.290e-01 to 1.732e-03 in  0.00 secs 
-(002)   0.0 s v=3.062831e+00 p=3.973214e+01 div/v=4.52e-03 dv/v=3.80e-03 dp/p=1.43e-02 step 7
- *  residual (008) = 1.264e-03 from 3.367e-02 to 1.732e-03 in  0.00 secs 
-(003)   0.0 s v=3.063119e+00 p=3.973108e+01 div/v=9.39e-04 dv/v=6.49e-04 dp/p=1.12e-03 step 7
- *  residual (003) = 8.824e-04 from 4.994e-03 to 1.732e-03 in  0.00 secs 
-(004)   0.0 s v=3.063136e+00 p=3.973435e+01 div/v=2.25e-04 dv/v=6.69e-05 dp/p=2.54e-04 step 7
- *  residual (001) = 8.396e-04 from 1.238e-03 to 1.732e-03 in  0.00 secs 
-(005)   0.0 s v=3.063138e+00 p=3.973574e+01 div/v=2.40e-04 dv/v=1.31e-05 dp/p=1.25e-04 step 7
+ *  residual (022) = 1.723e-03 from 1.280e+00 to 1.732e-03 in  0.08 secs 
+(000)   0.1 s v=3.062372e+00 p=3.699764e+01 div/v=3.14e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 7
+ *  residual (018) = 1.640e-03 from 1.018e+00 to 1.732e-03 in  0.08 secs 
+(001)   0.2 s v=3.064407e+00 p=3.969454e+01 div/v=6.03e-02 dv/v=3.82e-02 dp/p=7.16e-02 step 7
+ *  residual (014) = 8.326e-04 from 4.290e-01 to 1.732e-03 in  0.06 secs 
+(002)   0.2 s v=3.062831e+00 p=3.973214e+01 div/v=4.52e-03 dv/v=3.80e-03 dp/p=1.43e-02 step 7
+ *  residual (008) = 1.264e-03 from 3.367e-02 to 1.732e-03 in  0.04 secs 
+(003)   0.3 s v=3.063119e+00 p=3.973108e+01 div/v=9.39e-04 dv/v=6.49e-04 dp/p=1.12e-03 step 7
+ *  residual (003) = 8.824e-04 from 4.994e-03 to 1.732e-03 in  0.01 secs 
+(004)   0.3 s v=3.063136e+00 p=3.973435e+01 div/v=2.25e-04 dv/v=6.69e-05 dp/p=2.54e-04 step 7
+ *  residual (001) = 8.396e-04 from 1.238e-03 to 1.732e-03 in  0.01 secs 
+(005)   0.3 s v=3.063138e+00 p=3.973574e+01 div/v=2.40e-04 dv/v=1.31e-05 dp/p=1.25e-04 step 7
  *  residual (001) = 1.134e-03 from 2.142e-03 to 1.732e-03 in  0.00 secs 
-(006)   0.0 s v=3.063139e+00 p=3.973757e+01 div/v=1.90e-04 dv/v=1.11e-05 dp/p=1.46e-04 step 7
+(006)   0.3 s v=3.063139e+00 p=3.973757e+01 div/v=1.90e-04 dv/v=1.11e-05 dp/p=1.46e-04 step 7
  *  residual (001) = 7.440e-04 from 9.802e-04 to 1.732e-03 in  0.00 secs 
-(007)   0.0 s v=3.063142e+00 p=3.974012e+01 div/v=2.13e-04 dv/v=1.39e-05 dp/p=1.76e-04 step 7
- *  residual (001) = 8.445e-04 from 1.505e-03 to 1.732e-03 in  0.00 secs 
-(008)   0.0 s v=3.063143e+00 p=3.974281e+01 div/v=1.99e-04 dv/v=1.23e-05 dp/p=2.08e-04 step 7
+(007)   0.3 s v=3.063142e+00 p=3.974012e+01 div/v=2.13e-04 dv/v=1.39e-05 dp/p=1.76e-04 step 7
+ *  residual (001) = 8.445e-04 from 1.505e-03 to 1.732e-03 in  0.01 secs 
+(008)   0.3 s v=3.063143e+00 p=3.974281e+01 div/v=1.99e-04 dv/v=1.23e-05 dp/p=2.08e-04 step 7
  *  residual (001) = 6.041e-04 from 1.110e-03 to 1.732e-03 in  0.00 secs 
-(009)   0.0 s v=3.063144e+00 p=3.974498e+01 div/v=2.65e-04 dv/v=1.30e-05 dp/p=2.82e-04 step 7
+(009)   0.3 s v=3.063144e+00 p=3.974498e+01 div/v=2.65e-04 dv/v=1.30e-05 dp/p=2.82e-04 step 7
  *  residual (001) = 8.738e-04 from 1.622e-03 to 1.732e-03 in  0.00 secs 
-(010)   0.0 s v=3.063145e+00 p=3.974723e+01 div/v=3.57e-04 dv/v=1.77e-05 dp/p=5.73e-04 step 7
+(010)   0.3 s v=3.063145e+00 p=3.974723e+01 div/v=3.57e-04 dv/v=1.77e-05 dp/p=5.73e-04 step 7
  *  residual (001) = 1.387e-03 from 2.015e-03 to 1.732e-03 in  0.00 secs 
-(011)   0.0 s v=3.063146e+00 p=3.974834e+01 div/v=4.24e-04 dv/v=2.58e-05 dp/p=9.42e-04 step 7
- *  residual (001) = 1.338e-03 from 2.405e-03 to 1.732e-03 in  0.00 secs 
-(012)   0.0 s v=3.063146e+00 p=3.974809e+01 div/v=5.76e-04 dv/v=2.88e-05 dp/p=1.53e-03 step 7
- *  residual (014) = 1.613e-03 from 3.311e-03 to 1.732e-03 in  0.00 secs 
-(013)   0.0 s v=3.063147e+00 p=3.974799e+01 div/v=6.18e-04 dv/v=1.31e-04 dp/p=1.34e-04 step 7
- *  residual (016) = 1.291e-03 from 8.654e-03 to 1.732e-03 in  0.01 secs 
-(014)   0.0 s v=3.063148e+00 p=3.974780e+01 div/v=6.85e-04 dv/v=1.30e-04 dp/p=1.54e-04 step 7
- *  residual (012) = 1.707e-03 from 1.499e-02 to 1.732e-03 in  0.00 secs 
-(015)   0.0 s v=3.063159e+00 p=3.974747e+01 div/v=7.44e-04 dv/v=8.92e-05 dp/p=2.10e-04 step 7
- *  residual (004) = 1.688e-03 from 1.985e-02 to 1.732e-03 in  0.00 secs 
-(016)   0.0 s v=3.063157e+00 p=3.974702e+01 div/v=7.21e-04 dv/v=1.53e-05 dp/p=2.67e-04 step 7
- *  residual (004) = 1.643e-03 from 1.764e-02 to 1.732e-03 in  0.00 secs 
-(017)   0.0 s v=3.063155e+00 p=3.974654e+01 div/v=7.93e-04 dv/v=1.68e-05 dp/p=2.85e-04 step 7
- *  residual (007) = 1.672e-03 from 1.737e-02 to 1.732e-03 in  0.00 secs 
-(018)   0.0 s v=3.063152e+00 p=3.974601e+01 div/v=9.19e-04 dv/v=3.29e-05 dp/p=3.38e-04 step 7
- *  residual (018) = 1.659e-03 from 1.659e-02 to 1.732e-03 in  0.01 secs 
-(019)   0.1 s v=3.063155e+00 p=3.974566e+01 div/v=9.22e-04 dv/v=1.36e-04 dp/p=2.99e-04 step 7
- *  residual (018) = 1.463e-03 from 9.337e-03 to 1.732e-03 in  0.01 secs 
-(020)   0.1 s v=3.063157e+00 p=3.974546e+01 div/v=9.40e-04 dv/v=1.72e-04 dp/p=3.07e-04 step 7
- *  residual (017) = 1.613e-03 from 7.180e-03 to 1.732e-03 in  0.01 secs 
-(021)   0.1 s v=3.063158e+00 p=3.974543e+01 div/v=9.88e-04 dv/v=1.90e-04 dp/p=3.39e-04 step 7
- *  residual (018) = 1.486e-03 from 1.414e-02 to 1.732e-03 in  0.01 secs 
-(022)   0.1 s v=3.063156e+00 p=3.974560e+01 div/v=1.08e-03 dv/v=1.92e-04 dp/p=3.96e-04 step 7
- *  residual (018) = 1.533e-03 from 2.374e-02 to 1.732e-03 in  0.01 secs 
-(023)   0.1 s v=3.063153e+00 p=3.974601e+01 div/v=1.19e-03 dv/v=1.64e-04 dp/p=4.82e-04 step 7
- *  residual (008) = 1.609e-03 from 3.316e-02 to 1.732e-03 in  0.00 secs 
-(024)   0.1 s v=3.063154e+00 p=3.974674e+01 div/v=1.17e-03 dv/v=3.51e-05 dp/p=6.35e-04 step 7
- *  residual (005) = 1.646e-03 from 3.157e-02 to 1.732e-03 in  0.00 secs 
-(025)   0.1 s v=3.063156e+00 p=3.974759e+01 div/v=1.24e-03 dv/v=2.46e-05 dp/p=6.70e-04 step 7
- *  residual (008) = 1.328e-03 from 3.033e-02 to 1.732e-03 in  0.00 secs 
-(026)   0.1 s v=3.063158e+00 p=3.974862e+01 div/v=1.40e-03 dv/v=3.92e-05 dp/p=7.75e-04 step 7
- *  residual (020) = 1.038e-03 from 2.940e-02 to 1.732e-03 in  0.01 secs 
-(027)   0.1 s v=3.063155e+00 p=3.974954e+01 div/v=1.42e-03 dv/v=1.87e-04 dp/p=7.42e-04 step 7
- *  residual (019) = 1.661e-03 from 2.010e-02 to 1.732e-03 in  0.01 secs 
-(028)   0.1 s v=3.063153e+00 p=3.975037e+01 div/v=1.46e-03 dv/v=2.46e-04 dp/p=7.82e-04 step 7
- *  residual (019) = 1.412e-03 from 1.518e-02 to 1.732e-03 in  0.01 secs 
-(029)   0.1 s v=3.063154e+00 p=3.975111e+01 div/v=1.55e-03 dv/v=2.79e-04 dp/p=8.71e-04 step 7
- *  residual (020) = 1.186e-03 from 2.178e-02 to 1.732e-03 in  0.01 secs 
-(030)   0.1 s v=3.063159e+00 p=3.975177e+01 div/v=1.68e-03 dv/v=2.81e-04 dp/p=1.03e-03 step 7
- *  residual (020) = 1.432e-03 from 3.495e-02 to 1.732e-03 in  0.01 secs 
-(031)   0.1 s v=3.063167e+00 p=3.975236e+01 div/v=1.83e-03 dv/v=2.36e-04 dp/p=1.25e-03 step 7
- *  residual (020) = 1.561e-03 from 4.849e-02 to 1.732e-03 in  0.01 secs 
-(032)   0.1 s v=3.063177e+00 p=3.975291e+01 div/v=1.96e-03 dv/v=1.32e-04 dp/p=1.47e-03 step 7
- *  residual (008) = 1.486e-03 from 5.647e-02 to 1.732e-03 in  0.00 secs 
-(033)   0.1 s v=3.063178e+00 p=3.975347e+01 div/v=2.05e-03 dv/v=4.75e-05 dp/p=1.62e-03 step 7
- *  residual (019) = 1.732e-03 from 5.591e-02 to 1.732e-03 in  0.01 secs 
-(034)   0.1 s v=3.063197e+00 p=3.975411e+01 div/v=2.10e-03 dv/v=1.62e-04 dp/p=1.68e-03 step 7
- *  residual (021) = 1.178e-03 from 4.755e-02 to 1.732e-03 in  0.01 secs 
-(035)   0.1 s v=3.063203e+00 p=3.975488e+01 div/v=2.12e-03 dv/v=2.81e-04 dp/p=1.69e-03 step 7
- *  residual (020) = 1.722e-03 from 3.596e-02 to 1.732e-03 in  0.01 secs 
-(036)   0.1 s v=3.063204e+00 p=3.975591e+01 div/v=2.17e-03 dv/v=3.52e-04 dp/p=1.75e-03 step 7
- *  residual (020) = 1.591e-03 from 2.951e-02 to 1.732e-03 in  0.01 secs 
-(037)   0.2 s v=3.063199e+00 p=3.975735e+01 div/v=2.28e-03 dv/v=3.84e-04 dp/p=1.94e-03 step 7
- *  residual (021) = 1.269e-03 from 3.512e-02 to 1.732e-03 in  0.01 secs 
-(038)   0.2 s v=3.063188e+00 p=3.975943e+01 div/v=2.45e-03 dv/v=3.68e-04 dp/p=2.27e-03 step 7
- *  residual (021) = 1.660e-03 from 5.023e-02 to 1.732e-03 in  0.01 secs 
-(039)   0.2 s v=3.063172e+00 p=3.976239e+01 div/v=2.63e-03 dv/v=2.84e-04 dp/p=2.69e-03 step 7
- *  residual (012) = 1.514e-03 from 6.650e-02 to 1.732e-03 in  0.00 secs 
-(040)   0.2 s v=3.063156e+00 p=3.976638e+01 div/v=2.69e-03 dv/v=1.17e-04 dp/p=3.12e-03 step 7
- *  residual (012) = 1.598e-03 from 7.145e-02 to 1.732e-03 in  0.00 secs 
-(041)   0.2 s v=3.063138e+00 p=3.977124e+01 div/v=2.85e-03 dv/v=9.86e-05 dp/p=3.34e-03 step 7
- *  residual (022) = 1.278e-03 from 7.489e-02 to 1.732e-03 in  0.01 secs 
-(042)   0.2 s v=3.063117e+00 p=3.977659e+01 div/v=2.88e-03 dv/v=2.95e-04 dp/p=3.32e-03 step 7
- *  residual (021) = 1.538e-03 from 6.486e-02 to 1.732e-03 in  0.01 secs 
-(043)   0.2 s v=3.063101e+00 p=3.978234e+01 div/v=2.91e-03 dv/v=4.15e-04 dp/p=3.29e-03 step 7
- *  residual (021) = 1.408e-03 from 5.355e-02 to 1.732e-03 in  0.01 secs 
-(044)   0.2 s v=3.063095e+00 p=3.978864e+01 div/v=2.98e-03 dv/v=4.75e-04 dp/p=3.37e-03 step 7
- *  residual (021) = 1.452e-03 from 4.914e-02 to 1.732e-03 in  0.01 secs 
-(045)   0.2 s v=3.063099e+00 p=3.979592e+01 div/v=3.11e-03 dv/v=4.74e-04 dp/p=3.66e-03 step 7
- *  residual (022) = 1.413e-03 from 5.578e-02 to 1.732e-03 in  0.01 secs 
-(046)   0.2 s v=3.063113e+00 p=3.980473e+01 div/v=3.28e-03 dv/v=4.03e-04 dp/p=4.16e-03 step 7
- *  residual (022) = 1.634e-03 from 7.006e-02 to 1.732e-03 in  0.01 secs 
-(047)   0.2 s v=3.063137e+00 p=3.981548e+01 div/v=3.42e-03 dv/v=2.56e-04 dp/p=4.72e-03 step 7
- *  residual (012) = 1.419e-03 from 8.347e-02 to 1.732e-03 in  0.00 secs 
-(048)   0.2 s v=3.063159e+00 p=3.982804e+01 div/v=3.52e-03 dv/v=1.53e-04 dp/p=5.11e-03 step 7
- *  residual (022) = 1.685e-03 from 8.995e-02 to 1.732e-03 in  0.01 secs 
-(049)   0.2 s v=3.063191e+00 p=3.984185e+01 div/v=3.54e-03 dv/v=2.98e-04 dp/p=5.19e-03 step 7
- *  residual (022) = 1.462e-03 from 8.569e-02 to 1.732e-03 in  0.01 secs 
-(050)   0.2 s v=3.063221e+00 p=3.985633e+01 div/v=3.53e-03 dv/v=4.67e-04 dp/p=5.05e-03 step 7
- *  residual (022) = 1.246e-03 from 7.586e-02 to 1.732e-03 in  0.01 secs 
-(051)   0.2 s v=3.063245e+00 p=3.987143e+01 div/v=3.55e-03 dv/v=5.59e-04 dp/p=4.91e-03 step 7
- *  residual (022) = 1.383e-03 from 6.827e-02 to 1.732e-03 in  0.01 secs 
-(052)   0.3 s v=3.063262e+00 p=3.988773e+01 div/v=3.62e-03 dv/v=5.72e-04 dp/p=4.96e-03 step 7
- *  residual (022) = 1.572e-03 from 6.817e-02 to 1.732e-03 in  0.01 secs 
-(053)   0.3 s v=3.063268e+00 p=3.990608e+01 div/v=3.73e-03 dv/v=5.04e-04 dp/p=5.26e-03 step 7
- *  residual (023) = 1.478e-03 from 7.571e-02 to 1.732e-03 in  0.01 secs 
-(054)   0.3 s v=3.063263e+00 p=3.992706e+01 div/v=3.81e-03 dv/v=3.54e-04 dp/p=5.66e-03 step 7
- *  residual (012) = 1.703e-03 from 8.539e-02 to 1.732e-03 in  0.00 secs 
-(055)   0.3 s v=3.063249e+00 p=3.995042e+01 div/v=3.75e-03 dv/v=1.69e-04 dp/p=5.95e-03 step 7
- *  residual (023) = 1.673e-03 from 8.762e-02 to 1.732e-03 in  0.01 secs 
-(056)   0.3 s v=3.063221e+00 p=3.997472e+01 div/v=3.68e-03 dv/v=2.55e-04 dp/p=5.88e-03 step 7
- *  residual (023) = 1.525e-03 from 8.509e-02 to 1.732e-03 in  0.01 secs 
-(057)   0.3 s v=3.063189e+00 p=3.999861e+01 div/v=3.57e-03 dv/v=4.49e-04 dp/p=5.52e-03 step 7
- *  residual (022) = 1.383e-03 from 7.682e-02 to 1.732e-03 in  0.01 secs 
-(058)   0.3 s v=3.063155e+00 p=4.002150e+01 div/v=3.48e-03 dv/v=5.65e-04 dp/p=5.10e-03 step 7
- *  residual (022) = 1.265e-03 from 6.930e-02 to 1.732e-03 in  0.01 secs 
-(059)   0.3 s v=3.063125e+00 p=4.004384e+01 div/v=3.45e-03 dv/v=5.93e-04 dp/p=4.81e-03 step 7
- *  residual (022) = 1.526e-03 from 6.685e-02 to 1.732e-03 in  0.01 secs 
-(060)   0.3 s v=3.063101e+00 p=4.006659e+01 div/v=3.46e-03 dv/v=5.38e-04 dp/p=4.74e-03 step 7
- *  residual (022) = 1.667e-03 from 6.990e-02 to 1.732e-03 in  0.01 secs 
-(061)   0.3 s v=3.063086e+00 p=4.009047e+01 div/v=3.45e-03 dv/v=3.99e-04 dp/p=4.80e-03 step 7
- *  residual (022) = 1.577e-03 from 7.481e-02 to 1.732e-03 in  0.01 secs 
-(062)   0.3 s v=3.063081e+00 p=4.011518e+01 div/v=3.36e-03 dv/v=2.00e-04 dp/p=4.78e-03 step 7
- *  residual (013) = 1.508e-03 from 7.584e-02 to 1.732e-03 in  0.00 secs 
-(063)   0.3 s v=3.063086e+00 p=4.013958e+01 div/v=3.28e-03 dv/v=1.42e-04 dp/p=4.53e-03 step 7
- *  residual (023) = 1.479e-03 from 7.536e-02 to 1.732e-03 in  0.01 secs 
-(064)   0.3 s v=3.063097e+00 p=4.016182e+01 div/v=3.05e-03 dv/v=3.45e-04 dp/p=3.97e-03 step 7
- *  residual (022) = 1.536e-03 from 6.554e-02 to 1.732e-03 in  0.01 secs 
-(065)   0.3 s v=3.063115e+00 p=4.018159e+01 div/v=2.84e-03 dv/v=4.63e-04 dp/p=3.39e-03 step 7
- *  residual (021) = 1.498e-03 from 5.656e-02 to 1.732e-03 in  0.01 secs 
-(066)   0.4 s v=3.063137e+00 p=4.019936e+01 div/v=2.70e-03 dv/v=5.04e-04 dp/p=2.94e-03 step 7
- *  residual (021) = 1.401e-03 from 5.202e-02 to 1.732e-03 in  0.01 secs 
-(067)   0.4 s v=3.063161e+00 p=4.021619e+01 div/v=2.65e-03 dv/v=4.86e-04 dp/p=2.68e-03 step 7
- *  residual (021) = 1.542e-03 from 5.246e-02 to 1.732e-03 in  0.01 secs 
-(068)   0.4 s v=3.063185e+00 p=4.023310e+01 div/v=2.64e-03 dv/v=4.16e-04 dp/p=2.61e-03 step 7
- *  residual (021) = 1.583e-03 from 5.583e-02 to 1.732e-03 in  0.01 secs 
-(069)   0.4 s v=3.063207e+00 p=4.025050e+01 div/v=2.62e-03 dv/v=2.90e-04 dp/p=2.62e-03 step 7
- *  residual (012) = 1.485e-03 from 5.844e-02 to 1.732e-03 in  0.00 secs 
-(070)   0.4 s v=3.063218e+00 p=4.026810e+01 div/v=2.44e-03 dv/v=1.14e-04 dp/p=2.60e-03 step 7
- *  residual (012) = 1.725e-03 from 5.303e-02 to 1.732e-03 in  0.00 secs 
-(071)   0.4 s v=3.063223e+00 p=4.028450e+01 div/v=2.39e-03 dv/v=1.08e-04 dp/p=2.39e-03 step 7
- *  residual (021) = 1.526e-03 from 5.161e-02 to 1.732e-03 in  0.01 secs 
-(072)   0.4 s v=3.063223e+00 p=4.029841e+01 div/v=2.19e-03 dv/v=2.71e-04 dp/p=2.02e-03 step 7
- *  residual (021) = 1.311e-03 from 4.378e-02 to 1.732e-03 in  0.01 secs 
-(073)   0.4 s v=3.063217e+00 p=4.030993e+01 div/v=2.01e-03 dv/v=3.47e-04 dp/p=1.69e-03 step 7
- *  residual (020) = 1.368e-03 from 3.807e-02 to 1.732e-03 in  0.01 secs 
-(074)   0.4 s v=3.063205e+00 p=4.031956e+01 div/v=1.89e-03 dv/v=3.66e-04 dp/p=1.44e-03 step 7
- *  residual (020) = 1.253e-03 from 3.633e-02 to 1.732e-03 in  0.01 secs 
-(075)   0.4 s v=3.063191e+00 p=4.032803e+01 div/v=1.84e-03 dv/v=3.46e-04 dp/p=1.29e-03 step 7
- *  residual (020) = 1.302e-03 from 3.778e-02 to 1.732e-03 in  0.01 secs 
-(076)   0.4 s v=3.063174e+00 p=4.033594e+01 div/v=1.82e-03 dv/v=2.92e-04 dp/p=1.24e-03 step 7
- *  residual (020) = 1.423e-03 from 4.030e-02 to 1.732e-03 in  0.01 secs 
-(077)   0.4 s v=3.063157e+00 p=4.034363e+01 div/v=1.80e-03 dv/v=2.03e-04 dp/p=1.23e-03 step 7
- *  residual (011) = 1.391e-03 from 4.122e-02 to 1.732e-03 in  0.00 secs 
-(078)   0.4 s v=3.063147e+00 p=4.035107e+01 div/v=1.67e-03 dv/v=8.78e-05 dp/p=1.20e-03 step 7
- *  residual (011) = 1.360e-03 from 3.601e-02 to 1.732e-03 in  0.00 secs 
-(079)   0.4 s v=3.063139e+00 p=4.035785e+01 div/v=1.63e-03 dv/v=8.08e-05 dp/p=1.10e-03 step 7
- *  residual (020) = 1.452e-03 from 3.385e-02 to 1.732e-03 in  0.01 secs 
-(080)   0.4 s v=3.063132e+00 p=4.036365e+01 div/v=1.50e-03 dv/v=1.79e-04 dp/p=9.30e-04 step 7
- *  residual (020) = 1.196e-03 from 2.822e-02 to 1.732e-03 in  0.01 secs 
-(081)   0.4 s v=3.063130e+00 p=4.036863e+01 div/v=1.37e-03 dv/v=2.30e-04 dp/p=7.78e-04 step 7
- *  residual (017) = 1.723e-03 from 2.495e-02 to 1.732e-03 in  0.01 secs 
-(082)   0.4 s v=3.063138e+00 p=4.037306e+01 div/v=1.27e-03 dv/v=2.39e-04 dp/p=6.69e-04 step 7
- *  residual (019) = 1.490e-03 from 2.470e-02 to 1.732e-03 in  0.01 secs 
-(083)   0.5 s v=3.063144e+00 p=4.037718e+01 div/v=1.22e-03 dv/v=2.27e-04 dp/p=5.96e-04 step 7
- *  residual (019) = 1.541e-03 from 2.635e-02 to 1.732e-03 in  0.01 secs 
-(084)   0.5 s v=3.063152e+00 p=4.038125e+01 div/v=1.19e-03 dv/v=1.88e-04 dp/p=5.62e-04 step 7
- *  residual (019) = 1.578e-03 from 2.809e-02 to 1.732e-03 in  0.01 secs 
-(085)   0.5 s v=3.063161e+00 p=4.038532e+01 div/v=1.15e-03 dv/v=1.26e-04 dp/p=5.38e-04 step 7
- *  residual (008) = 1.693e-03 from 2.792e-02 to 1.732e-03 in  0.00 secs 
-(086)   0.5 s v=3.063168e+00 p=4.038929e+01 div/v=1.06e-03 dv/v=5.92e-05 dp/p=5.06e-04 step 7
- *  residual (008) = 1.647e-03 from 2.359e-02 to 1.732e-03 in  0.00 secs 
-(087)   0.5 s v=3.063175e+00 p=4.039290e+01 div/v=1.02e-03 dv/v=5.45e-05 dp/p=4.48e-04 step 7
- *  residual (019) = 1.320e-03 from 2.110e-02 to 1.732e-03 in  0.01 secs 
-(088)   0.5 s v=3.063180e+00 p=4.039582e+01 div/v=9.32e-04 dv/v=1.12e-04 dp/p=3.61e-04 step 7
- *  residual (018) = 1.622e-03 from 1.692e-02 to 1.732e-03 in  0.01 secs 
-(089)   0.5 s v=3.063183e+00 p=4.039822e+01 div/v=8.50e-04 dv/v=1.37e-04 dp/p=3.00e-04 step 7
- *  residual (017) = 1.520e-03 from 1.474e-02 to 1.732e-03 in  0.01 secs 
-(090)   0.5 s v=3.063181e+00 p=4.040024e+01 div/v=7.98e-04 dv/v=1.43e-04 dp/p=2.57e-04 step 7
- *  residual (016) = 1.732e-03 from 1.514e-02 to 1.732e-03 in  0.01 secs 
-(091)   0.5 s v=3.063177e+00 p=4.040201e+01 div/v=7.44e-04 dv/v=1.32e-04 dp/p=2.36e-04 step 7
- *  residual (018) = 1.469e-03 from 1.595e-02 to 1.732e-03 in  0.01 secs 
-(092)   0.5 s v=3.063174e+00 p=4.040361e+01 div/v=7.20e-04 dv/v=1.12e-04 dp/p=2.22e-04 step 7
- *  residual (008) = 1.441e-03 from 1.742e-02 to 1.732e-03 in  0.00 secs 
-(093)   0.5 s v=3.063173e+00 p=4.040528e+01 div/v=6.39e-04 dv/v=3.95e-05 dp/p=2.44e-04 step 7
- *  residual (007) = 1.559e-03 from 1.475e-02 to 1.732e-03 in  0.00 secs 
-(094)   0.5 s v=3.063171e+00 p=4.040657e+01 div/v=5.88e-04 dv/v=3.46e-05 dp/p=2.01e-04 step 7
- *  residual (007) = 1.443e-03 from 1.263e-02 to 1.732e-03 in  0.00 secs 
-(095)   0.5 s v=3.063168e+00 p=4.040761e+01 div/v=5.65e-04 dv/v=3.31e-05 dp/p=1.74e-04 step 7
- *  residual (007) = 1.636e-03 from 1.127e-02 to 1.732e-03 in  0.00 secs 
-(096)   0.5 s v=3.063165e+00 p=4.040852e+01 div/v=5.64e-04 dv/v=3.23e-05 dp/p=1.62e-04 step 7
- *  residual (008) = 1.441e-03 from 1.074e-02 to 1.732e-03 in  0.00 secs 
-(097)   0.5 s v=3.063163e+00 p=4.040940e+01 div/v=5.78e-04 dv/v=3.55e-05 dp/p=1.56e-04 step 7
- *  residual (016) = 1.701e-03 from 1.102e-02 to 1.732e-03 in  0.01 secs 
-(098)   0.5 s v=3.063164e+00 p=4.040998e+01 div/v=5.49e-04 dv/v=8.23e-05 dp/p=1.01e-04 step 7
- *  residual (013) = 1.723e-03 from 1.048e-02 to 1.732e-03 in  0.00 secs 
-(099)   0.5 s v=3.063166e+00 p=4.041053e+01 div/v=5.24e-04 dv/v=8.16e-05 dp/p=9.15e-05 step 7
- *  residual (016) = 1.448e-03 from 1.079e-02 to 1.732e-03 in  0.01 secs 
-(100)   0.5 s v=3.063167e+00 p=4.041106e+01 div/v=4.96e-04 dv/v=7.54e-05 dp/p=8.59e-05 step 7
+(011)   0.3 s v=3.063146e+00 p=3.974834e+01 div/v=4.24e-04 dv/v=2.58e-05 dp/p=9.42e-04 step 7
+ *  residual (001) = 1.338e-03 from 2.405e-03 to 1.732e-03 in  0.01 secs 
+(012)   0.4 s v=3.063146e+00 p=3.974809e+01 div/v=5.76e-04 dv/v=2.88e-05 dp/p=1.53e-03 step 7
+ *  residual (014) = 1.613e-03 from 3.311e-03 to 1.732e-03 in  0.06 secs 
+(013)   0.4 s v=3.063147e+00 p=3.974799e+01 div/v=6.18e-04 dv/v=1.31e-04 dp/p=1.34e-04 step 7
+ *  residual (016) = 1.291e-03 from 8.654e-03 to 1.732e-03 in  0.07 secs 
+(014)   0.5 s v=3.063148e+00 p=3.974780e+01 div/v=6.85e-04 dv/v=1.30e-04 dp/p=1.54e-04 step 7
+ *  residual (012) = 1.707e-03 from 1.499e-02 to 1.732e-03 in  0.07 secs 
+(015)   0.6 s v=3.063159e+00 p=3.974747e+01 div/v=7.44e-04 dv/v=8.92e-05 dp/p=2.10e-04 step 7
+ *  residual (004) = 1.688e-03 from 1.985e-02 to 1.732e-03 in  0.03 secs 
+(016)   0.6 s v=3.063157e+00 p=3.974702e+01 div/v=7.21e-04 dv/v=1.53e-05 dp/p=2.67e-04 step 7
+ *  residual (004) = 1.643e-03 from 1.764e-02 to 1.732e-03 in  0.03 secs 
+(017)   0.6 s v=3.063155e+00 p=3.974654e+01 div/v=7.93e-04 dv/v=1.68e-05 dp/p=2.85e-04 step 7
+ *  residual (007) = 1.672e-03 from 1.737e-02 to 1.732e-03 in  0.05 secs 
+(018)   0.7 s v=3.063152e+00 p=3.974601e+01 div/v=9.19e-04 dv/v=3.29e-05 dp/p=3.38e-04 step 7
+ *  residual (018) = 1.659e-03 from 1.659e-02 to 1.732e-03 in  0.11 secs 
+(019)   0.8 s v=3.063155e+00 p=3.974566e+01 div/v=9.22e-04 dv/v=1.36e-04 dp/p=2.99e-04 step 7
+ *  residual (018) = 1.463e-03 from 9.337e-03 to 1.732e-03 in  0.11 secs 
+(020)   0.9 s v=3.063157e+00 p=3.974546e+01 div/v=9.40e-04 dv/v=1.72e-04 dp/p=3.07e-04 step 7
+ *  residual (017) = 1.613e-03 from 7.180e-03 to 1.732e-03 in  0.11 secs 
+(021)   1.0 s v=3.063158e+00 p=3.974543e+01 div/v=9.88e-04 dv/v=1.90e-04 dp/p=3.39e-04 step 7
+ *  residual (018) = 1.486e-03 from 1.414e-02 to 1.732e-03 in  0.11 secs 
+(022)   1.1 s v=3.063156e+00 p=3.974560e+01 div/v=1.08e-03 dv/v=1.92e-04 dp/p=3.96e-04 step 7
+ *  residual (018) = 1.533e-03 from 2.374e-02 to 1.732e-03 in  0.10 secs 
+(023)   1.3 s v=3.063153e+00 p=3.974601e+01 div/v=1.19e-03 dv/v=1.64e-04 dp/p=4.82e-04 step 7
+ *  residual (008) = 1.609e-03 from 3.316e-02 to 1.732e-03 in  0.05 secs 
+(024)   1.3 s v=3.063154e+00 p=3.974674e+01 div/v=1.17e-03 dv/v=3.51e-05 dp/p=6.35e-04 step 7
+ *  residual (005) = 1.646e-03 from 3.157e-02 to 1.732e-03 in  0.03 secs 
+(025)   1.4 s v=3.063156e+00 p=3.974759e+01 div/v=1.24e-03 dv/v=2.46e-05 dp/p=6.70e-04 step 7
+ *  residual (008) = 1.328e-03 from 3.033e-02 to 1.732e-03 in  0.05 secs 
+(026)   1.4 s v=3.063158e+00 p=3.974862e+01 div/v=1.40e-03 dv/v=3.92e-05 dp/p=7.75e-04 step 7
+ *  residual (020) = 1.038e-03 from 2.940e-02 to 1.732e-03 in  0.12 secs 
+(027)   1.5 s v=3.063155e+00 p=3.974954e+01 div/v=1.42e-03 dv/v=1.87e-04 dp/p=7.42e-04 step 7
+ *  residual (019) = 1.661e-03 from 2.010e-02 to 1.732e-03 in  0.09 secs 
+(028)   1.6 s v=3.063153e+00 p=3.975037e+01 div/v=1.46e-03 dv/v=2.46e-04 dp/p=7.82e-04 step 7
+ *  residual (019) = 1.412e-03 from 1.518e-02 to 1.732e-03 in  0.09 secs 
+(029)   1.7 s v=3.063154e+00 p=3.975111e+01 div/v=1.55e-03 dv/v=2.79e-04 dp/p=8.71e-04 step 7
+ *  residual (020) = 1.186e-03 from 2.178e-02 to 1.732e-03 in  0.10 secs 
+(030)   1.8 s v=3.063159e+00 p=3.975177e+01 div/v=1.68e-03 dv/v=2.81e-04 dp/p=1.03e-03 step 7
+ *  residual (020) = 1.432e-03 from 3.495e-02 to 1.732e-03 in  0.09 secs 
+(031)   1.9 s v=3.063167e+00 p=3.975236e+01 div/v=1.83e-03 dv/v=2.36e-04 dp/p=1.25e-03 step 7
+ *  residual (020) = 1.561e-03 from 4.849e-02 to 1.732e-03 in  0.12 secs 
+(032)   2.0 s v=3.063177e+00 p=3.975291e+01 div/v=1.96e-03 dv/v=1.32e-04 dp/p=1.47e-03 step 7
+ *  residual (008) = 1.486e-03 from 5.647e-02 to 1.732e-03 in  0.05 secs 
+(033)   2.1 s v=3.063178e+00 p=3.975347e+01 div/v=2.05e-03 dv/v=4.75e-05 dp/p=1.62e-03 step 7
+ *  residual (019) = 1.732e-03 from 5.591e-02 to 1.732e-03 in  0.10 secs 
+(034)   2.2 s v=3.063197e+00 p=3.975411e+01 div/v=2.10e-03 dv/v=1.62e-04 dp/p=1.68e-03 step 7
+ *  residual (021) = 1.178e-03 from 4.755e-02 to 1.732e-03 in  0.11 secs 
+(035)   2.3 s v=3.063203e+00 p=3.975488e+01 div/v=2.12e-03 dv/v=2.81e-04 dp/p=1.69e-03 step 7
+ *  residual (020) = 1.722e-03 from 3.596e-02 to 1.732e-03 in  0.11 secs 
+(036)   2.4 s v=3.063204e+00 p=3.975591e+01 div/v=2.17e-03 dv/v=3.52e-04 dp/p=1.75e-03 step 7
+ *  residual (020) = 1.591e-03 from 2.951e-02 to 1.732e-03 in  0.11 secs 
+(037)   2.5 s v=3.063199e+00 p=3.975735e+01 div/v=2.28e-03 dv/v=3.84e-04 dp/p=1.94e-03 step 7
+ *  residual (021) = 1.269e-03 from 3.512e-02 to 1.732e-03 in  0.11 secs 
+(038)   2.6 s v=3.063188e+00 p=3.975943e+01 div/v=2.45e-03 dv/v=3.68e-04 dp/p=2.27e-03 step 7
+ *  residual (021) = 1.660e-03 from 5.023e-02 to 1.732e-03 in  0.11 secs 
+(039)   2.8 s v=3.063172e+00 p=3.976239e+01 div/v=2.63e-03 dv/v=2.84e-04 dp/p=2.69e-03 step 7
+ *  residual (012) = 1.514e-03 from 6.650e-02 to 1.732e-03 in  0.07 secs 
+(040)   2.8 s v=3.063156e+00 p=3.976638e+01 div/v=2.69e-03 dv/v=1.17e-04 dp/p=3.12e-03 step 7
+ *  residual (012) = 1.598e-03 from 7.145e-02 to 1.732e-03 in  0.07 secs 
+(041)   2.9 s v=3.063138e+00 p=3.977124e+01 div/v=2.85e-03 dv/v=9.86e-05 dp/p=3.34e-03 step 7
+ *  residual (022) = 1.278e-03 from 7.489e-02 to 1.732e-03 in  0.11 secs 
+(042)   3.0 s v=3.063117e+00 p=3.977659e+01 div/v=2.88e-03 dv/v=2.95e-04 dp/p=3.32e-03 step 7
+ *  residual (021) = 1.538e-03 from 6.486e-02 to 1.732e-03 in  0.11 secs 
+(043)   3.1 s v=3.063101e+00 p=3.978234e+01 div/v=2.91e-03 dv/v=4.15e-04 dp/p=3.29e-03 step 7
+ *  residual (021) = 1.408e-03 from 5.355e-02 to 1.732e-03 in  0.11 secs 
+(044)   3.2 s v=3.063095e+00 p=3.978864e+01 div/v=2.98e-03 dv/v=4.75e-04 dp/p=3.37e-03 step 7
+ *  residual (021) = 1.452e-03 from 4.914e-02 to 1.732e-03 in  0.09 secs 
+(045)   3.3 s v=3.063099e+00 p=3.979592e+01 div/v=3.11e-03 dv/v=4.74e-04 dp/p=3.66e-03 step 7
+ *  residual (022) = 1.413e-03 from 5.578e-02 to 1.732e-03 in  0.10 secs 
+(046)   3.4 s v=3.063113e+00 p=3.980473e+01 div/v=3.28e-03 dv/v=4.03e-04 dp/p=4.16e-03 step 7
+ *  residual (022) = 1.634e-03 from 7.006e-02 to 1.732e-03 in  0.09 secs 
+(047)   3.5 s v=3.063137e+00 p=3.981548e+01 div/v=3.42e-03 dv/v=2.56e-04 dp/p=4.72e-03 step 7
+ *  residual (012) = 1.419e-03 from 8.347e-02 to 1.732e-03 in  0.06 secs 
+(048)   3.6 s v=3.063159e+00 p=3.982804e+01 div/v=3.52e-03 dv/v=1.53e-04 dp/p=5.11e-03 step 7
+ *  residual (022) = 1.685e-03 from 8.995e-02 to 1.732e-03 in  0.10 secs 
+(049)   3.7 s v=3.063191e+00 p=3.984185e+01 div/v=3.54e-03 dv/v=2.98e-04 dp/p=5.19e-03 step 7
+ *  residual (022) = 1.462e-03 from 8.569e-02 to 1.732e-03 in  0.10 secs 
+(050)   3.8 s v=3.063221e+00 p=3.985633e+01 div/v=3.53e-03 dv/v=4.67e-04 dp/p=5.05e-03 step 7
+ *  residual (022) = 1.246e-03 from 7.586e-02 to 1.732e-03 in  0.10 secs 
+(051)   3.9 s v=3.063245e+00 p=3.987143e+01 div/v=3.55e-03 dv/v=5.59e-04 dp/p=4.91e-03 step 7
+ *  residual (022) = 1.383e-03 from 6.827e-02 to 1.732e-03 in  0.10 secs 
+(052)   4.0 s v=3.063262e+00 p=3.988773e+01 div/v=3.62e-03 dv/v=5.72e-04 dp/p=4.96e-03 step 7
+ *  residual (022) = 1.572e-03 from 6.817e-02 to 1.732e-03 in  0.09 secs 
+(053)   4.1 s v=3.063268e+00 p=3.990608e+01 div/v=3.73e-03 dv/v=5.04e-04 dp/p=5.26e-03 step 7
+ *  residual (023) = 1.478e-03 from 7.571e-02 to 1.732e-03 in  0.10 secs 
+(054)   4.2 s v=3.063263e+00 p=3.992706e+01 div/v=3.81e-03 dv/v=3.54e-04 dp/p=5.66e-03 step 7
+ *  residual (012) = 1.703e-03 from 8.539e-02 to 1.732e-03 in  0.06 secs 
+(055)   4.2 s v=3.063249e+00 p=3.995042e+01 div/v=3.75e-03 dv/v=1.69e-04 dp/p=5.95e-03 step 7
+ *  residual (023) = 1.673e-03 from 8.762e-02 to 1.732e-03 in  0.10 secs 
+(056)   4.3 s v=3.063221e+00 p=3.997472e+01 div/v=3.68e-03 dv/v=2.55e-04 dp/p=5.88e-03 step 7
+ *  residual (023) = 1.525e-03 from 8.509e-02 to 1.732e-03 in  0.11 secs 
+(057)   4.5 s v=3.063189e+00 p=3.999861e+01 div/v=3.57e-03 dv/v=4.49e-04 dp/p=5.52e-03 step 7
+ *  residual (022) = 1.383e-03 from 7.682e-02 to 1.732e-03 in  0.10 secs 
+(058)   4.6 s v=3.063155e+00 p=4.002150e+01 div/v=3.48e-03 dv/v=5.65e-04 dp/p=5.10e-03 step 7
+ *  residual (022) = 1.265e-03 from 6.930e-02 to 1.732e-03 in  0.10 secs 
+(059)   4.7 s v=3.063125e+00 p=4.004384e+01 div/v=3.45e-03 dv/v=5.93e-04 dp/p=4.81e-03 step 7
+ *  residual (022) = 1.526e-03 from 6.685e-02 to 1.732e-03 in  0.10 secs 
+(060)   4.8 s v=3.063101e+00 p=4.006659e+01 div/v=3.46e-03 dv/v=5.38e-04 dp/p=4.74e-03 step 7
+ *  residual (022) = 1.667e-03 from 6.990e-02 to 1.732e-03 in  0.09 secs 
+(061)   4.9 s v=3.063086e+00 p=4.009047e+01 div/v=3.45e-03 dv/v=3.99e-04 dp/p=4.80e-03 step 7
+ *  residual (022) = 1.577e-03 from 7.481e-02 to 1.732e-03 in  0.10 secs 
+(062)   5.0 s v=3.063081e+00 p=4.011518e+01 div/v=3.36e-03 dv/v=2.00e-04 dp/p=4.78e-03 step 7
+ *  residual (013) = 1.508e-03 from 7.584e-02 to 1.732e-03 in  0.07 secs 
+(063)   5.0 s v=3.063086e+00 p=4.013958e+01 div/v=3.28e-03 dv/v=1.42e-04 dp/p=4.53e-03 step 7
+ *  residual (023) = 1.479e-03 from 7.536e-02 to 1.732e-03 in  0.14 secs 
+(064)   5.2 s v=3.063097e+00 p=4.016182e+01 div/v=3.05e-03 dv/v=3.45e-04 dp/p=3.97e-03 step 7
+ *  residual (022) = 1.536e-03 from 6.554e-02 to 1.732e-03 in  0.14 secs 
+(065)   5.3 s v=3.063115e+00 p=4.018159e+01 div/v=2.84e-03 dv/v=4.63e-04 dp/p=3.39e-03 step 7
+ *  residual (021) = 1.498e-03 from 5.656e-02 to 1.732e-03 in  0.12 secs 
+(066)   5.4 s v=3.063137e+00 p=4.019936e+01 div/v=2.70e-03 dv/v=5.04e-04 dp/p=2.94e-03 step 7
+ *  residual (021) = 1.401e-03 from 5.202e-02 to 1.732e-03 in  0.09 secs 
+(067)   5.5 s v=3.063161e+00 p=4.021619e+01 div/v=2.65e-03 dv/v=4.86e-04 dp/p=2.68e-03 step 7
+ *  residual (021) = 1.542e-03 from 5.246e-02 to 1.732e-03 in  0.10 secs 
+(068)   5.6 s v=3.063185e+00 p=4.023310e+01 div/v=2.64e-03 dv/v=4.16e-04 dp/p=2.61e-03 step 7
+ *  residual (021) = 1.583e-03 from 5.583e-02 to 1.732e-03 in  0.09 secs 
+(069)   5.7 s v=3.063207e+00 p=4.025050e+01 div/v=2.62e-03 dv/v=2.90e-04 dp/p=2.62e-03 step 7
+ *  residual (012) = 1.485e-03 from 5.844e-02 to 1.732e-03 in  0.06 secs 
+(070)   5.8 s v=3.063218e+00 p=4.026810e+01 div/v=2.44e-03 dv/v=1.14e-04 dp/p=2.60e-03 step 7
+ *  residual (012) = 1.725e-03 from 5.303e-02 to 1.732e-03 in  0.06 secs 
+(071)   5.8 s v=3.063223e+00 p=4.028450e+01 div/v=2.39e-03 dv/v=1.08e-04 dp/p=2.39e-03 step 7
+ *  residual (021) = 1.526e-03 from 5.161e-02 to 1.732e-03 in  0.10 secs 
+(072)   5.9 s v=3.063223e+00 p=4.029841e+01 div/v=2.19e-03 dv/v=2.71e-04 dp/p=2.02e-03 step 7
+ *  residual (021) = 1.311e-03 from 4.378e-02 to 1.732e-03 in  0.11 secs 
+(073)   6.1 s v=3.063217e+00 p=4.030993e+01 div/v=2.01e-03 dv/v=3.47e-04 dp/p=1.69e-03 step 7
+ *  residual (020) = 1.368e-03 from 3.807e-02 to 1.732e-03 in  0.09 secs 
+(074)   6.1 s v=3.063205e+00 p=4.031956e+01 div/v=1.89e-03 dv/v=3.66e-04 dp/p=1.44e-03 step 7
+ *  residual (020) = 1.253e-03 from 3.633e-02 to 1.732e-03 in  0.09 secs 
+(075)   6.2 s v=3.063191e+00 p=4.032803e+01 div/v=1.84e-03 dv/v=3.46e-04 dp/p=1.29e-03 step 7
+ *  residual (020) = 1.302e-03 from 3.778e-02 to 1.732e-03 in  0.09 secs 
+(076)   6.3 s v=3.063174e+00 p=4.033594e+01 div/v=1.82e-03 dv/v=2.92e-04 dp/p=1.24e-03 step 7
+ *  residual (020) = 1.423e-03 from 4.030e-02 to 1.732e-03 in  0.09 secs 
+(077)   6.4 s v=3.063157e+00 p=4.034363e+01 div/v=1.80e-03 dv/v=2.03e-04 dp/p=1.23e-03 step 7
+ *  residual (011) = 1.391e-03 from 4.122e-02 to 1.732e-03 in  0.06 secs 
+(078)   6.5 s v=3.063147e+00 p=4.035107e+01 div/v=1.67e-03 dv/v=8.78e-05 dp/p=1.20e-03 step 7
+ *  residual (011) = 1.360e-03 from 3.601e-02 to 1.732e-03 in  0.05 secs 
+(079)   6.5 s v=3.063139e+00 p=4.035785e+01 div/v=1.63e-03 dv/v=8.08e-05 dp/p=1.10e-03 step 7
+ *  residual (020) = 1.452e-03 from 3.385e-02 to 1.732e-03 in  0.09 secs 
+(080)   6.6 s v=3.063132e+00 p=4.036365e+01 div/v=1.50e-03 dv/v=1.79e-04 dp/p=9.30e-04 step 7
+ *  residual (020) = 1.196e-03 from 2.822e-02 to 1.732e-03 in  0.09 secs 
+(081)   6.7 s v=3.063130e+00 p=4.036863e+01 div/v=1.37e-03 dv/v=2.30e-04 dp/p=7.78e-04 step 7
+ *  residual (017) = 1.723e-03 from 2.495e-02 to 1.732e-03 in  0.08 secs 
+(082)   6.8 s v=3.063138e+00 p=4.037306e+01 div/v=1.27e-03 dv/v=2.39e-04 dp/p=6.69e-04 step 7
+ *  residual (019) = 1.490e-03 from 2.470e-02 to 1.732e-03 in  0.08 secs 
+(083)   6.9 s v=3.063144e+00 p=4.037718e+01 div/v=1.22e-03 dv/v=2.27e-04 dp/p=5.96e-04 step 7
+ *  residual (019) = 1.541e-03 from 2.635e-02 to 1.732e-03 in  0.08 secs 
+(084)   7.0 s v=3.063152e+00 p=4.038125e+01 div/v=1.19e-03 dv/v=1.88e-04 dp/p=5.62e-04 step 7
+ *  residual (019) = 1.578e-03 from 2.809e-02 to 1.732e-03 in  0.09 secs 
+(085)   7.1 s v=3.063161e+00 p=4.038532e+01 div/v=1.15e-03 dv/v=1.26e-04 dp/p=5.38e-04 step 7
+ *  residual (008) = 1.693e-03 from 2.792e-02 to 1.732e-03 in  0.04 secs 
+(086)   7.1 s v=3.063168e+00 p=4.038929e+01 div/v=1.06e-03 dv/v=5.92e-05 dp/p=5.06e-04 step 7
+ *  residual (008) = 1.647e-03 from 2.359e-02 to 1.732e-03 in  0.04 secs 
+(087)   7.2 s v=3.063175e+00 p=4.039290e+01 div/v=1.02e-03 dv/v=5.45e-05 dp/p=4.48e-04 step 7
+ *  residual (019) = 1.320e-03 from 2.110e-02 to 1.732e-03 in  0.09 secs 
+(088)   7.2 s v=3.063180e+00 p=4.039582e+01 div/v=9.32e-04 dv/v=1.12e-04 dp/p=3.61e-04 step 7
+ *  residual (018) = 1.622e-03 from 1.692e-02 to 1.732e-03 in  0.08 secs 
+(089)   7.3 s v=3.063183e+00 p=4.039822e+01 div/v=8.50e-04 dv/v=1.37e-04 dp/p=3.00e-04 step 7
+ *  residual (017) = 1.520e-03 from 1.474e-02 to 1.732e-03 in  0.08 secs 
+(090)   7.4 s v=3.063181e+00 p=4.040024e+01 div/v=7.98e-04 dv/v=1.43e-04 dp/p=2.57e-04 step 7
+ *  residual (016) = 1.732e-03 from 1.514e-02 to 1.732e-03 in  0.07 secs 
+(091)   7.5 s v=3.063177e+00 p=4.040201e+01 div/v=7.44e-04 dv/v=1.32e-04 dp/p=2.36e-04 step 7
+ *  residual (018) = 1.469e-03 from 1.595e-02 to 1.732e-03 in  0.08 secs 
+(092)   7.6 s v=3.063174e+00 p=4.040361e+01 div/v=7.20e-04 dv/v=1.12e-04 dp/p=2.22e-04 step 7
+ *  residual (008) = 1.441e-03 from 1.742e-02 to 1.732e-03 in  0.05 secs 
+(093)   7.6 s v=3.063173e+00 p=4.040528e+01 div/v=6.39e-04 dv/v=3.95e-05 dp/p=2.44e-04 step 7
+ *  residual (007) = 1.559e-03 from 1.475e-02 to 1.732e-03 in  0.04 secs 
+(094)   7.7 s v=3.063171e+00 p=4.040657e+01 div/v=5.88e-04 dv/v=3.46e-05 dp/p=2.01e-04 step 7
+ *  residual (007) = 1.443e-03 from 1.263e-02 to 1.732e-03 in  0.04 secs 
+(095)   7.7 s v=3.063168e+00 p=4.040761e+01 div/v=5.65e-04 dv/v=3.31e-05 dp/p=1.74e-04 step 7
+ *  residual (007) = 1.636e-03 from 1.127e-02 to 1.732e-03 in  0.04 secs 
+(096)   7.7 s v=3.063165e+00 p=4.040852e+01 div/v=5.64e-04 dv/v=3.23e-05 dp/p=1.62e-04 step 7
+ *  residual (008) = 1.441e-03 from 1.074e-02 to 1.732e-03 in  0.04 secs 
+(097)   7.8 s v=3.063163e+00 p=4.040940e+01 div/v=5.78e-04 dv/v=3.55e-05 dp/p=1.56e-04 step 7
+ *  residual (016) = 1.701e-03 from 1.102e-02 to 1.732e-03 in  0.08 secs 
+(098)   7.9 s v=3.063164e+00 p=4.040998e+01 div/v=5.49e-04 dv/v=8.23e-05 dp/p=1.01e-04 step 7
+ *  residual (013) = 1.723e-03 from 1.048e-02 to 1.732e-03 in  0.07 secs 
+(099)   8.0 s v=3.063166e+00 p=4.041053e+01 div/v=5.24e-04 dv/v=8.16e-05 dp/p=9.15e-05 step 7
+ *  residual (016) = 1.448e-03 from 1.079e-02 to 1.732e-03 in  0.09 secs 
+(100)   8.0 s v=3.063167e+00 p=4.041106e+01 div/v=4.96e-04 dv/v=7.54e-05 dp/p=8.59e-05 step 7
 Angular momentum: rot=2.932585e-06 tr=9.010339e+01 fr=9.025773e+01
 Momentum equation force 1.839415202e+01
- *  residual (033) = 1.508e-03 from 1.345e+00 to 1.839e-03 in  0.01 secs 
-(000)   0.0 s v=3.304977e+00 p=4.041106e+01 div/v=3.11e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 8
- *  residual (031) = 1.597e-03 from 1.057e+00 to 1.839e-03 in  0.01 secs 
-(001)   0.0 s v=3.307353e+00 p=4.329098e+01 div/v=5.99e-02 dv/v=3.83e-02 dp/p=7.02e-02 step 8
- *  residual (025) = 1.409e-03 from 4.573e-01 to 1.839e-03 in  0.01 secs 
-(002)   0.0 s v=3.305393e+00 p=4.333548e+01 div/v=4.70e-03 dv/v=4.46e-03 dp/p=1.40e-02 step 8
- *  residual (018) = 1.802e-03 from 3.683e-02 to 1.839e-03 in  0.01 secs 
-(003)   0.0 s v=3.305903e+00 p=4.333316e+01 div/v=1.09e-03 dv/v=1.32e-03 dp/p=1.10e-03 step 8
- *  residual (003) = 1.187e-03 from 6.677e-03 to 1.839e-03 in  0.00 secs 
-(004)   0.0 s v=3.305920e+00 p=4.333525e+01 div/v=6.99e-04 dv/v=7.98e-05 dp/p=3.94e-04 step 8
- *  residual (001) = 1.690e-03 from 2.416e-03 to 1.839e-03 in  0.00 secs 
-(005)   0.0 s v=3.305931e+00 p=4.333914e+01 div/v=1.59e-03 dv/v=7.27e-05 dp/p=1.33e-03 step 8
- *  residual (019) = 1.443e-03 from 1.199e-02 to 1.839e-03 in  0.01 secs 
-(006)   0.0 s v=3.305943e+00 p=4.333935e+01 div/v=1.51e-03 dv/v=3.03e-04 dp/p=9.45e-05 step 8
- *  residual (019) = 1.261e-03 from 2.868e-02 to 1.839e-03 in  0.01 secs 
-(007)   0.1 s v=3.305953e+00 p=4.333949e+01 div/v=1.48e-03 dv/v=2.78e-04 dp/p=9.31e-05 step 8
- *  residual (019) = 1.402e-03 from 4.472e-02 to 1.839e-03 in  0.01 secs 
-(008)   0.1 s v=3.305962e+00 p=4.333956e+01 div/v=1.48e-03 dv/v=2.35e-04 dp/p=9.66e-05 step 8
- *  residual (018) = 1.607e-03 from 5.824e-02 to 1.839e-03 in  0.01 secs 
-(009)   0.1 s v=3.305969e+00 p=4.333955e+01 div/v=1.48e-03 dv/v=1.70e-04 dp/p=1.02e-04 step 8
- *  residual (015) = 1.615e-03 from 6.677e-02 to 1.839e-03 in  0.00 secs 
-(010)   0.1 s v=3.305973e+00 p=4.333947e+01 div/v=1.46e-03 dv/v=8.10e-05 dp/p=1.05e-04 step 8
- *  residual (005) = 1.222e-03 from 6.702e-02 to 1.839e-03 in  0.00 secs 
-(011)   0.1 s v=3.305971e+00 p=4.333932e+01 div/v=1.41e-03 dv/v=1.67e-05 dp/p=1.03e-04 step 8
- *  residual (017) = 1.766e-03 from 6.027e-02 to 1.839e-03 in  0.01 secs 
-(012)   0.1 s v=3.305963e+00 p=4.333914e+01 div/v=1.32e-03 dv/v=8.74e-05 dp/p=9.48e-05 step 8
- *  residual (018) = 1.799e-03 from 4.610e-02 to 1.839e-03 in  0.01 secs 
-(013)   0.1 s v=3.305953e+00 p=4.333895e+01 div/v=1.21e-03 dv/v=1.48e-04 dp/p=8.35e-05 step 8
- *  residual (018) = 1.636e-03 from 2.936e-02 to 1.839e-03 in  0.01 secs 
-(014)   0.1 s v=3.305943e+00 p=4.333878e+01 div/v=1.11e-03 dv/v=1.79e-04 dp/p=7.26e-05 step 8
- *  residual (017) = 1.810e-03 from 1.464e-02 to 1.839e-03 in  0.01 secs 
-(015)   0.1 s v=3.305933e+00 p=4.333862e+01 div/v=1.02e-03 dv/v=1.89e-04 dp/p=6.47e-05 step 8
- *  residual (017) = 1.650e-03 from 9.744e-03 to 1.839e-03 in  0.01 secs 
-(016)   0.1 s v=3.305924e+00 p=4.333850e+01 div/v=9.72e-04 dv/v=1.86e-04 dp/p=6.05e-05 step 8
- *  residual (018) = 1.590e-03 from 1.816e-02 to 1.839e-03 in  0.01 secs 
-(017)   0.1 s v=3.305915e+00 p=4.333839e+01 div/v=9.51e-04 dv/v=1.72e-04 dp/p=5.99e-05 step 8
- *  residual (018) = 1.640e-03 from 2.834e-02 to 1.839e-03 in  0.01 secs 
-(018)   0.1 s v=3.305907e+00 p=4.333832e+01 div/v=9.48e-04 dv/v=1.46e-04 dp/p=6.21e-05 step 8
- *  residual (017) = 1.635e-03 from 3.731e-02 to 1.839e-03 in  0.01 secs 
-(019)   0.1 s v=3.305900e+00 p=4.333828e+01 div/v=9.43e-04 dv/v=1.05e-04 dp/p=6.53e-05 step 8
- *  residual (007) = 1.809e-03 from 4.287e-02 to 1.839e-03 in  0.00 secs 
-(020)   0.1 s v=3.305898e+00 p=4.333829e+01 div/v=8.47e-04 dv/v=1.48e-05 dp/p=7.11e-05 step 8
- *  residual (005) = 1.402e-03 from 3.658e-02 to 1.839e-03 in  0.00 secs 
-(021)   0.1 s v=3.305899e+00 p=4.333833e+01 div/v=8.13e-04 dv/v=1.13e-05 dp/p=6.44e-05 step 8
+ *  residual (033) = 1.508e-03 from 1.345e+00 to 1.839e-03 in  0.16 secs 
+(000)   0.2 s v=3.304977e+00 p=4.041106e+01 div/v=3.11e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 8
+ *  residual (031) = 1.597e-03 from 1.057e+00 to 1.839e-03 in  0.16 secs 
+(001)   0.3 s v=3.307353e+00 p=4.329098e+01 div/v=5.99e-02 dv/v=3.83e-02 dp/p=7.02e-02 step 8
+ *  residual (025) = 1.409e-03 from 4.573e-01 to 1.839e-03 in  0.13 secs 
+(002)   0.5 s v=3.305393e+00 p=4.333548e+01 div/v=4.70e-03 dv/v=4.46e-03 dp/p=1.40e-02 step 8
+ *  residual (018) = 1.802e-03 from 3.683e-02 to 1.839e-03 in  0.10 secs 
+(003)   0.6 s v=3.305903e+00 p=4.333316e+01 div/v=1.09e-03 dv/v=1.32e-03 dp/p=1.10e-03 step 8
+ *  residual (003) = 1.187e-03 from 6.677e-03 to 1.839e-03 in  0.02 secs 
+(004)   0.6 s v=3.305920e+00 p=4.333525e+01 div/v=6.99e-04 dv/v=7.98e-05 dp/p=3.94e-04 step 8
+ *  residual (001) = 1.690e-03 from 2.416e-03 to 1.839e-03 in  0.01 secs 
+(005)   0.6 s v=3.305931e+00 p=4.333914e+01 div/v=1.59e-03 dv/v=7.27e-05 dp/p=1.33e-03 step 8
+ *  residual (019) = 1.443e-03 from 1.199e-02 to 1.839e-03 in  0.10 secs 
+(006)   0.7 s v=3.305943e+00 p=4.333935e+01 div/v=1.51e-03 dv/v=3.03e-04 dp/p=9.45e-05 step 8
+ *  residual (019) = 1.261e-03 from 2.868e-02 to 1.839e-03 in  0.09 secs 
+(007)   0.8 s v=3.305953e+00 p=4.333949e+01 div/v=1.48e-03 dv/v=2.78e-04 dp/p=9.31e-05 step 8
+ *  residual (019) = 1.402e-03 from 4.472e-02 to 1.839e-03 in  0.12 secs 
+(008)   0.9 s v=3.305962e+00 p=4.333956e+01 div/v=1.48e-03 dv/v=2.35e-04 dp/p=9.66e-05 step 8
+ *  residual (018) = 1.607e-03 from 5.824e-02 to 1.839e-03 in  0.12 secs 
+(009)   1.0 s v=3.305969e+00 p=4.333955e+01 div/v=1.48e-03 dv/v=1.70e-04 dp/p=1.02e-04 step 8
+ *  residual (015) = 1.615e-03 from 6.677e-02 to 1.839e-03 in  0.10 secs 
+(010)   1.1 s v=3.305973e+00 p=4.333947e+01 div/v=1.46e-03 dv/v=8.10e-05 dp/p=1.05e-04 step 8
+ *  residual (005) = 1.222e-03 from 6.702e-02 to 1.839e-03 in  0.02 secs 
+(011)   1.2 s v=3.305971e+00 p=4.333932e+01 div/v=1.41e-03 dv/v=1.67e-05 dp/p=1.03e-04 step 8
+ *  residual (017) = 1.766e-03 from 6.027e-02 to 1.839e-03 in  0.07 secs 
+(012)   1.2 s v=3.305963e+00 p=4.333914e+01 div/v=1.32e-03 dv/v=8.74e-05 dp/p=9.48e-05 step 8
+ *  residual (018) = 1.799e-03 from 4.610e-02 to 1.839e-03 in  0.09 secs 
+(013)   1.3 s v=3.305953e+00 p=4.333895e+01 div/v=1.21e-03 dv/v=1.48e-04 dp/p=8.35e-05 step 8
+ *  residual (018) = 1.636e-03 from 2.936e-02 to 1.839e-03 in  0.09 secs 
+(014)   1.4 s v=3.305943e+00 p=4.333878e+01 div/v=1.11e-03 dv/v=1.79e-04 dp/p=7.26e-05 step 8
+ *  residual (017) = 1.810e-03 from 1.464e-02 to 1.839e-03 in  0.08 secs 
+(015)   1.5 s v=3.305933e+00 p=4.333862e+01 div/v=1.02e-03 dv/v=1.89e-04 dp/p=6.47e-05 step 8
+ *  residual (017) = 1.650e-03 from 9.744e-03 to 1.839e-03 in  0.08 secs 
+(016)   1.6 s v=3.305924e+00 p=4.333850e+01 div/v=9.72e-04 dv/v=1.86e-04 dp/p=6.05e-05 step 8
+ *  residual (018) = 1.590e-03 from 1.816e-02 to 1.839e-03 in  0.09 secs 
+(017)   1.7 s v=3.305915e+00 p=4.333839e+01 div/v=9.51e-04 dv/v=1.72e-04 dp/p=5.99e-05 step 8
+ *  residual (018) = 1.640e-03 from 2.834e-02 to 1.839e-03 in  0.11 secs 
+(018)   1.8 s v=3.305907e+00 p=4.333832e+01 div/v=9.48e-04 dv/v=1.46e-04 dp/p=6.21e-05 step 8
+ *  residual (017) = 1.635e-03 from 3.731e-02 to 1.839e-03 in  0.11 secs 
+(019)   1.9 s v=3.305900e+00 p=4.333828e+01 div/v=9.43e-04 dv/v=1.05e-04 dp/p=6.53e-05 step 8
+ *  residual (007) = 1.809e-03 from 4.287e-02 to 1.839e-03 in  0.05 secs 
+(020)   2.0 s v=3.305898e+00 p=4.333829e+01 div/v=8.47e-04 dv/v=1.48e-05 dp/p=7.11e-05 step 8
+ *  residual (005) = 1.402e-03 from 3.658e-02 to 1.839e-03 in  0.04 secs 
+(021)   2.0 s v=3.305899e+00 p=4.333833e+01 div/v=8.13e-04 dv/v=1.13e-05 dp/p=6.44e-05 step 8
 Angular momentum: rot=3.312693e-06 tr=9.010090e+01 fr=9.027499e+01
 Momentum equation force 1.960256463e+01
- *  residual (033) = 1.536e-03 from 1.431e+00 to 1.960e-03 in  0.01 secs 
-(000)   0.0 s v=3.566925e+00 p=4.333833e+01 div/v=3.12e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 9
- *  residual (031) = 1.786e-03 from 1.118e+00 to 1.960e-03 in  0.01 secs 
-(001)   0.0 s v=3.569326e+00 p=4.648637e+01 div/v=6.00e-02 dv/v=3.85e-02 dp/p=7.07e-02 step 9
- *  residual (025) = 1.538e-03 from 4.913e-01 to 1.960e-03 in  0.01 secs 
-(002)   0.0 s v=3.567205e+00 p=4.653991e+01 div/v=4.83e-03 dv/v=4.80e-03 dp/p=1.41e-02 step 9
- *  residual (019) = 1.580e-03 from 3.982e-02 to 1.960e-03 in  0.01 secs 
-(003)   0.0 s v=3.567711e+00 p=4.653740e+01 div/v=1.21e-03 dv/v=1.60e-03 dp/p=1.11e-03 step 9
- *  residual (003) = 1.460e-03 from 8.170e-03 to 1.960e-03 in  0.00 secs 
-(004)   0.0 s v=3.567735e+00 p=4.654053e+01 div/v=9.35e-04 dv/v=8.88e-05 dp/p=4.87e-04 step 9
- *  residual (002) = 1.837e-03 from 3.376e-03 to 1.960e-03 in  0.00 secs 
-(005)   0.0 s v=3.567773e+00 p=4.654591e+01 div/v=1.68e-03 dv/v=1.27e-04 dp/p=1.12e-03 step 9
- *  residual (016) = 1.914e-03 from 8.128e-03 to 1.960e-03 in  0.01 secs 
-(006)   0.0 s v=3.567800e+00 p=4.654631e+01 div/v=1.56e-03 dv/v=3.72e-04 dp/p=1.17e-04 step 9
- *  residual (017) = 1.818e-03 from 1.735e-02 to 1.960e-03 in  0.01 secs 
-(007)   0.0 s v=3.567821e+00 p=4.654649e+01 div/v=1.52e-03 dv/v=3.31e-04 dp/p=1.16e-04 step 9
- *  residual (018) = 1.817e-03 from 2.760e-02 to 1.960e-03 in  0.01 secs 
-(008)   0.1 s v=3.567835e+00 p=4.654647e+01 div/v=1.51e-03 dv/v=2.59e-04 dp/p=1.25e-04 step 9
- *  residual (016) = 1.856e-03 from 3.619e-02 to 1.960e-03 in  0.01 secs 
-(009)   0.1 s v=3.567840e+00 p=4.654623e+01 div/v=1.48e-03 dv/v=1.37e-04 dp/p=1.33e-04 step 9
- *  residual (005) = 1.406e-03 from 3.918e-02 to 1.960e-03 in  0.00 secs 
-(010)   0.1 s v=3.567835e+00 p=4.654580e+01 div/v=1.42e-03 dv/v=3.14e-05 dp/p=1.32e-04 step 9
- *  residual (019) = 1.627e-03 from 3.510e-02 to 1.960e-03 in  0.01 secs 
-(011)   0.1 s v=3.567817e+00 p=4.654528e+01 div/v=1.29e-03 dv/v=1.22e-04 dp/p=1.18e-04 step 9
- *  residual (019) = 1.554e-03 from 2.533e-02 to 1.960e-03 in  0.01 secs 
-(012)   0.1 s v=3.567795e+00 p=4.654476e+01 div/v=1.16e-03 dv/v=1.94e-04 dp/p=9.92e-05 step 9
- *  residual (017) = 1.918e-03 from 1.472e-02 to 1.960e-03 in  0.01 secs 
-(013)   0.1 s v=3.567770e+00 p=4.654429e+01 div/v=1.04e-03 dv/v=2.15e-04 dp/p=8.31e-05 step 9
- *  residual (016) = 1.870e-03 from 8.254e-03 to 1.960e-03 in  0.01 secs 
-(014)   0.1 s v=3.567746e+00 p=4.654389e+01 div/v=9.53e-04 dv/v=2.10e-04 dp/p=7.32e-05 step 9
- *  residual (017) = 1.267e-03 from 1.003e-02 to 1.960e-03 in  0.01 secs 
-(015)   0.1 s v=3.567723e+00 p=4.654356e+01 div/v=9.04e-04 dv/v=1.88e-04 dp/p=6.98e-05 step 9
- *  residual (017) = 1.812e-03 from 1.548e-02 to 1.960e-03 in  0.01 secs 
-(016)   0.1 s v=3.567703e+00 p=4.654329e+01 div/v=8.75e-04 dv/v=1.45e-04 dp/p=7.20e-05 step 9
- *  residual (008) = 1.862e-03 from 2.050e-02 to 1.960e-03 in  0.00 secs 
-(017)   0.1 s v=3.567692e+00 p=4.654311e+01 div/v=7.54e-04 dv/v=3.19e-05 dp/p=8.36e-05 step 9
- *  residual (004) = 1.348e-03 from 1.844e-02 to 1.960e-03 in  0.00 secs 
-(018)   0.1 s v=3.567693e+00 p=4.654316e+01 div/v=6.94e-04 dv/v=1.69e-05 dp/p=7.35e-05 step 9
+ *  residual (033) = 1.536e-03 from 1.431e+00 to 1.960e-03 in  0.12 secs 
+(000)   0.1 s v=3.566925e+00 p=4.333833e+01 div/v=3.12e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 9
+ *  residual (031) = 1.786e-03 from 1.118e+00 to 1.960e-03 in  0.13 secs 
+(001)   0.3 s v=3.569326e+00 p=4.648637e+01 div/v=6.00e-02 dv/v=3.85e-02 dp/p=7.07e-02 step 9
+ *  residual (025) = 1.538e-03 from 4.913e-01 to 1.960e-03 in  0.10 secs 
+(002)   0.4 s v=3.567205e+00 p=4.653991e+01 div/v=4.83e-03 dv/v=4.80e-03 dp/p=1.41e-02 step 9
+ *  residual (019) = 1.580e-03 from 3.982e-02 to 1.960e-03 in  0.09 secs 
+(003)   0.5 s v=3.567711e+00 p=4.653740e+01 div/v=1.21e-03 dv/v=1.60e-03 dp/p=1.11e-03 step 9
+ *  residual (003) = 1.460e-03 from 8.170e-03 to 1.960e-03 in  0.01 secs 
+(004)   0.5 s v=3.567735e+00 p=4.654053e+01 div/v=9.35e-04 dv/v=8.88e-05 dp/p=4.87e-04 step 9
+ *  residual (002) = 1.837e-03 from 3.376e-03 to 1.960e-03 in  0.01 secs 
+(005)   0.5 s v=3.567773e+00 p=4.654591e+01 div/v=1.68e-03 dv/v=1.27e-04 dp/p=1.12e-03 step 9
+ *  residual (016) = 1.914e-03 from 8.128e-03 to 1.960e-03 in  0.07 secs 
+(006)   0.6 s v=3.567800e+00 p=4.654631e+01 div/v=1.56e-03 dv/v=3.72e-04 dp/p=1.17e-04 step 9
+ *  residual (017) = 1.818e-03 from 1.735e-02 to 1.960e-03 in  0.08 secs 
+(007)   0.7 s v=3.567821e+00 p=4.654649e+01 div/v=1.52e-03 dv/v=3.31e-04 dp/p=1.16e-04 step 9
+ *  residual (018) = 1.817e-03 from 2.760e-02 to 1.960e-03 in  0.08 secs 
+(008)   0.7 s v=3.567835e+00 p=4.654647e+01 div/v=1.51e-03 dv/v=2.59e-04 dp/p=1.25e-04 step 9
+ *  residual (016) = 1.856e-03 from 3.619e-02 to 1.960e-03 in  0.08 secs 
+(009)   0.8 s v=3.567840e+00 p=4.654623e+01 div/v=1.48e-03 dv/v=1.37e-04 dp/p=1.33e-04 step 9
+ *  residual (005) = 1.406e-03 from 3.918e-02 to 1.960e-03 in  0.02 secs 
+(010)   0.8 s v=3.567835e+00 p=4.654580e+01 div/v=1.42e-03 dv/v=3.14e-05 dp/p=1.32e-04 step 9
+ *  residual (019) = 1.627e-03 from 3.510e-02 to 1.960e-03 in  0.08 secs 
+(011)   0.9 s v=3.567817e+00 p=4.654528e+01 div/v=1.29e-03 dv/v=1.22e-04 dp/p=1.18e-04 step 9
+ *  residual (019) = 1.554e-03 from 2.533e-02 to 1.960e-03 in  0.08 secs 
+(012)   1.0 s v=3.567795e+00 p=4.654476e+01 div/v=1.16e-03 dv/v=1.94e-04 dp/p=9.92e-05 step 9
+ *  residual (017) = 1.918e-03 from 1.472e-02 to 1.960e-03 in  0.08 secs 
+(013)   1.1 s v=3.567770e+00 p=4.654429e+01 div/v=1.04e-03 dv/v=2.15e-04 dp/p=8.31e-05 step 9
+ *  residual (016) = 1.870e-03 from 8.254e-03 to 1.960e-03 in  0.07 secs 
+(014)   1.2 s v=3.567746e+00 p=4.654389e+01 div/v=9.53e-04 dv/v=2.10e-04 dp/p=7.32e-05 step 9
+ *  residual (017) = 1.267e-03 from 1.003e-02 to 1.960e-03 in  0.08 secs 
+(015)   1.2 s v=3.567723e+00 p=4.654356e+01 div/v=9.04e-04 dv/v=1.88e-04 dp/p=6.98e-05 step 9
+ *  residual (017) = 1.812e-03 from 1.548e-02 to 1.960e-03 in  0.08 secs 
+(016)   1.3 s v=3.567703e+00 p=4.654329e+01 div/v=8.75e-04 dv/v=1.45e-04 dp/p=7.20e-05 step 9
+ *  residual (008) = 1.862e-03 from 2.050e-02 to 1.960e-03 in  0.04 secs 
+(017)   1.4 s v=3.567692e+00 p=4.654311e+01 div/v=7.54e-04 dv/v=3.19e-05 dp/p=8.36e-05 step 9
+ *  residual (004) = 1.348e-03 from 1.844e-02 to 1.960e-03 in  0.03 secs 
+(018)   1.4 s v=3.567693e+00 p=4.654316e+01 div/v=6.94e-04 dv/v=1.69e-05 dp/p=7.35e-05 step 9
 Angular momentum: rot=4.075963e-06 tr=9.009566e+01 fr=9.026660e+01
 Momentum equation force 2.095022201e+01
- *  residual (033) = 1.581e-03 from 1.528e+00 to 2.095e-03 in  0.01 secs 
-(000)   0.0 s v=3.849428e+00 p=4.654316e+01 div/v=3.11e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 10
- *  residual (031) = 1.966e-03 from 1.185e+00 to 2.095e-03 in  0.01 secs 
-(001)   0.0 s v=3.851990e+00 p=4.996360e+01 div/v=5.98e-02 dv/v=3.84e-02 dp/p=7.08e-02 step 10
- *  residual (025) = 1.700e-03 from 5.275e-01 to 2.095e-03 in  0.01 secs 
-(002)   0.0 s v=3.849720e+00 p=5.002624e+01 div/v=4.75e-03 dv/v=4.61e-03 dp/p=1.41e-02 step 10
- *  residual (019) = 1.672e-03 from 4.236e-02 to 2.095e-03 in  0.01 secs 
-(003)   0.0 s v=3.850273e+00 p=5.002379e+01 div/v=1.16e-03 dv/v=1.46e-03 dp/p=1.11e-03 step 10
- *  residual (003) = 1.526e-03 from 8.315e-03 to 2.095e-03 in  0.00 secs 
-(004)   0.0 s v=3.850297e+00 p=5.002712e+01 div/v=8.45e-04 dv/v=8.68e-05 dp/p=4.57e-04 step 10
- *  residual (002) = 1.724e-03 from 3.360e-03 to 2.095e-03 in  0.00 secs 
-(005)   0.0 s v=3.850330e+00 p=5.003209e+01 div/v=1.50e-03 dv/v=1.12e-04 dp/p=1.01e-03 step 10
- *  residual (021) = 2.013e-03 from 7.637e-03 to 2.095e-03 in  0.01 secs 
-(006)   0.0 s v=3.850342e+00 p=5.003248e+01 div/v=1.39e-03 dv/v=3.38e-04 dp/p=1.08e-04 step 10
- *  residual (019) = 1.935e-03 from 1.658e-02 to 2.095e-03 in  0.01 secs 
-(007)   0.1 s v=3.850356e+00 p=5.003268e+01 div/v=1.34e-03 dv/v=2.95e-04 dp/p=1.09e-04 step 10
- *  residual (018) = 1.999e-03 from 2.635e-02 to 2.095e-03 in  0.01 secs 
-(008)   0.1 s v=3.850367e+00 p=5.003268e+01 div/v=1.33e-03 dv/v=2.23e-04 dp/p=1.16e-04 step 10
- *  residual (005) = 1.838e-03 from 3.395e-02 to 2.095e-03 in  0.00 secs 
-(009)   0.1 s v=3.850364e+00 p=5.003244e+01 div/v=1.12e-03 dv/v=3.11e-05 dp/p=1.36e-04 step 10
- *  residual (004) = 1.783e-03 from 2.675e-02 to 2.095e-03 in  0.00 secs 
-(010)   0.1 s v=3.850359e+00 p=5.003202e+01 div/v=1.08e-03 dv/v=2.75e-05 dp/p=1.18e-04 step 10
- *  residual (014) = 2.089e-03 from 2.386e-02 to 2.095e-03 in  0.00 secs 
-(011)   0.1 s v=3.850345e+00 p=5.003149e+01 div/v=1.01e-03 dv/v=1.02e-04 dp/p=1.07e-04 step 10
- *  residual (018) = 2.049e-03 from 1.660e-02 to 2.095e-03 in  0.01 secs 
-(012)   0.1 s v=3.850332e+00 p=5.003101e+01 div/v=9.04e-04 dv/v=1.76e-04 dp/p=8.42e-05 step 10
- *  residual (017) = 1.833e-03 from 8.825e-03 to 2.095e-03 in  0.01 secs 
-(013)   0.1 s v=3.850318e+00 p=5.003059e+01 div/v=8.19e-04 dv/v=1.86e-04 dp/p=7.10e-05 step 10
- *  residual (016) = 1.861e-03 from 7.392e-03 to 2.095e-03 in  0.01 secs 
-(014)   0.1 s v=3.850302e+00 p=5.003023e+01 div/v=7.66e-04 dv/v=1.73e-04 dp/p=6.45e-05 step 10
- *  residual (017) = 1.567e-03 from 1.162e-02 to 2.095e-03 in  0.01 secs 
-(015)   0.1 s v=3.850287e+00 p=5.002996e+01 div/v=7.37e-04 dv/v=1.45e-04 dp/p=6.31e-05 step 10
- *  residual (004) = 2.091e-03 from 1.639e-02 to 2.095e-03 in  0.00 secs 
-(016)   0.1 s v=3.850285e+00 p=5.002973e+01 div/v=5.73e-04 dv/v=1.97e-05 dp/p=9.04e-05 step 10
- *  residual (003) = 2.067e-03 from 1.267e-02 to 2.095e-03 in  0.00 secs 
-(017)   0.1 s v=3.850286e+00 p=5.002976e+01 div/v=5.21e-04 dv/v=1.50e-05 dp/p=6.99e-05 step 10
+ *  residual (033) = 1.581e-03 from 1.528e+00 to 2.095e-03 in  0.15 secs 
+(000)   0.2 s v=3.849428e+00 p=4.654316e+01 div/v=3.11e-01 dv/v=1.00e+00 dp/p=1.00e+00 step 10
+ *  residual (031) = 1.966e-03 from 1.185e+00 to 2.095e-03 in  0.16 secs 
+(001)   0.3 s v=3.851990e+00 p=4.996360e+01 div/v=5.98e-02 dv/v=3.84e-02 dp/p=7.08e-02 step 10
+ *  residual (025) = 1.700e-03 from 5.275e-01 to 2.095e-03 in  0.13 secs 
+(002)   0.4 s v=3.849720e+00 p=5.002624e+01 div/v=4.75e-03 dv/v=4.61e-03 dp/p=1.41e-02 step 10
+ *  residual (019) = 1.672e-03 from 4.236e-02 to 2.095e-03 in  0.08 secs 
+(003)   0.5 s v=3.850273e+00 p=5.002379e+01 div/v=1.16e-03 dv/v=1.46e-03 dp/p=1.11e-03 step 10
+ *  residual (003) = 1.526e-03 from 8.315e-03 to 2.095e-03 in  0.01 secs 
+(004)   0.6 s v=3.850297e+00 p=5.002712e+01 div/v=8.45e-04 dv/v=8.68e-05 dp/p=4.57e-04 step 10
+ *  residual (002) = 1.724e-03 from 3.360e-03 to 2.095e-03 in  0.01 secs 
+(005)   0.6 s v=3.850330e+00 p=5.003209e+01 div/v=1.50e-03 dv/v=1.12e-04 dp/p=1.01e-03 step 10
+ *  residual (021) = 2.013e-03 from 7.637e-03 to 2.095e-03 in  0.09 secs 
+(006)   0.7 s v=3.850342e+00 p=5.003248e+01 div/v=1.39e-03 dv/v=3.38e-04 dp/p=1.08e-04 step 10
+ *  residual (019) = 1.935e-03 from 1.658e-02 to 2.095e-03 in  0.08 secs 
+(007)   0.8 s v=3.850356e+00 p=5.003268e+01 div/v=1.34e-03 dv/v=2.95e-04 dp/p=1.09e-04 step 10
+ *  residual (018) = 1.999e-03 from 2.635e-02 to 2.095e-03 in  0.08 secs 
+(008)   0.8 s v=3.850367e+00 p=5.003268e+01 div/v=1.33e-03 dv/v=2.23e-04 dp/p=1.16e-04 step 10
+ *  residual (005) = 1.838e-03 from 3.395e-02 to 2.095e-03 in  0.02 secs 
+(009)   0.9 s v=3.850364e+00 p=5.003244e+01 div/v=1.12e-03 dv/v=3.11e-05 dp/p=1.36e-04 step 10
+ *  residual (004) = 1.783e-03 from 2.675e-02 to 2.095e-03 in  0.03 secs 
+(010)   0.9 s v=3.850359e+00 p=5.003202e+01 div/v=1.08e-03 dv/v=2.75e-05 dp/p=1.18e-04 step 10
+ *  residual (014) = 2.089e-03 from 2.386e-02 to 2.095e-03 in  0.06 secs 
+(011)   1.0 s v=3.850345e+00 p=5.003149e+01 div/v=1.01e-03 dv/v=1.02e-04 dp/p=1.07e-04 step 10
+ *  residual (018) = 2.049e-03 from 1.660e-02 to 2.095e-03 in  0.10 secs 
+(012)   1.1 s v=3.850332e+00 p=5.003101e+01 div/v=9.04e-04 dv/v=1.76e-04 dp/p=8.42e-05 step 10
+ *  residual (017) = 1.833e-03 from 8.825e-03 to 2.095e-03 in  0.08 secs 
+(013)   1.1 s v=3.850318e+00 p=5.003059e+01 div/v=8.19e-04 dv/v=1.86e-04 dp/p=7.10e-05 step 10
+ *  residual (016) = 1.861e-03 from 7.392e-03 to 2.095e-03 in  0.07 secs 
+(014)   1.2 s v=3.850302e+00 p=5.003023e+01 div/v=7.66e-04 dv/v=1.73e-04 dp/p=6.45e-05 step 10
+ *  residual (017) = 1.567e-03 from 1.162e-02 to 2.095e-03 in  0.07 secs 
+(015)   1.3 s v=3.850287e+00 p=5.002996e+01 div/v=7.37e-04 dv/v=1.45e-04 dp/p=6.31e-05 step 10
+ *  residual (004) = 2.091e-03 from 1.639e-02 to 2.095e-03 in  0.02 secs 
+(016)   1.3 s v=3.850285e+00 p=5.002973e+01 div/v=5.73e-04 dv/v=1.97e-05 dp/p=9.04e-05 step 10
+ *  residual (003) = 2.067e-03 from 1.267e-02 to 2.095e-03 in  0.02 secs 
+(017)   1.3 s v=3.850286e+00 p=5.002976e+01 div/v=5.21e-04 dv/v=1.50e-05 dp/p=6.99e-05 step 10
 Angular momentum: rot=5.001342e-06 tr=9.008047e+01 fr=9.025973e+01
