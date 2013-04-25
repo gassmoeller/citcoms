@@ -2200,6 +2200,12 @@ void chemical_changes(struct All_variables *E)
 {
     int j,kk;
 
+    if (E->trace.nflavors == 1)
+    {
+        fprintf (stderr,"Error, no chemical change possible with nflavors = 1");
+        parallel_process_termination();
+    }
+
     for (j=1;j<=E->sphere.caps_per_proc;j++)
       for (kk=1;kk<=E->trace.ntracers[j];kk++)
         if ((E->trace.basicq[j][2][kk] > 0.9985) && (E->trace.extraq[j][0][kk] == 0))
