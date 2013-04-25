@@ -31,6 +31,7 @@ if [ "$answer" == "Yes" ]; then
 reference_data=$test_folder/reference_data
 test_data=$test_folder/data
 
+rm $test_data/*.diff
 cp -r $test_data/* $reference_data/
 svn info $citcom_folder | grep Revision > $reference_data/revision.log
 fi
