@@ -1134,19 +1134,21 @@ void vtk_refstate_viscosity (struct All_variables *E, FILE *fr)
     fputs("        </DataArray>\n", fr);
 }
 
-void vtk_refstate_density(struct All_variables *E, FILE *fp)
+void vtk_refstate_field(struct All_variables *E, double ***field, char* field_name, FILE *fp)
 {
     int i,k,l;
-    int nodes = E->lmesh.noz;
+    int nodes = E->composition.ntdeps*E->lmesh.noz*max(1,E->trace.nflavors);
 
-    double *data = malloc(E->composition.ntdeps*nodes*max(1,E->trace.nflavors)*sizeof(double));
+    double *data = malloc(nodes*sizeof(double));
 
-    fprintf(fp,"        <DataArray type=\"Float32\" Name=\"density\" NumberOfComponents=\"%d\" format=\"ascii\">\n", max(1,E->trace.nflavors));
+    fprintf(fp,"        <DataArray type=\"Float32\" Name=\"%s\" NumberOfComponents=\"%d\" format=\"ascii\">\n", field_name,max(1,E->trace.nflavors));
 
-    for(i=0;i<max(1,E->trace.nflavors);i++)
-          for(k=0; k<nodes; k++)
-              for(l=0; l<E->composition.ntdeps; l++)
-                  data[l*nodes*max(1,E->trace.nflavors) + k*max(1,E->trace.nflavors) + i] = E->refstate.tab_density[i][k][l];
+    for(i=0;i<E->lmesh.noz;i++)
+        for(k=0; k<E->composition.ntdeps; k++)
+            for(l=0; l<max(1,E->trace.nflavors); l++)
+                //data[i*E->composition.ntdeps*max(1,E->trace.nflavors) + k*max(1,E->trace.nflavors) + l] = 0.0;
+                data[i*E->composition.ntdeps*max(1,E->trace.nflavors) + k*max(1,E->trace.nflavors) + l] = field[l+1][i+1][k+1];
+
 
     if (strcmp(E->output.vtk_format,"binary") == 0) {
         write_binary_array_double(nodes,data,fp);
@@ -1174,15 +1176,24 @@ void write_refstate_vtk(struct All_variables *E)
 
     f_refstate = output_open(vtv_file, "w");
 
-    const int borders[6]  = {E->lmesh.ezs, E->lmesh.ezs + E->lmesh.elz,
-             E->lmesh.exs, E->lmesh.exs + E->lmesh.elx,
+    const int borders[6]  = {
+             0, E->composition.ntdeps-1,
+             E->lmesh.ezs, E->lmesh.ezs + E->lmesh.elz,
              0, 0};
 
     vts_file_header(E, f_refstate,borders);
     /* write node-based field */
     vtk_point_data_header(E, f_refstate);
 
-    vtk_refstate_viscosity (E, f_refstate);
+    if (E->viscosity.RHEOL == 105)
+        vtk_refstate_viscosity (E, f_refstate);
+
+    vtk_refstate_field (E,E->refstate.tab_density,"density",f_refstate);
+    vtk_refstate_field (E,E->refstate.tab_thermal_expansivity,"thermal expansivity",f_refstate);
+    vtk_refstate_field (E,E->refstate.tab_heat_capacity,"heat capacity",f_refstate);
+
+    vtk_refstate_field (E,E->refstate.tab_seismic_vp,"seismic vp",f_refstate);
+    vtk_refstate_field (E,E->refstate.tab_seismic_vs,"seismic vs",f_refstate);
 
     vtk_point_data_trailer(E,f_refstate);
 
@@ -1194,14 +1205,14 @@ void write_refstate_vtk(struct All_variables *E)
     fputs("      <Points>\n", f_refstate);
     fprintf(f_refstate, "        <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"%s\">\n", E->output.vtk_format);
 
-    for (iT = 1; iT<= E->lmesh.noz;iT++)
-    {
-        double temp = (double) (iT-1) / (double)(E->lmesh.noz-1);
 
-        for (iz = E->lmesh.noz; iz>0;iz--)
+    for (iz = E->lmesh.noz; iz>0;iz--)
+    {
+        double depth = E->sx[1][3][E->lmesh.noz-iz+1] * E->data.radius_km;
+        for (iT = 1; iT<= E->composition.ntdeps;iT++)
         {
-            double depth = (double)(E->lmesh.noz - iz) / (double) E->lmesh.noz;
-            fprintf(f_refstate,"%f %f %f ", depth, temp, 0.0);
+            double temp = ((double) (iT-1) / (double)(E->composition.ntdeps-1)) * (E->composition.end_temp - E->composition.start_temp) + E->composition.start_temp;
+            fprintf(f_refstate,"%f %f %f\n",  temp, depth, 0.0);
         }
     }
 
@@ -1691,7 +1702,8 @@ void vtk_output(struct All_variables *E, int cycles)
 
     fclose(fp);
 
-    if ((E->parallel.me == 0) && (cycles == 0) && (E->viscosity.RHEOL == 105)) write_refstate_vtk(E);
+    if ((E->parallel.me == 0) && (cycles == 0)
+            && ((E->refstate.choice == 3) || (E->refstate.choice == 4))) write_refstate_vtk(E);
 
     /* if processor is first of cap write summary for simple reading */
     if (E->parallel.me%procs_per_cap == 0) write_pvts(E, cycles);
