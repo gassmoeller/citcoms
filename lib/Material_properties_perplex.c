@@ -670,7 +670,8 @@ void read_perplex_data (struct All_variables *E)
 
     for (i = 1; i <= max(1,E->trace.nflavors);i++)
     {
-        fprintf(stderr,"Field number:%d Filename:%s Flavors:%d\n",i,E->refstate.perplex_files[i],E->trace.nflavors);
+        if (E->control.verbose && (E->parallel.me == 0))
+                fprintf(stderr,"Field number:%d Filename:%s\n",i,E->refstate.perplex_files[i]);
 
         if (E->refstate.perplex_files[i] == NULL)
         {
@@ -713,7 +714,7 @@ void read_perplex_data (struct All_variables *E)
                 {
                     int k = (j-1) / E->composition.pressure_oversampling + 1;
                     E->refstate.Tadi[k] = Tadi[j]/E->data.ref_temperature;
-                    printf("Me: %d Tadi:%f pressure:%f k:%d \n",E->parallel.me,Tadi[j],Padi[j],k);
+                    if (E->control.verbose) printf("Me: %d Tadi:%f pressure:%f k:%d \n",E->parallel.me,Tadi[j],Padi[j],k);
                 }
             }
 
