@@ -46,6 +46,7 @@ static void write_binary_array_int(int nn, int* array, FILE * f);
 static void write_ascii_array_float(int nn, int perLine, float *array, FILE *fp);
 static void write_ascii_array_double(int nn, int perLine, double *array, FILE *fp);
 static void write_ascii_array_seismic(int nn, int perLine, double *array, FILE *fp);
+static void write_ascii_array_double_reduced(int nn, int perLine, double *array, FILE *fp);
 static void write_ascii_array(int nn, int perLine, int ascii_precision, double *array, FILE *fp);
 double modified_plgndr_a(int, int, double);
 
@@ -230,7 +231,7 @@ static void vtk_output_velo(struct All_variables *E, FILE *fp)
     if (strcmp(E->output.vtk_format, "binary") == 0) 
         write_binary_array_double(nodes*3,vel,fp);
     else 
-        write_ascii_array_double(nodes*3,3,vel,fp);
+        write_ascii_array_double_reduced(nodes*3,3,vel,fp);
     fputs("        </DataArray>\n", fp);
 
     free(vel);
@@ -326,7 +327,7 @@ static void vtk_output_svelo(struct All_variables *E, FILE *fp)
     if (strcmp(E->output.vtk_format, "binary") == 0) 
         write_binary_array_double(nodes*3,svel,fp);
     else 
-        write_ascii_array_double(nodes*3,3,svel,fp);
+        write_ascii_array_double_reduced(nodes*3,3,svel,fp);
     fputs("        </DataArray>\n", fp);
 
     free(svel);
@@ -1267,6 +1268,17 @@ static void write_ascii_array_float(int nn, int perLine, float *array, FILE *fp)
 static void write_ascii_array_double(int nn, int perLine, double *array, FILE *fp)
 {
 	write_ascii_array(nn,perLine,6,array,fp);
+}
+
+
+/*
+ * This function is accepting a double field, but only outputs with float precision.
+ * It is used for example for the velocity, which is calculated as float, but nevertheless
+ * stored in the output routine as double.
+ */
+static void write_ascii_array_double_reduced(int nn, int perLine, double *array, FILE *fp)
+{
+        write_ascii_array(nn,perLine,4,array,fp);
 }
 
 /*
