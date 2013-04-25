@@ -52,6 +52,7 @@ class Param(CitcomComponent):
 
         reference_state = pyre.inventory.int("reference_state", default=1)
         refstate_file = pyre.inventory.str("refstate_file", default="refstate.dat")
+        perplex_files = pyre.inventory.str("perplex_files", default="pyrolite.tab")
 
         mineral_physics_model = pyre.inventory.int("mineral_physics_model", default=3)
 

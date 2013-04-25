@@ -43,8 +43,14 @@
 
 void allocate_perplex_refstate(struct All_variables *E)
 {
+
     const int noz = E->lmesh.noz;
     int i,j;
+
+    E->refstate.perplex_files = (char**) malloc((max(1,E->trace.nflavors)+1) * sizeof(char *));
+    E->refstate.perplex_files[1] = strtok(E->refstate.perplex_filenames, ", \n \0");
+    for (i = 2; i <= max(1,E->trace.nflavors);i++)
+       E->refstate.perplex_files[i] = strtok(NULL, ", \n \0");
 
     const int nodes = (E->composition.pressure_oversampling
             * (noz - 1) + 2);
@@ -622,20 +628,59 @@ border_field (c_morb,borders,nodes,numtemp,5);
      */
 }
 
+/*
+ * This creates perplex material properties without a perplex file depending on the buoyancy ratio
+ * and temperature and depth-dependent parameters as field index 1
+ */
+static void set_non_perplex_eos(struct All_variables *E, const int idx_field)
+{
+    int k,l;
+    double r, z, beta;
+
+    if(E->parallel.me == 0) {
+        fprintf(stderr,"Adams-Williamson EOS\n");
+    }
+
+    beta = E->control.disptn_number * E->control.inv_gruneisen;
+
+    for (k=1;k<=(E->lmesh.noz-1)*E->composition.pressure_oversampling+1;k++)
+    {
+        z = 1 - r;
+        for (l=1;l<=E->composition.ntdeps;l++){
+            E->refstate.tab_density[idx_field][k][l] = E->refstate.tab_density[1][k][l] + E->composition.buoyancy_ratio[idx_field] * E->data.therm_exp * E->data.ref_temperature;
+            E->refstate.tab_thermal_expansivity[idx_field][k][l] = E->refstate.tab_thermal_expansivity[1][k][l];
+            E->refstate.tab_heat_capacity[idx_field][k][l] = E->refstate.tab_heat_capacity[1][k][l];
+
+            E->refstate.tab_seismic_vp[idx_field][k][l] = E->refstate.tab_seismic_vp[1][k][l];
+            E->refstate.tab_seismic_vs[idx_field][k][l] = E->refstate.tab_seismic_vs[1][k][l];
+        }
+    }
+
+    return;
+}
+
 void read_perplex_data (struct All_variables *E)
 {
     int i;
-    char perplex_filename[80];
 
     const int nodes = (E->lmesh.noz-1) *E->composition.pressure_oversampling + 1;
     double *Padi = (double *) malloc((nodes+1)*sizeof(double));
     double *Tadi = (double *) malloc((nodes+1)*sizeof(double));
 
+
     for (i = 1; i <= max(1,E->trace.nflavors);i++)
     {
+        fprintf(stderr,"Field number:%d Filename:%s Flavors:%d\n",i,E->refstate.perplex_files[i],E->trace.nflavors);
 
-        snprintf(perplex_filename,80,"pyrolite.tab");
-        FILE* perplex_file = fopen(perplex_filename,"r");
+        if (E->refstate.perplex_files[i] == NULL)
+        {
+            set_non_perplex_eos(E,i);
+        }
+
+        else
+        {
+
+        FILE* perplex_file = fopen(E->refstate.perplex_files[i],"r");
 
         // Get information about size of table, stored in perplex_table
         struct table_properties perplex_table;
@@ -677,6 +722,7 @@ void read_perplex_data (struct All_variables *E)
         // Transform to CitcomS data
         calculate_refstate_data(E,cperplex_table,(const double *) Padi,cperplex_data,i);
         free_perplex_data(&perplex_table,&perplex_data);
+        }
     }
 
     free(Padi);

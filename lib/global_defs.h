@@ -554,6 +554,8 @@ struct CONTROL {
 struct REF_STATE {
     int choice;
     char filename[200];
+    char perplex_filenames[255];
+    char **perplex_files;
     double ***tab_density;
     double ***tab_thermal_expansivity;
     double ***tab_heat_capacity;
