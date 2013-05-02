@@ -1,0 +1,17 @@
+me=0 loc1=0 loc2=0 loc3=0
+capid[1]=1 
+horizontal group of me=0 loc3=0
+0 proc=0
+vertical group of me=0 loc1=0 loc2=0
+0 proc=0
+1 proc=1
+output_shared_nodes 0 
+lev=0  me=0 capid=1 m=1 
+output_communication route surface for lev=0 
+  me= 0 cap=1 pass  1 
+proc 0 and pass  1 to proc 1 with 867 eqn and 289 node
+rank=0 my_volume=1.323206e-01 total_volume=3.687806e-01
+output_evisc 
+output_evisc 
+output_evisc 
+output_evisc 
