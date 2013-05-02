@@ -1153,7 +1153,7 @@ void vtk_refstate_field(struct All_variables *E, double ***field, char* field_na
     if (strcmp(E->output.vtk_format,"binary") == 0) {
         write_binary_array_double(nodes,data,fp);
     } else {
-        write_ascii_array_double(nodes,max(1,E->trace.nflavors),data,fp);
+        write_ascii_array_seismic(nodes,max(1,E->trace.nflavors),data,fp);
     }
 
     fputs("        </DataArray>\n", fp);
@@ -1172,7 +1172,7 @@ void write_refstate_vtk(struct All_variables *E)
 
     if (E->control.verbose) fprintf(stderr,"Printing Refstate table\n"); //Passed
 
-    snprintf(vtv_file, 255, "%s.refstate.vts",E->control.data_file);
+    snprintf(vtv_file, 255, "%s.refstate.%d.vts",E->control.data_file,E->parallel.me);
 
     f_refstate = output_open(vtv_file, "w");
 
@@ -1702,7 +1702,7 @@ void vtk_output(struct All_variables *E, int cycles)
 
     fclose(fp);
 
-    if ((E->parallel.me == 0) && (cycles == 0)
+    if ((E->parallel.me < E->parallel.nprocz) && (cycles == 0)
             && ((E->refstate.choice == 3) || (E->refstate.choice == 4))) write_refstate_vtk(E);
 
     /* if processor is first of cap write summary for simple reading */
