@@ -635,18 +635,13 @@ border_field (c_morb,borders,nodes,numtemp,5);
 static void set_non_perplex_eos(struct All_variables *E, const int idx_field)
 {
     int k,l;
-    double r, z, beta;
 
-    if(E->parallel.me == 0) {
-        fprintf(stderr,"Adams-Williamson EOS\n");
+    if((E->parallel.me == 0) && E->control.verbose) {
+        fprintf(stderr,"Using buoyancy ratio:%lf idx_field:%d\n",E->composition.buoyancy_ratio[idx_field-2],idx_field);
     }
-
-    fprintf(stderr,"Using buoyancy ratio:%lf idx_field:%d\n",E->composition.buoyancy_ratio[idx_field-2],idx_field);
-    beta = E->control.disptn_number * E->control.inv_gruneisen;
 
     for (k=1;k<=(E->lmesh.noz-1)*E->composition.pressure_oversampling+1;k++)
     {
-        z = 1 - r;
         for (l=1;l<=E->composition.ntdeps;l++){
             E->refstate.tab_density[idx_field][k][l] = E->refstate.tab_density[1][k][l] + E->composition.buoyancy_ratio[idx_field-2] * E->data.therm_exp * E->data.ref_temperature;
             E->refstate.tab_thermal_expansivity[idx_field][k][l] = E->refstate.tab_thermal_expansivity[1][k][l];

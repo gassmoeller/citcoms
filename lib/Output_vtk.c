@@ -1170,7 +1170,7 @@ void write_refstate_vtk(struct All_variables *E)
     char vtv_file[255];
     int iT,iz;
 
-    fprintf(stderr,"Printing viscosity table\n"); //Passed
+    if (E->control.verbose) fprintf(stderr,"Printing Refstate table\n"); //Passed
 
     snprintf(vtv_file, 255, "%s.refstate.vts",E->control.data_file);
 
