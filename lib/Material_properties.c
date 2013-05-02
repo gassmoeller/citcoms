@@ -106,7 +106,7 @@ void allocate_refstate(struct All_variables *E)
 void mat_prop_allocate(struct All_variables *E)
 {
 	allocate_refstate(E);
-	if ((E->refstate.choice == 3) || (E->refstate.choice == 4))
+	if (E->refstate.choice == 3)
 		allocate_perplex_refstate(E);
 }
 

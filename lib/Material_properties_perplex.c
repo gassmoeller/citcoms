@@ -47,11 +47,6 @@ void allocate_perplex_refstate(struct All_variables *E)
     const int noz = E->lmesh.noz;
     int i,j;
 
-    E->refstate.perplex_files = (char**) malloc((max(1,E->trace.nflavors)+1) * sizeof(char *));
-    E->refstate.perplex_files[1] = strtok(E->refstate.perplex_filenames, ", \n \0");
-    for (i = 2; i <= max(1,E->trace.nflavors);i++)
-       E->refstate.perplex_files[i] = strtok(NULL, ", \n \0");
-
     const int nodes = (E->composition.pressure_oversampling
             * (noz - 1) + 2);
     const size_t nodes_size = nodes * sizeof(double*);
@@ -429,10 +424,6 @@ void calc_adiabatic_step(
 void calc_adiabatic_profile(const struct All_variables* E, double **Padi, double **Tadi, const struct table_properties* perplex_table, const double*** perplex_data)
 {
     const int nodes = (E->lmesh.noz-1) *E->composition.pressure_oversampling + 1;
-    (*Padi)[nodes] = 1.0;
-    (*Tadi)[nodes] = (double) E->control.adiabaticT0 * E->data.ref_temperature;
-
-    printf("Tadi:%f pressure:%f k:%d\n",(*Tadi)[nodes],(*Padi)[nodes],nodes);
 
     int k;
     for (k = nodes - 1; k > 0; k--)
@@ -452,6 +443,8 @@ void set_adiabatic_profile(const struct All_variables* E, double **Padi, double 
 {
     int i;
     const int nodes = (E->lmesh.noz-1) *E->composition.pressure_oversampling + 1;
+    (*Padi)[nodes] = 1.0;
+    (*Tadi)[nodes] = (double) E->control.adiabaticT0 * E->data.ref_temperature;
 
     for (i=E->parallel.nprocz-1;i>=0;i--)
     {
@@ -655,7 +648,7 @@ static void set_non_perplex_eos(struct All_variables *E, const int idx_field)
     return;
 }
 
-static void set_test_perplex_data(struct All_variables *E, const int idx_field)
+static void set_test_perplex_field(struct All_variables *E, const int idx_field)
 {
     int k,l;
     double r, z, beta;
@@ -664,7 +657,9 @@ static void set_test_perplex_data(struct All_variables *E, const int idx_field)
         fprintf(stderr,"Adams-Williamson EOS\n");
     }
 
+    if (idx_field >= 2) {
     fprintf(stderr,"Using buoyancy ratio:%lf idx_field:%d\n",E->composition.buoyancy_ratio[idx_field-2],idx_field);
+    }
     beta = E->control.disptn_number * E->control.inv_gruneisen;
 
     for (k=1;k<=(E->lmesh.noz-1)*E->composition.pressure_oversampling+1;k++)
@@ -684,25 +679,48 @@ static void set_test_perplex_data(struct All_variables *E, const int idx_field)
     return;
 }
 
+void separate_perplex_filenames(struct All_variables *E)
+{
+	int i;
+
+	E->refstate.perplex_files = (char**) malloc((max(1,E->trace.nflavors)+1) * sizeof(char *));
+	E->refstate.perplex_files[1] = strtok(E->refstate.perplex_filenames, ", \n \0");
+	for (i = 2; i <= max(1,E->trace.nflavors);i++)
+		E->refstate.perplex_files[i] = strtok(NULL, ", \n \0");
+}
+
 void read_perplex_data (struct All_variables *E)
 {
     int i;
+    const char *test = "testcase";
 
     const int nodes = (E->lmesh.noz-1) *E->composition.pressure_oversampling + 1;
     double *Padi = (double *) malloc((nodes+1)*sizeof(double));
     double *Tadi = (double *) malloc((nodes+1)*sizeof(double));
 
+    separate_perplex_filenames(E);
 
     for (i = 1; i <= max(1,E->trace.nflavors);i++)
     {
+    	int res = strcmp(E->refstate.perplex_files[i],test);
+
         if (E->control.verbose && (E->parallel.me == 0))
                 fprintf(stderr,"Field number:%d Filename:%s\n",i,E->refstate.perplex_files[i]);
 
         if (E->refstate.perplex_files[i] == NULL)
         {
+            allocate_perplex_refstate(E);
             set_non_perplex_eos(E,i);
         }
-
+        else if (!strcmp(E->refstate.perplex_files[i],test))
+        {
+            E->composition.ntdeps = 4001;
+            E->composition.delta_temp = 1;
+            E->composition.start_temp = 0;
+            E->composition.end_temp = 4000;
+            allocate_perplex_refstate(E);
+        	set_test_perplex_field(E, i);
+        }
         else
         {
 
@@ -730,6 +748,7 @@ void read_perplex_data (struct All_variables *E)
 
         if (i == 1)
         {
+        	allocate_perplex_refstate(E);
             // Calculate adiabatic reference profile
             set_adiabatic_profile(E,&Padi,&Tadi,&perplex_table,cperplex_data);
             int j;
