@@ -829,6 +829,7 @@ const double get_property_nd_perplex_absolute(const struct All_variables *E, con
     int i,j;
 
     double prop = 0.0;
+    double proportion_normal_material = 1.0;
 	double deltaT;
 
     const int nz = idxNz(nn, E->lmesh.noz);
@@ -845,17 +846,18 @@ const double get_property_nd_perplex_absolute(const struct All_variables *E, con
     const double weight = (temperature_accurate == 1) ? fmax(fmin(refTemp / E->composition.delta_temp - (nT-1),1),0) : 0.0;
 
     for (i=nzmin;i<=nzmax;i++){
-    	prop = property[1][i][nT];
-    	if (temperature_accurate == 1)
-    	{
-    		prop *= (1-weight);
-    		prop += weight * property[1][i][nT+1];
-    	}
-
 		for(j=0;j<E->composition.ncomp;j++){
+		    proportion_normal_material -= E->composition.comp_node[m][j][nn];
 			prop +=  (1-weight) * property[j+2][i][nT]*E->composition.comp_node[m][j][nn];
 			prop +=  weight * property[j+2][i][nT+1]*E->composition.comp_node[m][j][nn];
 		}
+
+    	prop += property[1][i][nT] * proportion_normal_material;
+    	if (temperature_accurate == 1)
+    	{
+    		prop *= (1-weight);
+    		prop += weight * property[1][i][nT+1] * proportion_normal_material;
+    	}
     }
     prop /= (nzmax-nzmin+1);
 
