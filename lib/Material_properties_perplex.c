@@ -709,11 +709,16 @@ void read_perplex_data (struct All_variables *E)
 
         if (E->refstate.perplex_files[i] == NULL)
         {
-            allocate_perplex_refstate(E);
+        	if (i == 1)
+        	{
+                fprintf(stderr, "Error, need at least one perplex file for refstate=4.\n");
+        		parallel_process_termination();
+        	}
             set_non_perplex_eos(E,i);
         }
         else if (!strcmp(E->refstate.perplex_files[i],test))
         {
+        	fprintf(stderr,"Setting up test case field %d\n",i);
             E->composition.ntdeps = 4001;
             E->composition.delta_temp = 1;
             E->composition.start_temp = 0;
@@ -725,6 +730,11 @@ void read_perplex_data (struct All_variables *E)
         {
 
         FILE* perplex_file = fopen(E->refstate.perplex_files[i],"r");
+        if(perplex_file == NULL) {
+                fprintf(stderr, "Cannot open perplex file: %s\n",
+                        E->refstate.perplex_files[i]);
+                parallel_process_termination();
+            }
 
         // Get information about size of table, stored in perplex_table
         struct table_properties perplex_table;
