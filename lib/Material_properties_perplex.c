@@ -702,10 +702,6 @@ void read_perplex_data (struct All_variables *E)
 
     for (i = 1; i <= max(1,E->trace.nflavors);i++)
     {
-    	int res = strcmp(E->refstate.perplex_files[i],test);
-
-        if (E->control.verbose && (E->parallel.me == 0))
-                fprintf(stderr,"Field number:%d Filename:%s\n",i,E->refstate.perplex_files[i]);
 
         if (E->refstate.perplex_files[i] == NULL)
         {
@@ -714,9 +710,14 @@ void read_perplex_data (struct All_variables *E)
                 fprintf(stderr, "Error, need at least one perplex file for refstate=4.\n");
         		parallel_process_termination();
         	}
+                if (E->control.verbose && (E->parallel.me == 0))
+        	    fprintf(stderr,"Field number:%d like field 1 with buoyancy ratio:%f\n",i,E->composition.buoyancy_ratio[i-2]);
             set_non_perplex_eos(E,i);
         }
-        else if (!strcmp(E->refstate.perplex_files[i],test))
+        else 
+{
+    	int res = strcmp(E->refstate.perplex_files[i],test);
+if (!strcmp(E->refstate.perplex_files[i],test))
         {
         	fprintf(stderr,"Setting up test case field %d\n",i);
             E->composition.ntdeps = 4001;
@@ -728,6 +729,8 @@ void read_perplex_data (struct All_variables *E)
         }
         else
         {
+        if (E->control.verbose && (E->parallel.me == 0))
+                fprintf(stderr,"Field number:%d Filename:%s\n",i,E->refstate.perplex_files[i]);
 
         FILE* perplex_file = fopen(E->refstate.perplex_files[i],"r");
         if(perplex_file == NULL) {
@@ -779,7 +782,7 @@ void read_perplex_data (struct All_variables *E)
         free_perplex_data(&perplex_table,&perplex_data);
         }
     }
-
+}
     free(Padi);
     free(Tadi);
 }
