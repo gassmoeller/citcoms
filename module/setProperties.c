@@ -370,7 +370,7 @@ PyObject * pyCitcom_Param_set_properties(PyObject *self, PyObject *args)
     getIntProperty(properties, "reference_state", E->refstate.choice, fp);
     if(E->refstate.choice == 0 || E->refstate.choice == 3 || E->refstate.choice == 4) {
         getStringProperty(properties, "refstate_file", E->refstate.filename, fp);
-        getStringProperty(properties, "perplex_files", E->refstate.perplex_filenames, fp);
+        getStringProperty(properties, "perplex_files", E->perplex.perplex_filenames, fp);
     }
 
     getIntProperty(properties, "mineral_physics_model", E->control.mineral_physics_model, fp);

@@ -1188,12 +1188,12 @@ void write_refstate_vtk(struct All_variables *E)
     if (E->viscosity.RHEOL == 105)
         vtk_refstate_viscosity (E, f_refstate);
 
-    vtk_refstate_field (E,E->refstate.tab_density,"density",f_refstate);
-    vtk_refstate_field (E,E->refstate.tab_thermal_expansivity,"thermal expansivity",f_refstate);
-    vtk_refstate_field (E,E->refstate.tab_heat_capacity,"heat capacity",f_refstate);
+    vtk_refstate_field (E,E->perplex.tab_density,"density",f_refstate);
+    vtk_refstate_field (E,E->perplex.tab_thermal_expansivity,"thermal expansivity",f_refstate);
+    vtk_refstate_field (E,E->perplex.tab_heat_capacity,"heat capacity",f_refstate);
 
-    vtk_refstate_field (E,E->refstate.tab_seismic_vp,"seismic vp",f_refstate);
-    vtk_refstate_field (E,E->refstate.tab_seismic_vs,"seismic vs",f_refstate);
+    vtk_refstate_field (E,E->perplex.tab_seismic_vp,"seismic vp",f_refstate);
+    vtk_refstate_field (E,E->perplex.tab_seismic_vs,"seismic vs",f_refstate);
 
     vtk_point_data_trailer(E,f_refstate);
 

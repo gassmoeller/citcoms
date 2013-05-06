@@ -119,6 +119,8 @@ extern "C" {
 
 
 /* Common structures */
+struct All_variables;
+
 
 struct Bdry {
   int nel;
@@ -554,13 +556,7 @@ struct CONTROL {
 struct REF_STATE {
     int choice;
     char filename[200];
-    char perplex_filenames[255];
-    char **perplex_files;
-    double ***tab_density;
-    double ***tab_thermal_expansivity;
-    double ***tab_heat_capacity;
-    double ***tab_seismic_vp;
-    double ***tab_seismic_vs;
+
     double *rho;
     double *thermal_expansivity;
     double *heat_capacity;
@@ -575,6 +571,17 @@ struct REF_STATE {
     int **cont_position;
 
 
+};
+
+struct PERPLEX {
+    char perplex_filenames[255];
+    char **perplex_files;
+    double ***tab_density;
+    double ***tab_thermal_expansivity;
+    double ***tab_heat_capacity;
+    double ***tab_seismic_vp;
+    double ***tab_seismic_vs;
+    const double (* get_property_nd_perplex)(const struct All_variables *, const double***, const int, const int, const int);
 };
 
 
@@ -786,6 +793,7 @@ struct All_variables {
     struct CCX element_Ccx;
 
     struct REF_STATE refstate;
+    struct PERPLEX perplex;
 
 
     higher_precision *Eqn_k1[MAX_LEVELS][NCS],*Eqn_k2[MAX_LEVELS][NCS],*Eqn_k3[MAX_LEVELS][NCS];

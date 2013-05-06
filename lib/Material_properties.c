@@ -120,16 +120,6 @@ void set_refstate(struct All_variables *E)
     E->get_radheat_nd = get_radheat_nd_refstate;
 }
 
-void set_perplex(struct All_variables *E)
-{
-    E->get_alpha_nd = get_alpha_nd_perplex;
-    E->get_cp_nd = get_cp_nd_perplex;
-    E->get_rho_nd = get_rho_nd_perplex;
-    E->get_vp_nd = get_vp_nd_perplex;
-    E->get_vs_nd = get_vs_nd_perplex;
-    E->get_radheat_nd = get_radheat_nd_perplex;
-}
-
 
 void reference_state(struct All_variables *E)
 {
