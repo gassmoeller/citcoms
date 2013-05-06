@@ -10,4 +10,5 @@ model=`basename $1`
 
 echo start "$1"
 cd $model_folder/$model/configuration/ 
+rm -r ../data
 $citcom_folder/bin/citcoms $model.cfg
