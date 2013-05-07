@@ -1,0 +1,1 @@
+This is a test to compare the buoyancy calculation with perplex test data and native citcom calculation. If the perplex calculation is correct the test data and the citcom calculation should have equal results.
