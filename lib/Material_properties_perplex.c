@@ -665,7 +665,8 @@ static void set_test_perplex_field(struct All_variables *E, const int idx_field)
     {
         z = 1 - r;
         for (l=1;l<=E->perplex.ntdeps;l++){
-            E->perplex.tab_density[idx_field][k][l] = E->refstate.rho[k/E->composition.pressure_oversampling] * (1.0 - l*E->perplex.delta_temp*E->data.therm_exp);
+            E->perplex.tab_density[idx_field][k][l] = E->refstate.rho[k/E->composition.pressure_oversampling] *
+            		(1.0 - l*E->perplex.delta_temp*E->data.therm_exp*E->refstate.thermal_expansivity[k/E->composition.pressure_oversampling]);
             E->perplex.tab_thermal_expansivity[idx_field][k][l] = E->refstate.thermal_expansivity[k/E->composition.pressure_oversampling];
             E->perplex.tab_heat_capacity[idx_field][k][l] = E->refstate.heat_capacity[k/E->composition.pressure_oversampling];
 
@@ -701,11 +702,11 @@ void read_perplex_data (struct All_variables *E)
 
     int numfields;
     if (E->control.tracer == 0)
-    	numfields = 1;
+    	E->perplex.nfields = 1;
     else
-    	numfields = max(1,E->trace.nflavors);
+    	E->perplex.nfields = max(1,E->trace.nflavors);
 
-    for (i = 1; i <= numfields;i++)
+    for (i = 1; i <= E->perplex.nfields;i++)
     {
     	if (E->perplex.perplex_files[i] == NULL)
     	{
@@ -775,7 +776,7 @@ void read_perplex_data (struct All_variables *E)
     					if ((j-1) % E->composition.pressure_oversampling == 0)
     					{
     						int k = (j-1) / E->composition.pressure_oversampling + 1;
-    						E->refstate.Tadi[k] = Tadi[j]/E->data.ref_temperature;
+    						E->refstate.Tadi[k] = Tadi[j];
     						if (E->control.verbose) printf("Me: %d Tadi:%f pressure:%f k:%d \n",E->parallel.me,Tadi[j],Padi[j],k);
     					}
     				}
@@ -835,7 +836,6 @@ const double get_property_nd_perplex_absolute(const struct All_variables *E, con
     int i,j;
 
     double prop = 0.0;
-    double proportion_normal_material = 1.0;
 	double deltaT;
 
     const int nz = idxNz(nn, E->lmesh.noz);
@@ -852,18 +852,16 @@ const double get_property_nd_perplex_absolute(const struct All_variables *E, con
     const double weight = (temperature_accurate == 1) ? fmax(fmin(refTemp / E->perplex.delta_temp - (nT-1),1),0) : 0.0;
 
     for (i=nzmin;i<=nzmax;i++){
+        double proportion_normal_material = 1.0;
+
 		for(j=0;j<E->composition.ncomp;j++){
 		    proportion_normal_material -= E->composition.comp_node[m][j][nn];
 			prop +=  (1-weight) * property[j+2][i][nT]*E->composition.comp_node[m][j][nn];
 			prop +=  weight * property[j+2][i][nT+1]*E->composition.comp_node[m][j][nn];
 		}
 
-    	prop += property[1][i][nT] * proportion_normal_material;
-    	if (temperature_accurate == 1)
-    	{
-    		prop *= (1-weight);
-    		prop += weight * property[1][i][nT+1] * proportion_normal_material;
-    	}
+		prop += (1-weight) * property[1][i][nT] * proportion_normal_material;
+		prop += weight * property[1][i][nT+1] * proportion_normal_material;
     }
     prop /= (nzmax-nzmin+1);
 
@@ -942,8 +940,14 @@ void set_perplex(struct All_variables *E)
     E->get_vs_nd = get_vs_nd_perplex;
     E->get_radheat_nd = get_radheat_nd_perplex;
     if (E->refstate.choice == 3)
+    {
+    	if ((E->control.verbose) && (E->parallel.me == 0)) fprintf(stderr,"Using relative perplex calculation\n");
     	E->perplex.get_property_nd_perplex  = get_property_nd_perplex_relative;
+    }
     else
+    {
+    	if ((E->control.verbose) && (E->parallel.me == 0)) fprintf(stderr,"Using absolute perplex calculation\n");
     	E->perplex.get_property_nd_perplex  = get_property_nd_perplex_absolute;
+    }
 }
 
