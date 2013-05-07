@@ -1137,17 +1137,17 @@ void vtk_refstate_viscosity (struct All_variables *E, FILE *fr)
 void vtk_refstate_field(struct All_variables *E, double ***field, char* field_name, FILE *fp)
 {
     int i,k,l;
-    int nodes = E->composition.ntdeps*E->lmesh.noz*max(1,E->trace.nflavors);
+    int nodes = E->perplex.ntdeps*E->lmesh.noz*max(1,E->trace.nflavors);
 
     double *data = malloc(nodes*sizeof(double));
 
     fprintf(fp,"        <DataArray type=\"Float32\" Name=\"%s\" NumberOfComponents=\"%d\" format=\"ascii\">\n", field_name,max(1,E->trace.nflavors));
 
     for(i=0;i<E->lmesh.noz;i++)
-        for(k=0; k<E->composition.ntdeps; k++)
-            for(l=0; l<max(1,E->trace.nflavors); l++)
+        for(k=0; k<E->perplex.ntdeps; k++)
+            for(l=0; l<E->perplex.nfields; l++)
                 //data[i*E->composition.ntdeps*max(1,E->trace.nflavors) + k*max(1,E->trace.nflavors) + l] = 0.0;
-                data[i*E->composition.ntdeps*max(1,E->trace.nflavors) + k*max(1,E->trace.nflavors) + l] = field[l+1][i+1][k+1];
+                data[i*E->perplex.ntdeps*max(1,E->trace.nflavors) + k*max(1,E->trace.nflavors) + l] = field[l+1][i+1][k+1];
 
 
     if (strcmp(E->output.vtk_format,"binary") == 0) {
@@ -1177,7 +1177,7 @@ void write_refstate_vtk(struct All_variables *E)
     f_refstate = output_open(vtv_file, "w");
 
     const int borders[6]  = {
-             0, E->composition.ntdeps-1,
+             0, E->perplex.ntdeps-1,
              E->lmesh.ezs, E->lmesh.ezs + E->lmesh.elz,
              0, 0};
 
@@ -1209,9 +1209,9 @@ void write_refstate_vtk(struct All_variables *E)
     for (iz = E->lmesh.noz; iz>0;iz--)
     {
         double depth = E->sx[1][3][E->lmesh.noz-iz+1] * E->data.radius_km;
-        for (iT = 1; iT<= E->composition.ntdeps;iT++)
+        for (iT = 1; iT<= E->perplex.ntdeps;iT++)
         {
-            double temp = ((double) (iT-1) / (double)(E->composition.ntdeps-1)) * (E->composition.end_temp - E->composition.start_temp) + E->composition.start_temp;
+            double temp = ((double) (iT-1) / (double)(E->perplex.ntdeps-1)) * (E->perplex.end_temp - E->perplex.start_temp) + E->perplex.start_temp;
             fprintf(f_refstate,"%f %f %f\n",  temp, depth, 0.0);
         }
     }

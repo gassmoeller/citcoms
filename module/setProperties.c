@@ -675,16 +675,16 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
 
     getIntProperty(properties, "pressure_oversampling", E->composition.pressure_oversampling, fp);
     if(E->refstate.choice == 3){
-         getFloatProperty(properties, "start_temp", E->composition.start_temp, fp);
-         getFloatProperty(properties, "end_temp", E->composition.end_temp, fp);
-         getIntProperty(properties, "ntdeps", E->composition.ntdeps, fp);
+         getFloatProperty(properties, "start_temp", E->perplex.start_temp, fp);
+         getFloatProperty(properties, "end_temp", E->perplex.end_temp, fp);
+         getIntProperty(properties, "ntdeps", E->perplex.ntdeps, fp);
     } else {
-        E->composition.start_temp = 0.0;
-        E->composition.end_temp = E->data.ref_temperature;
-        E->composition.ntdeps = 1000;
+        E->perplex.start_temp = 0.0;
+        E->perplex.end_temp = E->data.ref_temperature;
+        E->perplex.ntdeps = 1000;
     }
-    E->composition.delta_temp = (E->composition.end_temp - E->composition.start_temp)
-                                   / (float) (E->composition.ntdeps-1);
+    E->perplex.delta_temp = (E->perplex.end_temp - E->perplex.start_temp)
+                                   / (float) (E->perplex.ntdeps-1);
 
     getIntProperty(properties, "tracer_enriched", E->control.tracer_enriched, fp);
     if(E->control.tracer_enriched) {

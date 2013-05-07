@@ -51,7 +51,7 @@ void allocate_perplex_refstate(struct All_variables *E)
             * (noz - 1) + 2);
     const size_t nodes_size = nodes * sizeof(double*);
 
-    const int temperatures = (E->composition.ntdeps + 1);
+    const int temperatures = (E->perplex.ntdeps + 1);
     const size_t temperature_size = temperatures
             * sizeof(double);
 
@@ -125,7 +125,7 @@ void read_perplexfile(struct All_variables *E)
         parallel_process_termination();
     }
     /* skip these lines, which belong to other processors */
-    for(i=1; i<=E->composition.pressure_oversampling*(E->lmesh.nzs-1)*E->composition.ntdeps*(E->composition.ncomp+1); i++) {
+    for(i=1; i<=E->composition.pressure_oversampling*(E->lmesh.nzs-1)*E->perplex.ntdeps*(E->composition.ncomp+1); i++) {
         buffer = fgets(buffer, 255, fp);
         if (buffer == NULL){
             fprintf(stderr, "Perplex file is too short or problem with processor number: %s\n",
@@ -135,7 +135,7 @@ void read_perplexfile(struct All_variables *E)
     }
 
     for(j=1; j<=E->composition.pressure_oversampling*(E->lmesh.noz-1)+1; j++) {
-        for(k=1; k<=E->composition.ntdeps; k++){
+        for(k=1; k<=E->perplex.ntdeps; k++){
             for(i=1; i<=E->composition.ncomp+1; i++){
                 buffer = fgets(buffer, 255, fp);
                 if(sscanf(buffer, "%lf %lf %lf %lf %lf\n",&(E->perplex.tab_density[i][j][k]),&(E->perplex.tab_thermal_expansivity[i][j][k]), &(E->perplex.tab_heat_capacity[i][j][k]), &(E->perplex.tab_seismic_vp[i][j][k]), &(E->perplex.tab_seismic_vs[i][j][k]))!=5){
@@ -634,7 +634,7 @@ static void set_non_perplex_eos(struct All_variables *E, const int idx_field)
 
     for (k=1;k<=(E->lmesh.noz-1)*E->composition.pressure_oversampling+1;k++)
     {
-        for (l=1;l<=E->composition.ntdeps;l++){
+        for (l=1;l<=E->perplex.ntdeps;l++){
             E->perplex.tab_density[idx_field][k][l] = E->perplex.tab_density[1][k][l] + E->composition.buoyancy_ratio[idx_field-2] * E->data.therm_exp * E->data.ref_temperature;
             E->perplex.tab_thermal_expansivity[idx_field][k][l] = E->perplex.tab_thermal_expansivity[1][k][l];
             E->perplex.tab_heat_capacity[idx_field][k][l] = E->perplex.tab_heat_capacity[1][k][l];
@@ -664,8 +664,8 @@ static void set_test_perplex_field(struct All_variables *E, const int idx_field)
     for (k=1;k<=(E->lmesh.noz-1)*E->composition.pressure_oversampling+1;k++)
     {
         z = 1 - r;
-        for (l=1;l<=E->composition.ntdeps;l++){
-            E->perplex.tab_density[idx_field][k][l] = E->refstate.rho[k/E->composition.pressure_oversampling] * (1.0 - l*E->composition.delta_temp*E->data.therm_exp);
+        for (l=1;l<=E->perplex.ntdeps;l++){
+            E->perplex.tab_density[idx_field][k][l] = E->refstate.rho[k/E->composition.pressure_oversampling] * (1.0 - l*E->perplex.delta_temp*E->data.therm_exp);
             E->perplex.tab_thermal_expansivity[idx_field][k][l] = E->refstate.thermal_expansivity[k/E->composition.pressure_oversampling];
             E->perplex.tab_heat_capacity[idx_field][k][l] = E->refstate.heat_capacity[k/E->composition.pressure_oversampling];
 
@@ -724,10 +724,10 @@ void read_perplex_data (struct All_variables *E)
     		if (!strcmp(E->perplex.perplex_files[i],test))
     		{
     			fprintf(stderr,"Setting up test case field %d\n",i);
-    			E->composition.ntdeps = 4001;
-    			E->composition.delta_temp = 1;
-    			E->composition.start_temp = 0;
-    			E->composition.end_temp = 4000;
+    			E->perplex.ntdeps = 4001;
+    			E->perplex.delta_temp = 1;
+    			E->perplex.start_temp = 0;
+    			E->perplex.end_temp = 4000;
     			if (i==1)
     				allocate_perplex_refstate(E);
     			set_test_perplex_field(E, i);
@@ -749,10 +749,10 @@ void read_perplex_data (struct All_variables *E)
     			const struct table_properties *const cperplex_table = &perplex_table;
     			read_perplex_header(perplex_file,&perplex_table);
 
-    			E->composition.ntdeps = perplex_table.TP[perplex_table.field_ids.T].ndeps;
-    			E->composition.delta_temp = perplex_table.TP[perplex_table.field_ids.T].delta;
-    			E->composition.start_temp = perplex_table.TP[perplex_table.field_ids.T].start;
-    			E->composition.end_temp = perplex_table.TP[perplex_table.field_ids.T].end;
+    			E->perplex.ntdeps = perplex_table.TP[perplex_table.field_ids.T].ndeps;
+    			E->perplex.delta_temp = perplex_table.TP[perplex_table.field_ids.T].delta;
+    			E->perplex.start_temp = perplex_table.TP[perplex_table.field_ids.T].start;
+    			E->perplex.end_temp = perplex_table.TP[perplex_table.field_ids.T].end;
 
     			// Get perplex data stored in perplex_file
     			double ***perplex_data;
@@ -808,9 +808,9 @@ const double get_property_nd_perplex_relative(const struct All_variables *E, con
     const int nzmax = min(E->composition.pressure_oversampling*(nz-1) + 1 + E->composition.pressure_oversampling/2,(E->lmesh.noz-1)*E->composition.pressure_oversampling+1);
 
     const double refTemp = get_refTemp(E,m,nn,nz);
-    const int nT = idxTemp(refTemp,E->composition.delta_temp,E->composition.ntdeps);
+    const int nT = idxTemp(refTemp,E->perplex.delta_temp,E->perplex.ntdeps);
 
-    const double weight = (temperature_accurate == 1) ? fmax(fmin(refTemp / E->composition.delta_temp - (nT-1),1),0) : 0.0;
+    const double weight = (temperature_accurate == 1) ? fmax(fmin(refTemp / E->perplex.delta_temp - (nT-1),1),0) : 0.0;
 
     for (i=nzmin;i<=nzmax;i++){
     	prop = property[1][i][nT];
@@ -847,9 +847,9 @@ const double get_property_nd_perplex_absolute(const struct All_variables *E, con
     const int nzmax = min(E->composition.pressure_oversampling*(nz-1) + 1 + E->composition.pressure_oversampling/2,(E->lmesh.noz-1)*E->composition.pressure_oversampling+1);
 
     const double refTemp = get_refTemp(E,m,nn,nz);
-    const int nT = idxTemp(refTemp,E->composition.delta_temp,E->composition.ntdeps);
+    const int nT = idxTemp(refTemp,E->perplex.delta_temp,E->perplex.ntdeps);
 
-    const double weight = (temperature_accurate == 1) ? fmax(fmin(refTemp / E->composition.delta_temp - (nT-1),1),0) : 0.0;
+    const double weight = (temperature_accurate == 1) ? fmax(fmin(refTemp / E->perplex.delta_temp - (nT-1),1),0) : 0.0;
 
     for (i=nzmin;i<=nzmax;i++){
 		for(j=0;j<E->composition.ncomp;j++){
@@ -877,8 +877,8 @@ const double get_radheat_nd_perplex(const struct All_variables *E, const int m,c
     const int idxnode = (nz - 1) * E->composition.pressure_oversampling + 1;
 
     const double refTemp = get_refTemp(E,m,nn,nz);
-    const int nT = idxTemp(refTemp,E->composition.delta_temp,E->composition.ntdeps);
-    const double weight = fmax(fmin(refTemp / E->composition.delta_temp - (nT-1),1),0);
+    const int nT = idxTemp(refTemp,E->perplex.delta_temp,E->perplex.ntdeps);
+    const double weight = fmax(fmin(refTemp / E->perplex.delta_temp - (nT-1),1),0);
 
     double radheat = 0.0;
     double density = 0.0;

@@ -576,6 +576,13 @@ struct REF_STATE {
 struct PERPLEX {
     char perplex_filenames[255];
     char **perplex_files;
+
+    float delta_temp;
+    float start_temp;
+    float end_temp;
+    int ntdeps;
+    int nfields;
+
     double ***tab_density;
     double ***tab_thermal_expansivity;
     double ***tab_heat_capacity;
@@ -704,10 +711,6 @@ struct COMPOSITION {
     int chemical_changes;
 
     int pressure_oversampling;
-    float delta_temp;
-    float start_temp;
-    float end_temp;
-    int ntdeps;
 
     int ncomp;
     double *buoyancy_ratio;

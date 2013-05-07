@@ -356,10 +356,10 @@ const double get_refTemp(const struct All_variables *E, const int m, const int n
 			- E->control.adiabaticT0 * E->data.ref_temperature;
 
     double refTemp = get_dimensionalT(E->T[m][nn],E->control.surface_temp,E->data.ref_temperature)
-    		- E->composition.start_temp
+    		- E->perplex.start_temp
     		+ get_adiabatic_correction(E,nz);
 
-    refTemp = fmax(fmin(refTemp,E->composition.end_temp-E->composition.start_temp),0);
+    refTemp = fmax(fmin(refTemp,E->perplex.end_temp-E->perplex.start_temp),0);
     return refTemp;
 }
 

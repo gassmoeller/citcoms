@@ -730,17 +730,17 @@ void read_initial_settings(struct All_variables *E)
 
   input_int("pressure_oversampling",&(E->composition.pressure_oversampling),"1,1,nomax",m);
   if(E->refstate.choice == 3){
-      input_float("start_temp",&(E->composition.start_temp),"0,0,nomax",m);
-      input_float("end_temp",&(E->composition.end_temp),"1,0,nomax",m);
-      input_int("ntdeps",&(E->composition.ntdeps),"1000,0,nomax",m);
+      input_float("start_temp",&(E->perplex.start_temp),"0,0,nomax",m);
+      input_float("end_temp",&(E->perplex.end_temp),"1,0,nomax",m);
+      input_int("ntdeps",&(E->perplex.ntdeps),"1000,0,nomax",m);
   }
   else {
-	  E->composition.start_temp = 0.0;
-      E->composition.end_temp = E->data.ref_temperature;
-      E->composition.ntdeps = 1000;
+	  E->perplex.start_temp = 0.0;
+      E->perplex.end_temp = E->data.ref_temperature;
+      E->perplex.ntdeps = 1000;
   }
-  E->composition.delta_temp = (E->composition.end_temp - E->composition.start_temp)
-                                     / (float) (E->composition.ntdeps-1);
+  E->perplex.delta_temp = (E->perplex.end_temp - E->perplex.start_temp)
+                                     / (float) (E->perplex.ntdeps-1);
 
 
   tracer_input(E);
