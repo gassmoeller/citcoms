@@ -653,7 +653,7 @@ static void set_test_perplex_field(struct All_variables *E, const int idx_field)
     double r, z, beta;
 
     if(E->parallel.me == 0) {
-        fprintf(stderr,"Adams-Williamson EOS\n");
+        fprintf(stderr,"Setting up perplex test field\n");
     }
 
     if (idx_field >= 2) {
@@ -665,7 +665,7 @@ static void set_test_perplex_field(struct All_variables *E, const int idx_field)
     {
         z = 1 - r;
         for (l=1;l<=E->composition.ntdeps;l++){
-            E->perplex.tab_density[idx_field][k][l] = 1.0 - l*E->composition.delta_temp*E->data.therm_exp;
+            E->perplex.tab_density[idx_field][k][l] = E->refstate.rho[k/E->composition.pressure_oversampling] * (1.0 - l*E->composition.delta_temp*E->data.therm_exp);
             E->perplex.tab_thermal_expansivity[idx_field][k][l] = E->refstate.thermal_expansivity[k/E->composition.pressure_oversampling];
             E->perplex.tab_heat_capacity[idx_field][k][l] = E->refstate.heat_capacity[k/E->composition.pressure_oversampling];
 
@@ -699,14 +699,19 @@ void read_perplex_data (struct All_variables *E)
 
     separate_perplex_filenames(E);
 
-    for (i = 1; i <= max(1,E->trace.nflavors);i++)
-    {
+    int numfields;
+    if (E->control.tracer == 0)
+    	numfields = 1;
+    else
+    	numfields = max(1,E->trace.nflavors);
 
+    for (i = 1; i <= numfields;i++)
+    {
     	if (E->perplex.perplex_files[i] == NULL)
     	{
     		if (i == 1)
     		{
-    			fprintf(stderr, "Error, need at least one perplex file for refstate=4.\n");
+    			fprintf(stderr, "Error, need at least one perplex file or testcase for refstate=4.\n");
     			parallel_process_termination();
     		}
     		if (E->control.verbose && (E->parallel.me == 0))
@@ -723,7 +728,8 @@ void read_perplex_data (struct All_variables *E)
     			E->composition.delta_temp = 1;
     			E->composition.start_temp = 0;
     			E->composition.end_temp = 4000;
-    			allocate_perplex_refstate(E);
+    			if (i==1)
+    				allocate_perplex_refstate(E);
     			set_test_perplex_field(E, i);
     		}
     		else
