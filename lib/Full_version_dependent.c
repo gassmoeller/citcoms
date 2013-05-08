@@ -84,7 +84,7 @@ void full_node_locations(E)
   int i,j,k,ii,lev;
   double ro,dr,*rr,*RR,fo,tg;
   double dircos[4][4];
-  float tt1;
+  double tt1;
   int step,nn;
   char output_file[255], a[255];
   FILE *fp1;
@@ -113,7 +113,7 @@ void full_node_locations(E)
     }
     fscanf(fp1,"%s %d",a,&i);
     for (k=1;k<=E->mesh.noz;k++)  {
-      if(fscanf(fp1,"%d %f",&nn,&tt1) != 2) {
+      if(fscanf(fp1,"%d %lf",&nn,&tt1) != 2) {
         fprintf(stderr,"Error while reading file '%s'\n",output_file);
         exit(8);
       }
