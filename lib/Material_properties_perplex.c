@@ -352,7 +352,7 @@ double get_depth_km (const struct All_variables *E, const int k)
 {
 
     if (E->composition.pressure_oversampling == 1)
-        return (E->sphere.ro - E->sx[1][3][k]) * E->data.radius_km;;
+        return (E->sphere.ro - E->sx[1][3][k]) * E->data.radius_km;
 
     const int iz = ((k-1) / E->composition.pressure_oversampling) + 1;
 
@@ -383,14 +383,19 @@ static void calc_adiabatic_step(
     const struct IDs *id = &(table->field_ids);
     const struct field *TP = table->TP;
 
-    // calc old indices
-    TPidx[id->T] = idxTemp(Tadi[k+1]-TP[id->T].start,TP[id->T].delta,TP[id->T].ndeps);
+    // calc old indices. idxTemp is used in other functions as well with 1 .. n bounded arrays
+    // therefore we need to subtract 1.
+    TPidx[id->T] = idxTemp(Tadi[k+1]-TP[id->T].start,TP[id->T].delta,TP[id->T].ndeps) - 1;
     TPidx[id->P] = idxPress(Padi[k+1]-TP[id->P].start,TP[id->P].delta,TP[id->P].ndeps);
 
+
     // calc old properties
-    double density = data[TPidx[1]][TPidx[0]][id->rho];
-    double alpha = data[TPidx[1]][TPidx[0]][id->alpha];
-    double cp = data[TPidx[1]][TPidx[0]][id->cp];
+    const double density_old = data[TPidx[1]][TPidx[0]][id->rho];
+    const double alpha_old = data[TPidx[1]][TPidx[0]][id->alpha];
+    const double cp_old = data[TPidx[1]][TPidx[0]][id->cp];
+
+    //fprintf(stderr,"nT:%d npress:%d delta_depth_m:%f midpoint_gravity:%f\n",TPidx[id->T],TPidx[id->P],delta_depth_m,midpoint_gravity);
+    //fprintf(stderr,"density:%f alpha:%f cp:%f\n",density_old,alpha_old,cp_old);
 
     //TODO: dh switch (see above)
    //double dHdp,dHdT;
@@ -400,23 +405,24 @@ static void calc_adiabatic_step(
     //cp = dHdT/E->data.Cp;
 
 
-        Tadi[k] = Tadi[k+1] * (1 + alpha * midpoint_gravity * delta_depth_m / cp);
-        Padi[k]= Padi[k+1] + midpoint_gravity * delta_depth_m * density / 1e5;
+        Tadi[k] = Tadi[k+1] * (1 + alpha_old * midpoint_gravity * delta_depth_m / cp_old);
+        Padi[k]= Padi[k+1] + midpoint_gravity * delta_depth_m * density_old / 1e5;
 
         int i;
         double temperature;
 
         for(i=1;i<11;i++){
-            TPidx[id->T] = idxTemp(Tadi[k+1]-TP[id->T].start,TP[id->T].delta,TP[id->T].ndeps);
+        	//fprintf(stderr,"Before iteration k:%d Tadi:%f pressure:%f\n",k,Tadi[k],Padi[k]);
+            TPidx[id->T] = idxTemp(Tadi[k]-TP[id->T].start,TP[id->T].delta,TP[id->T].ndeps)-1;
             TPidx[id->P] = idxPress(Padi[k]-TP[id->P].start,TP[id->P].delta,TP[id->P].ndeps);
 
-            density = 0.5*(density + data[TPidx[1]][TPidx[0]][id->rho]);
-            alpha =  0.5*(alpha+data[TPidx[1]][TPidx[0]][id->alpha]);
-            cp = 0.5*(cp+data[TPidx[1]][TPidx[0]][id->cp]);
+            double midpoint_density = 0.5*(density_old + data[TPidx[1]][TPidx[0]][id->rho]);
+            double midpoint_alpha =  0.5*(alpha_old+data[TPidx[1]][TPidx[0]][id->alpha]);
+            double midpoint_cp = 0.5*(cp_old+data[TPidx[1]][TPidx[0]][id->cp]);
             temperature = 0.5*(Tadi[k+1]+Tadi[k]);
 
-            Tadi[k] = Tadi[k+1] + temperature * alpha * midpoint_gravity * delta_depth_m / cp;
-            Padi[k]= Padi[k+1] + midpoint_gravity * delta_depth_m * density / 1e5;
+            Tadi[k] = Tadi[k+1] + temperature * midpoint_alpha * midpoint_gravity * delta_depth_m / midpoint_cp;
+            Padi[k]= Padi[k+1] + midpoint_gravity * delta_depth_m * midpoint_density / 1e5;
         }
     }
 
@@ -428,6 +434,8 @@ static void calc_adiabatic_profile(const struct All_variables* E, double **Padi,
     for (k = nodes - 1; k > 0; k--)
     {
         double delta_depth_m = 1000 * (get_depth_km(E,k) - get_depth_km(E,k+1));
+        //fprintf(stderr,"depth_km:%f\n",get_depth_km(E,k));
+
         double midpoint_gravity = 0.5
                 * (E->refstate.gravity[k + 1] + E->refstate.gravity[k])
                 * E->data.grav_acc;
@@ -777,7 +785,7 @@ void read_perplex_data (struct All_variables *E)
     					{
     						int k = (j-1) / E->composition.pressure_oversampling + 1;
     						E->refstate.Tadi[k] = Tadi[j];
-    						if (E->control.verbose) printf("Me: %d Tadi:%f pressure:%f k:%d \n",E->parallel.me,Tadi[j],Padi[j],k);
+    						if (E->control.verbose) printf("I am:%d k:%d Tadi:%f pressure:%f\n",E->parallel.me,Tadi[j],Padi[j],k);
     					}
     				}
 
