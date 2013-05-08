@@ -785,7 +785,7 @@ void read_perplex_data (struct All_variables *E)
     					{
     						int k = (j-1) / E->composition.pressure_oversampling + 1;
     						E->refstate.Tadi[k] = Tadi[j];
-    						if (E->control.verbose) printf("I am:%d k:%d Tadi:%f pressure:%f\n",E->parallel.me,Tadi[j],Padi[j],k);
+    						if (E->control.verbose) printf("I am:%d k:%d Tadi:%f pressure:%f\n",E->parallel.me,k,Tadi[j],Padi[j]);
     					}
     				}
 
