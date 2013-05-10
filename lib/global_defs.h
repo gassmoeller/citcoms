@@ -582,13 +582,13 @@ struct PERPLEX {
     float end_temp;
     int ntdeps;
     int nfields;
+    int absolute_properties;
 
     double ***tab_density;
     double ***tab_thermal_expansivity;
     double ***tab_heat_capacity;
     double ***tab_seismic_vp;
     double ***tab_seismic_vs;
-    const double (* get_property_nd_perplex)(const struct All_variables *, const double***, const int, const int, const int);
 };
 
 

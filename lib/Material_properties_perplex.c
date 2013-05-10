@@ -801,45 +801,7 @@ void read_perplex_data (struct All_variables *E)
     free(Tadi);
 }
 
-const double get_property_nd_perplex_relative(const struct All_variables *E, const double*** property, const int m, const int nn, const int temperature_accurate)
-{
-    int i,j;
-
-    double prop = 0.0;
-	double deltaT;
-
-    const int nz = idxNz(nn, E->lmesh.noz);
-
-    /* Calculating the borders in the case of pressure_oversampling == x > 1 (x times more depth nodes in material table than in model)
-     * In case pressure_oversampling == 1 : nzmin == nzmax == nz
-     */
-    const int nzmin = max(E->composition.pressure_oversampling*(nz-1) + 1 - E->composition.pressure_oversampling/2,1);
-    const int nzmax = min(E->composition.pressure_oversampling*(nz-1) + 1 + E->composition.pressure_oversampling/2,(E->lmesh.noz-1)*E->composition.pressure_oversampling+1);
-
-    const double refTemp = get_refTemp(E,m,nn,nz);
-    const int nT = idxTemp(refTemp,E->perplex.delta_temp,E->perplex.ntdeps);
-
-    const double weight = (temperature_accurate == 1) ? fmax(fmin(refTemp / E->perplex.delta_temp - (nT-1),1),0) : 0.0;
-
-    for (i=nzmin;i<=nzmax;i++){
-    	prop = property[1][i][nT];
-    	if (temperature_accurate == 1)
-    	{
-    		prop *= (1-weight);
-    		prop += weight * property[1][i][nT+1];
-    	}
-
-		for(j=0;j<E->composition.ncomp;j++){
-			prop +=  (1-weight) * property[j+2][i][nT]*E->composition.comp_node[m][j][nn];
-			prop +=  weight * property[j+2][i][nT+1]*E->composition.comp_node[m][j][nn];
-		}
-    }
-    prop /= (nzmax-nzmin+1);
-
-	return prop;
-}
-
-const double get_property_nd_perplex_absolute(const struct All_variables *E, const double*** property, const int m, const int nn, const int temperature_accurate)
+const double get_property_nd_perplex(const struct All_variables *E, const double*** property, const int m, const int nn, const int temperature_accurate)
 {
     int i,j;
 
@@ -863,7 +825,7 @@ const double get_property_nd_perplex_absolute(const struct All_variables *E, con
         double proportion_normal_material = 1.0;
 
 		for(j=0;j<E->composition.ncomp;j++){
-		    proportion_normal_material -= E->composition.comp_node[m][j][nn];
+		    if (E->perplex.absolute_properties) proportion_normal_material -= E->composition.comp_node[m][j][nn];
 			prop +=  (1-weight) * property[j+2][i][nT]*E->composition.comp_node[m][j][nn];
 			prop +=  weight * property[j+2][i][nT+1]*E->composition.comp_node[m][j][nn];
 		}
@@ -890,17 +852,17 @@ const double get_radheat_nd_perplex(const struct All_variables *E, const int m,c
     double density = 0.0;
     double proportion_normal_material = 1.0;
 
-
+// TODO: This computation is only right for relative properties
     if (E->control.tracer_enriched){
-	int j;
-	for(j=0;j<E->composition.ncomp;j++){
-	    proportion_normal_material -= E->composition.comp_node[m][j][nn];
-            density = E->perplex.tab_density[j+2][idxnode][nT] + E->perplex.tab_density[1][idxnode][nT];
-	    radheat +=  (1-weight) * density * E->composition.comp_node[m][j][nn] * E->control.Q0ER[j];
+    	int j;
+    	for(j=0;j<E->composition.ncomp;j++){
+    		proportion_normal_material -= E->composition.comp_node[m][j][nn];
+    		density = E->perplex.tab_density[j+2][idxnode][nT] + E->perplex.tab_density[1][idxnode][nT];
+    		radheat +=  (1-weight) * density * E->composition.comp_node[m][j][nn] * E->control.Q0ER[j];
 
-	    density = E->perplex.tab_density[j+2][idxnode][nT+1] + E->perplex.tab_density[1][idxnode][nT+1];
-	    radheat +=  weight * density * E->composition.comp_node[m][j][nn] * E->control.Q0ER[j];
-	}
+    		density = E->perplex.tab_density[j+2][idxnode][nT+1] + E->perplex.tab_density[1][idxnode][nT+1];
+    		radheat +=  weight * density * E->composition.comp_node[m][j][nn] * E->control.Q0ER[j];
+    	}
     }
 
     radheat += (1-weight) * E->perplex.tab_density[1][idxnode][nT] * proportion_normal_material * E->control.Q0;
@@ -911,32 +873,32 @@ const double get_radheat_nd_perplex(const struct All_variables *E, const int m,c
 
 const double get_cp_nd_perplex(const struct All_variables *E, const int m, const int nn)
 {
-    const int temperature_accurate = 0;
-    return E->perplex.get_property_nd_perplex(E,(const double ***)E->perplex.tab_heat_capacity,m,nn,temperature_accurate);
+	const int temperature_accurate = 0;
+	return get_property_nd_perplex(E,(const double ***)E->perplex.tab_heat_capacity,m,nn,temperature_accurate);
 }
 
 const double get_alpha_nd_perplex(const struct All_variables *E, const int m, const int nn)
 {
-    const int temperature_accurate = 0;
-    return E->perplex.get_property_nd_perplex(E,(const double ***)E->perplex.tab_thermal_expansivity,m,nn,temperature_accurate);
+	const int temperature_accurate = 0;
+	return get_property_nd_perplex(E,(const double ***)E->perplex.tab_thermal_expansivity,m,nn,temperature_accurate);
 }
 
 const double get_rho_nd_perplex(const struct All_variables *E, const int m, const int nn)
 {
-    const int temperature_accurate = 1;
-    return E->perplex.get_property_nd_perplex(E,(const double ***)E->perplex.tab_density,m,nn,temperature_accurate);
+	const int temperature_accurate = 1;
+	return get_property_nd_perplex(E,(const double ***)E->perplex.tab_density,m,nn,temperature_accurate);
 }
 
 const double get_vs_nd_perplex(const struct All_variables *E, const int m, const int nn)
 {
 	const int temperature_accurate = 0;
-        return E->perplex.get_property_nd_perplex(E,(const double ***)E->perplex.tab_seismic_vs,m,nn,temperature_accurate);
+	return get_property_nd_perplex(E,(const double ***)E->perplex.tab_seismic_vs,m,nn,temperature_accurate);
 }
 
 const double get_vp_nd_perplex(const struct All_variables *E, const int m, const int nn)
 {
 	const int temperature_accurate = 0;
-	return E->perplex.get_property_nd_perplex(E,(const double ***)E->perplex.tab_seismic_vp,m,nn,temperature_accurate);
+	return get_property_nd_perplex(E,(const double ***)E->perplex.tab_seismic_vp,m,nn,temperature_accurate);
 }
 
 void set_perplex(struct All_variables *E)
@@ -950,12 +912,12 @@ void set_perplex(struct All_variables *E)
     if (E->refstate.choice == 3)
     {
     	if ((E->control.verbose) && (E->parallel.me == 0)) fprintf(stderr,"Using relative perplex calculation\n");
-    	E->perplex.get_property_nd_perplex  = get_property_nd_perplex_relative;
+    	E->perplex.absolute_properties  = 0;
     }
     else
     {
     	if ((E->control.verbose) && (E->parallel.me == 0)) fprintf(stderr,"Using absolute perplex calculation\n");
-    	E->perplex.get_property_nd_perplex  = get_property_nd_perplex_absolute;
+    	E->perplex.absolute_properties  = 1;
     }
 }
 
