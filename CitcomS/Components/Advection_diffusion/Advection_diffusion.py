@@ -89,6 +89,8 @@ class Advection_diffusion(CitcomComponent):
         ADV = prop.bool("ADV", default=True)
         filter_temp = prop.bool("filter_temp", default=False)
         monitor_max_T = prop.bool("monitor_max_T", default=True)
+        use_tdep_mass = prop.bool("use_tdep_mass", default=True)
+
 
         fixed_timestep = prop.float("fixed_timestep", default=0.0)
         finetunedt = prop.float("finetunedt", default=0.9)

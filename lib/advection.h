@@ -29,6 +29,7 @@ struct ADVECTION {
   int ADVECTION;
   int filter_temperature;
   int monitor_max_T;
+  int use_tdep_mass;            /* use temperature dependent mass matrix */
 
   float gamma;
   float timestep;

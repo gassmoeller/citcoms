@@ -81,6 +81,7 @@ void advection_diffusion_parameters(struct All_variables *E)
     input_boolean("ADV",&(E->advection.ADVECTION),"on",m);
     input_boolean("filter_temp",&(E->advection.filter_temperature),"off",m);
     input_boolean("monitor_max_T",&(E->advection.monitor_max_T),"on",m);
+    input_boolean("use_tdep_mass",&(E->advection.use_tdep_mass),"on",m);
 
     input_int("minstep",&(E->advection.min_timesteps),"1",m);
     input_int("maxstep",&(E->advection.max_timesteps),"1000",m);
@@ -451,8 +452,12 @@ static void pg_solver(struct All_variables *E,
     for (m=1;m<=E->sphere.caps_per_proc;m++)
       for(i=1;i<=E->lmesh.nno;i++) {
         if(!(E->node[m][i] & (TBX | TBY | TBZ))){
-	  DTdot[m][i] *= E->TMass[m][i] / (E->get_rho_nd(E,m,i)*E->get_cp_nd(E,m,i));         /* lumped mass matrix */
-	}	else
+            if (E->advection.use_tdep_mass)
+                DTdot[m][i] *= E->TMass[m][i] / (E->get_rho_nd(E,m,i)*E->get_cp_nd(E,m,i));         /* lumped mass matrix */
+            else
+                DTdot[m][i] *= E->TMass[m][i] / (E->refstate.rho[idxNz(i,E->lmesh.noz)]*E->refstate.heat_capacity[idxNz(i,E->lmesh.noz)]);         /* lumped mass matrix */
+
+        }	else
 	  DTdot[m][i] = 0.0;         /* lumped mass matrix */
       }
 
@@ -561,6 +566,8 @@ static void element_residual(struct All_variables *E, int el,
     int nz;
 
     void get_global_1d_shape_fn();
+    const double get_cp_nd_refstate(const struct All_variables *E, const int m, const int nn);
+    const double get_rho_nd_refstate(const struct All_variables *E, const int m, const int nn);
 
     const int dims=E->mesh.nsd;
     const int dofs=E->mesh.dof;
@@ -606,8 +613,16 @@ static void element_residual(struct All_variables *E, int el,
 	  Q += Q0->Q[i] * exp(-Q0->lambda[i] * (E->monitor.elapsed_time+Q0->t_offset));
 */
 
-    rho = get_rho_el(E,m,el);
-    cp = get_cp_el(E,m,el);
+    if (E->advection.use_tdep_mass)
+    {
+        rho = get_rho_el(E,m,el);
+        cp = get_cp_el(E,m,el);
+    }
+    else
+    {
+        rho = get_property_el(E, get_rho_nd_refstate,m,el);
+        cp = get_property_el(E, get_cp_nd_refstate,m,el);
+    }
 
     /* heat production */
     Q = get_radheat_el(E,m,el);
