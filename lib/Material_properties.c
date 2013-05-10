@@ -145,10 +145,22 @@ void reference_state(struct All_variables *E)
     case 3:
         /* read from a file */
     	read_refstate(E);
+
+        if (E->control.tracer == 0)
+            E->perplex.nfields = 1;
+        else
+            E->perplex.nfields = max(1,E->trace.nflavors);
+
         read_perplexfile(E);
         break;
     case 4:
         read_refstate(E);
+
+        if (E->control.tracer == 0)
+            E->perplex.nfields = 1;
+        else
+            E->perplex.nfields = max(1,E->trace.nflavors);
+
         read_perplex_data(E);
         break;
     default:

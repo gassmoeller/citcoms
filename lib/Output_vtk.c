@@ -1147,7 +1147,7 @@ void vtk_refstate_field(struct All_variables *E, double ***field, char* field_na
         for(k=0; k<E->perplex.ntdeps; k++)
             for(l=0; l<E->perplex.nfields; l++)
                 //data[i*E->composition.ntdeps*max(1,E->trace.nflavors) + k*max(1,E->trace.nflavors) + l] = 0.0;
-                data[i*E->perplex.ntdeps*max(1,E->trace.nflavors) + k*max(1,E->trace.nflavors) + l] = field[l+1][i+1][k+1];
+                data[i*E->perplex.ntdeps*E->perplex.nfields + k*E->perplex.nfields + l] = field[l+1][i+1][k+1];
 
 
     if (strcmp(E->output.vtk_format,"binary") == 0) {

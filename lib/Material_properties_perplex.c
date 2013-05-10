@@ -136,7 +136,7 @@ void read_perplexfile(struct All_variables *E)
 
     for(j=1; j<=E->composition.pressure_oversampling*(E->lmesh.noz-1)+1; j++) {
         for(k=1; k<=E->perplex.ntdeps; k++){
-            for(i=1; i<=E->composition.ncomp+1; i++){
+            for(i=1; i<=E->perplex.nfields; i++){
                 buffer = fgets(buffer, 255, fp);
                 if(sscanf(buffer, "%lf %lf %lf %lf %lf\n",&(E->perplex.tab_density[i][j][k]),&(E->perplex.tab_thermal_expansivity[i][j][k]), &(E->perplex.tab_heat_capacity[i][j][k]), &(E->perplex.tab_seismic_vp[i][j][k]), &(E->perplex.tab_seismic_vs[i][j][k]))!=5){
                     fprintf(stderr,"Error while reading file perplex.dat\n");
@@ -506,7 +506,7 @@ static void calculate_refstate_data (const struct All_variables *E,  const struc
         else
             maxnT = TP[id->T].ndeps;
 
-        TPidx[id->P] = idxPress(Padi[k],TP[id->P].delta,TP[id->P].ndeps);
+        TPidx[id->P] = idxPress(Padi[k]-TP[id->P].start,TP[id->P].delta,TP[id->P].ndeps);
 
 
         for (l=1;l<=TP[id->T].ndeps;l++){
@@ -708,12 +708,6 @@ void read_perplex_data (struct All_variables *E)
 
     separate_perplex_filenames(E);
 
-    int numfields;
-    if (E->control.tracer == 0)
-    	E->perplex.nfields = 1;
-    else
-    	E->perplex.nfields = max(1,E->trace.nflavors);
-
     for (i = 1; i <= E->perplex.nfields;i++)
     {
     	if (E->perplex.perplex_files[i] == NULL)
@@ -806,7 +800,7 @@ const double get_property_nd_perplex(const struct All_variables *E, const double
     int i,j;
 
     double prop = 0.0;
-	double deltaT;
+    double deltaT;
 
     const int nz = idxNz(nn, E->lmesh.noz);
 
@@ -824,18 +818,18 @@ const double get_property_nd_perplex(const struct All_variables *E, const double
     for (i=nzmin;i<=nzmax;i++){
         double proportion_normal_material = 1.0;
 
-		for(j=0;j<E->composition.ncomp;j++){
-		    if (E->perplex.absolute_properties) proportion_normal_material -= E->composition.comp_node[m][j][nn];
-			prop +=  (1-weight) * property[j+2][i][nT]*E->composition.comp_node[m][j][nn];
-			prop +=  weight * property[j+2][i][nT+1]*E->composition.comp_node[m][j][nn];
-		}
+        for(j=0;j<E->composition.ncomp;j++){
+            if (E->perplex.absolute_properties) proportion_normal_material -= E->composition.comp_node[m][j][nn];
+            prop +=  (1-weight) * property[j+2][i][nT]*E->composition.comp_node[m][j][nn];
+            prop +=  weight * property[j+2][i][nT+1]*E->composition.comp_node[m][j][nn];
+        }
 
-		prop += (1-weight) * property[1][i][nT] * proportion_normal_material;
-		prop += weight * property[1][i][nT+1] * proportion_normal_material;
+        prop += (1-weight) * property[1][i][nT] * proportion_normal_material;
+        prop += weight * property[1][i][nT+1] * proportion_normal_material;
     }
     prop /= (nzmax-nzmin+1);
 
-	return prop;
+    return prop;
 }
 
 const double get_radheat_nd_perplex(const struct All_variables *E, const int m,const int nn)

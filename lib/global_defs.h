@@ -577,6 +577,8 @@ struct PERPLEX {
     char perplex_filenames[255];
     char **perplex_files;
 
+    //TODO: As soon as this number are not longer read in from the configuration
+    // change it to double
     float delta_temp;
     float start_temp;
     float end_temp;
