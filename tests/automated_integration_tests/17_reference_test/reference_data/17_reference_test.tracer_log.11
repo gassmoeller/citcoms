@@ -26,7 +26,7 @@ Adjusted deltheta: 0.014057 delphi: 0.013963
 Number of regular elements: 51300  (nodes: 51865)
 regular/real ratio: 200.390625
 percentage mapped: 18.912561
-Mapping completed (0.921584 seconds)
+Mapping completed (0.882970 seconds)
 
 
 Information regarding number of real elements per regular elements
@@ -38,7 +38,7 @@ Ichoice=1: 12.362573 percent
 Ichoice=2: 6.319688 percent
 Ichoice=3: 0.725146 percent
 Ichoice=4: 0.074074 percent
-Tracer initialization takes 0.974304 seconds.
+Tracer initialization takes 0.981133 seconds.
 
 Generating 81920 Tracers
 Physical size of tracer arrays (max_ntracers): 102400
