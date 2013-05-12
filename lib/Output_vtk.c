@@ -1121,14 +1121,14 @@ void vtk_refstate_viscosity (struct All_variables *E, FILE *fr)
 
     fprintf(fr, "        <DataArray type=\"Float32\" Name=\"Viscosity\" format=\"%s\">\n", E->output.vtk_format);
 
-    for (iz = E->lmesh.noz; iz>0;iz--)
+    for (iz = 0; iz < E->lmesh.noz;iz++)
     {
-        for (iT = 1; iT<= E->lmesh.noz;iT++)
+        for (iT = 0; iT < E->perplex.ntdeps;iT++)
         {
-            double temp = (double) (iT-1) / (double)(E->lmesh.noz-1);
-            data[iz*E->lmesh.noz+iT] = visc_from_steinberger_calderwood(E,iz,temp);
-            data[iz*E->lmesh.noz+iT] = min(max(data[iz*E->lmesh.noz+iT],E->viscosity.min_value),E->viscosity.max_value);
-            data[iz*E->lmesh.noz+iT] = E->data.ref_viscosity * data[iz*E->lmesh.noz+iT];
+            double temp = (double) iT / (double)(E->perplex.ntdeps-1);
+            data[iz*E->perplex.ntdeps+iT] = visc_from_steinberger_calderwood(E,iz+1,temp);
+            data[iz*E->perplex.ntdeps+iT] = min(max(data[iz*E->perplex.ntdeps+iT],E->viscosity.min_value),E->viscosity.max_value);
+            data[iz*E->perplex.ntdeps+iT] = E->data.ref_viscosity * data[iz*E->perplex.ntdeps+iT];
         }
     }
 
@@ -1155,14 +1155,13 @@ void vtk_refstate_field(struct All_variables *E, double ***field, char* field_na
     for(i=0;i<E->lmesh.noz;i++)
         for(k=0; k<E->perplex.ntdeps; k++)
             for(l=0; l<E->perplex.nfields; l++)
-                //data[i*E->composition.ntdeps*max(1,E->trace.nflavors) + k*max(1,E->trace.nflavors) + l] = 0.0;
                 data[i*E->perplex.ntdeps*E->perplex.nfields + k*E->perplex.nfields + l] = field[l+1][i+1][k+1];
 
 
     if (strcmp(E->output.vtk_format,"binary") == 0) {
         write_binary_array_double(nodes,data,fp);
     } else {
-        write_ascii_array_seismic(nodes,max(1,E->trace.nflavors),data,fp);
+        write_ascii_array_seismic(nodes,E->perplex.nfields,data,fp);
     }
 
     fputs("        </DataArray>\n", fp);
@@ -1171,25 +1170,26 @@ void vtk_refstate_field(struct All_variables *E, double ***field, char* field_na
     return;
 }
 
-void vtk_refstate_coord(struct All_variables *E, double ***field, char* field_name, FILE *fp)
+void vtk_refstate_coord(struct All_variables *E, FILE *fp)
 {
     int i,k,l;
     int iT,iz;
 
-    int nodes = E->perplex.ntdeps*E->lmesh.noz*E->perplex.nfields;
+    int nodes = E->perplex.ntdeps*E->lmesh.noz*3;
 
     double *data = malloc(nodes*sizeof(double));
 
+    fputs("      <Points>\n", fp);
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"%s\">\n", E->output.vtk_format);
 
-    for (iz = E->lmesh.noz; iz>0;iz--)
+    for (iz = 0; iz<E->lmesh.noz;iz++)
     {
-        double depth = E->sx[1][3][E->lmesh.noz-iz+1] * E->data.radius_km;
-        for (iT = 1; iT<= E->perplex.ntdeps;iT++)
+        double radius = E->sx[1][3][iz+1] * E->data.radius_km;
+        for (iT = 0; iT< E->perplex.ntdeps;iT++)
         {
-            double temp = ((double) (iT-1) / (double)(E->perplex.ntdeps-1)) * (E->perplex.end_temp - E->perplex.start_temp) + E->perplex.start_temp;
+            double temp = ((double) (iT) / (double)(E->perplex.ntdeps-1)) * (E->perplex.end_temp - E->perplex.start_temp) + E->perplex.start_temp;
             data[iz*E->perplex.ntdeps*3 + iT*3 + 0] = temp;
-            data[iz*E->perplex.ntdeps*3 + iT*3 + 1] = depth;
+            data[iz*E->perplex.ntdeps*3 + iT*3 + 1] = radius;
             data[iz*E->perplex.ntdeps*3 + iT*3 + 2] = 0.0;
         }
     }
@@ -1201,6 +1201,7 @@ void vtk_refstate_coord(struct All_variables *E, double ***field, char* field_na
     }
 
     fputs("        </DataArray>\n", fp);
+    fputs("      </Points>\n", fp);
 
     free(data);
     return;
@@ -1246,20 +1247,7 @@ void write_refstate_vtk(struct All_variables *E)
     vtk_cell_data_trailer(E, f_refstate);
 
     /* write coordinate */
-    fputs("      <Points>\n", f_refstate);
-
-
-    for (iz = E->lmesh.noz; iz>0;iz--)
-    {
-        double depth = E->sx[1][3][E->lmesh.noz-iz+1] * E->data.radius_km;
-        for (iT = 1; iT<= E->perplex.ntdeps;iT++)
-        {
-            double temp = ((double) (iT-1) / (double)(E->perplex.ntdeps-1)) * (E->perplex.end_temp - E->perplex.start_temp) + E->perplex.start_temp;
-            fprintf(f_refstate,"%f %f %f\n",  temp, depth, 0.0);
-        }
-    }
-
-    fputs("      </Points>\n", f_refstate);
+    vtk_refstate_coord(E,f_refstate);
 
     vts_file_trailer(E, f_refstate);
 
