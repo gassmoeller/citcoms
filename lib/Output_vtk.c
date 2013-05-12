@@ -1113,35 +1113,44 @@ void write_viscosity_table_csv(struct All_variables *E)
 void vtk_refstate_viscosity (struct All_variables *E, FILE *fr)
 {
     int iT,iz;
+    int nodes = E->perplex.ntdeps*E->lmesh.noz;
+
+    double *data = malloc(nodes*sizeof(double));
 
     const float visc_from_steinberger_calderwood(struct All_variables *E,int i,double temp);
 
     fprintf(fr, "        <DataArray type=\"Float32\" Name=\"Viscosity\" format=\"%s\">\n", E->output.vtk_format);
 
-    for (iT = 1; iT<= E->lmesh.noz;iT++)
+    for (iz = E->lmesh.noz; iz>0;iz--)
     {
-        double temp = (double) (iT-1) / (double)(E->lmesh.noz-1);
-
-        for (iz = E->lmesh.noz; iz>0;iz--)
+        for (iT = 1; iT<= E->lmesh.noz;iT++)
         {
-            float visc = visc_from_steinberger_calderwood(E,iz,temp);
-            visc = min(max(visc,E->viscosity.min_value),E->viscosity.max_value);
-            visc = E->data.ref_viscosity * visc;
-            fprintf(fr,"%e ",visc);
+            double temp = (double) (iT-1) / (double)(E->lmesh.noz-1);
+            data[iz*E->lmesh.noz+iT] = visc_from_steinberger_calderwood(E,iz,temp);
+            data[iz*E->lmesh.noz+iT] = min(max(data[iz*E->lmesh.noz+iT],E->viscosity.min_value),E->viscosity.max_value);
+            data[iz*E->lmesh.noz+iT] = E->data.ref_viscosity * data[iz*E->lmesh.noz+iT];
         }
     }
 
+    if (strcmp(E->output.vtk_format,"binary") == 0) {
+        write_binary_array_double(nodes,data,fr);
+    } else {
+        write_ascii_array_seismic(nodes,1,data,fr);
+    }
+
     fputs("        </DataArray>\n", fr);
+    free(data);
+    return;
 }
 
 void vtk_refstate_field(struct All_variables *E, double ***field, char* field_name, FILE *fp)
 {
     int i,k,l;
-    int nodes = E->perplex.ntdeps*E->lmesh.noz*max(1,E->trace.nflavors);
+    int nodes = E->perplex.ntdeps*E->lmesh.noz*E->perplex.nfields;
 
     double *data = malloc(nodes*sizeof(double));
 
-    fprintf(fp,"        <DataArray type=\"Float32\" Name=\"%s\" NumberOfComponents=\"%d\" format=\"ascii\">\n", field_name,max(1,E->trace.nflavors));
+    fprintf(fp,"        <DataArray type=\"Float32\" Name=\"%s\" NumberOfComponents=\"%d\" format=\"ascii\">\n", field_name,E->perplex.nfields);
 
     for(i=0;i<E->lmesh.noz;i++)
         for(k=0; k<E->perplex.ntdeps; k++)
@@ -1154,6 +1163,41 @@ void vtk_refstate_field(struct All_variables *E, double ***field, char* field_na
         write_binary_array_double(nodes,data,fp);
     } else {
         write_ascii_array_seismic(nodes,max(1,E->trace.nflavors),data,fp);
+    }
+
+    fputs("        </DataArray>\n", fp);
+
+    free(data);
+    return;
+}
+
+void vtk_refstate_coord(struct All_variables *E, double ***field, char* field_name, FILE *fp)
+{
+    int i,k,l;
+    int iT,iz;
+
+    int nodes = E->perplex.ntdeps*E->lmesh.noz*E->perplex.nfields;
+
+    double *data = malloc(nodes*sizeof(double));
+
+    fprintf(fp, "        <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"%s\">\n", E->output.vtk_format);
+
+    for (iz = E->lmesh.noz; iz>0;iz--)
+    {
+        double depth = E->sx[1][3][E->lmesh.noz-iz+1] * E->data.radius_km;
+        for (iT = 1; iT<= E->perplex.ntdeps;iT++)
+        {
+            double temp = ((double) (iT-1) / (double)(E->perplex.ntdeps-1)) * (E->perplex.end_temp - E->perplex.start_temp) + E->perplex.start_temp;
+            data[iz*E->perplex.ntdeps*3 + iT*3 + 0] = temp;
+            data[iz*E->perplex.ntdeps*3 + iT*3 + 1] = depth;
+            data[iz*E->perplex.ntdeps*3 + iT*3 + 2] = 0.0;
+        }
+    }
+
+    if (strcmp(E->output.vtk_format,"binary") == 0) {
+        write_binary_array_double(nodes,data,fp);
+    } else {
+        write_ascii_array_seismic(nodes,3,data,fp);
     }
 
     fputs("        </DataArray>\n", fp);
@@ -1203,7 +1247,6 @@ void write_refstate_vtk(struct All_variables *E)
 
     /* write coordinate */
     fputs("      <Points>\n", f_refstate);
-    fprintf(f_refstate, "        <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"%s\">\n", E->output.vtk_format);
 
 
     for (iz = E->lmesh.noz; iz>0;iz--)
@@ -1216,7 +1259,6 @@ void write_refstate_vtk(struct All_variables *E)
         }
     }
 
-    fputs("        </DataArray>\n", f_refstate);
     fputs("      </Points>\n", f_refstate);
 
     vts_file_trailer(E, f_refstate);
