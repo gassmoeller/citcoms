@@ -1150,7 +1150,7 @@ void vtk_refstate_field(struct All_variables *E, double ***field, char* field_na
 
     double *data = malloc(nodes*sizeof(double));
 
-    fprintf(fp,"        <DataArray type=\"Float32\" Name=\"%s\" NumberOfComponents=\"%d\" format=\"ascii\">\n", field_name,E->perplex.nfields);
+    fprintf(fp,"        <DataArray type=\"Float32\" Name=\"%s\" NumberOfComponents=\"%d\" format=\"%s\">\n", field_name,E->perplex.nfields,E->output.vtk_format);
 
     for(i=0;i<E->lmesh.noz;i++)
         for(k=0; k<E->perplex.ntdeps; k++)
