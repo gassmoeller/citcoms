@@ -26,7 +26,7 @@ Adjusted deltheta: 0.014057 delphi: 0.013963
 Number of regular elements: 51300  (nodes: 51865)
 regular/real ratio: 200.390625
 percentage mapped: 18.912561
-Mapping completed (0.893500 seconds)
+Mapping completed (0.739970 seconds)
 
 
 Information regarding number of real elements per regular elements
@@ -38,34 +38,8 @@ Ichoice=1: 12.362573 percent
 Ichoice=2: 6.319688 percent
 Ichoice=3: 0.725146 percent
 Ichoice=4: 0.074074 percent
-Tracer initialization takes 1.027651 seconds.
+Tracer initialization takes 1.281102 seconds.
 
 Generating 81920 Tracers
 Physical size of tracer arrays (max_ntracers): 102400
-Entering lost_souls()
-Freeing memory in lost_souls()
-Leaving lost_souls()
 Sum of Tracers: 983036
-Entering lost_souls()
-Freeing memory in lost_souls()
-Leaving lost_souls()
-Entering lost_souls()
-Freeing memory in lost_souls()
-Leaving lost_souls()
-Entering lost_souls()
-Freeing memory in lost_souls()
-Leaving lost_souls()
-Number of times for all element search  0
-Number of tracers sent to other processors: 0
-Number of times element columns are checked: 0 
-Empty elements filled with old compositional values: 0 (0.000000 percent)
-Entering lost_souls()
-Freeing memory in lost_souls()
-Leaving lost_souls()
-Entering lost_souls()
-Freeing memory in lost_souls()
-Leaving lost_souls()
-Number of times for all element search  0
-Number of tracers sent to other processors: 0
-Number of times element columns are checked: 0 
-Empty elements filled with old compositional values: 0 (0.000000 percent)

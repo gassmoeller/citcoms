@@ -6,14 +6,14 @@ resi = 1.531213e+03 for iter 2 acc 2.539493e+02
 resi = 5.548919e+02 for iter 3 acc 2.539493e+02
 resi = 2.697313e+02 for iter 4 acc 2.539493e+02
 resi = 1.341092e+02 for iter 5 acc 2.539493e+02
- *  residual (005) = 1.341e+02 from 5.079e+04 to 2.539e+02 in  0.30 secs 
+ *  residual (005) = 1.341e+02 from 5.079e+04 to 2.539e+02 in  0.31 secs 
 (000)   0.3 s v=8.274541e+04 p=0.000000e+00 div/v=4.72e+00 dv/v=1.00e+00 dp/p=1.00e+00 step 0
 resi = 5.735006e+04 for iter 0 acc 2.539493e+02
 resi = 5.266828e+03 for iter 1 acc 2.539493e+02
 resi = 1.404548e+03 for iter 2 acc 2.539493e+02
 resi = 4.423276e+02 for iter 3 acc 2.539493e+02
 resi = 1.782904e+02 for iter 4 acc 2.539493e+02
- *  residual (004) = 1.783e+02 from 5.735e+04 to 2.539e+02 in  0.24 secs 
+ *  residual (004) = 1.783e+02 from 5.735e+04 to 2.539e+02 in  0.25 secs 
 (001)   0.6 s v=7.108766e+04 p=8.068079e+05 div/v=1.48e+00 dv/v=6.86e-01 dp/p=1.00e+00 step 0
 resi = 3.328857e+04 for iter 0 acc 2.539493e+02
 resi = 1.917809e+03 for iter 1 acc 2.539493e+02
@@ -32,7 +32,7 @@ resi = 1.325723e+02 for iter 1 acc 2.539493e+02
 resi = 8.001951e+02 for iter 0 acc 2.539493e+02
 resi = 4.694072e+01 for iter 1 acc 2.539493e+02
  *  residual (001) = 4.694e+01 from 8.002e+02 to 2.539e+02 in  0.06 secs 
-(005)   0.9 s v=6.932194e+04 p=8.422820e+05 div/v=2.07e-02 dv/v=2.07e-03 dp/p=9.40e-03 step 0
+(005)   1.0 s v=6.932194e+04 p=8.422820e+05 div/v=2.07e-02 dv/v=2.07e-03 dp/p=9.40e-03 step 0
 resi = 3.796586e+02 for iter 0 acc 2.539493e+02
 resi = 2.538687e+01 for iter 1 acc 2.539493e+02
  *  residual (001) = 2.539e+01 from 3.797e+02 to 2.539e+02 in  0.06 secs 
@@ -84,4 +84,4 @@ resi = 2.664279e+01 for iter 1 acc 2.653447e+02
 resi = 1.587762e+02 for iter 0 acc 2.653447e+02
 resi = 1.113660e+01 for iter 1 acc 2.653447e+02
  *  residual (001) = 1.114e+01 from 1.588e+02 to 2.653e+02 in  0.06 secs 
-(004)   0.4 s v=7.025089e+04 p=8.560859e+05 div/v=3.37e-03 dv/v=3.23e-04 dp/p=1.29e-03 step 2
+(004)   0.5 s v=7.025089e+04 p=8.560859e+05 div/v=3.37e-03 dv/v=3.23e-04 dp/p=1.29e-03 step 2

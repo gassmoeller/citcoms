@@ -6,15 +6,15 @@ resi = 2.060906e+03 for iter 2 acc 3.442698e+02
 resi = 7.198962e+02 for iter 3 acc 3.442698e+02
 resi = 3.476763e+02 for iter 4 acc 3.442698e+02
 resi = 1.761898e+02 for iter 5 acc 3.442698e+02
- *  residual (005) = 1.762e+02 from 6.885e+04 to 3.443e+02 in  0.30 secs 
+ *  residual (005) = 1.762e+02 from 6.885e+04 to 3.443e+02 in  0.31 secs 
 (000)   0.3 s v=1.056585e+05 p=0.000000e+00 div/v=4.83e+00 dv/v=1.00e+00 dp/p=1.00e+00 step 0
 resi = 7.800046e+04 for iter 0 acc 3.442698e+02
 resi = 6.977368e+03 for iter 1 acc 3.442698e+02
 resi = 1.833730e+03 for iter 2 acc 3.442698e+02
 resi = 5.879885e+02 for iter 3 acc 3.442698e+02
 resi = 2.380450e+02 for iter 4 acc 3.442698e+02
- *  residual (004) = 2.380e+02 from 7.800e+04 to 3.443e+02 in  0.24 secs 
-(001)   0.5 s v=9.044669e+04 p=1.057462e+06 div/v=1.50e+00 dv/v=6.92e-01 dp/p=1.00e+00 step 0
+ *  residual (004) = 2.380e+02 from 7.800e+04 to 3.443e+02 in  0.25 secs 
+(001)   0.6 s v=9.044669e+04 p=1.057462e+06 div/v=1.50e+00 dv/v=6.92e-01 dp/p=1.00e+00 step 0
 resi = 4.403968e+04 for iter 0 acc 3.442698e+02
 resi = 2.563262e+03 for iter 1 acc 3.442698e+02
 resi = 2.604141e+02 for iter 2 acc 3.442698e+02
@@ -32,7 +32,7 @@ resi = 1.795922e+02 for iter 1 acc 3.442698e+02
 resi = 1.032379e+03 for iter 0 acc 3.442698e+02
 resi = 6.199578e+01 for iter 1 acc 3.442698e+02
  *  residual (001) = 6.200e+01 from 1.032e+03 to 3.443e+02 in  0.06 secs 
-(005)   0.9 s v=8.837474e+04 p=1.101702e+06 div/v=2.05e-02 dv/v=2.04e-03 dp/p=9.16e-03 step 0
+(005)   1.0 s v=8.837474e+04 p=1.101702e+06 div/v=2.05e-02 dv/v=2.04e-03 dp/p=9.16e-03 step 0
 resi = 4.913759e+02 for iter 0 acc 3.442698e+02
 resi = 3.341138e+01 for iter 1 acc 3.442698e+02
  *  residual (001) = 3.341e+01 from 4.914e+02 to 3.443e+02 in  0.06 secs 
@@ -40,7 +40,7 @@ resi = 3.341138e+01 for iter 1 acc 3.442698e+02
 resi = 1.802152e+02 for iter 0 acc 3.442698e+02
 resi = 1.234133e+01 for iter 1 acc 3.442698e+02
  *  residual (001) = 1.234e+01 from 1.802e+02 to 3.443e+02 in  0.06 secs 
-(007)   1.0 s v=8.839595e+04 p=1.102751e+06 div/v=2.89e-03 dv/v=8.19e-04 dp/p=1.96e-03 step 0
+(007)   1.1 s v=8.839595e+04 p=1.102751e+06 div/v=2.89e-03 dv/v=8.19e-04 dp/p=1.96e-03 step 0
 Momentum equation force 6.885317818e+04
 resi = 5.026900e+02 for iter 0 acc 3.442659e+02
 resi = 1.257638e+02 for iter 1 acc 3.442659e+02
