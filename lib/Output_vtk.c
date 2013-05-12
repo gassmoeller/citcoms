@@ -1236,7 +1236,7 @@ void write_tracer_file(struct All_variables *E, int cycles)
     // this only works for E->sphere.caps_per_proc == 1
     int nselected_tracers = select_tracer_list(&E->trace,E->output.tracer_output_selection,tracer_list,1);
 
-    fprintf(stderr,"Number of output tracers:%d",nselected_tracers); //Passed
+    fprintf(stderr,"Me:%d Number of output tracers:%d\n",E->parallel.me, nselected_tracers); //Passed
 
     snprintf(vtp_file, 255, "%s.tracer_file.%d.%d.vtp",
     E->control.data_file,E->parallel.me,cycles);

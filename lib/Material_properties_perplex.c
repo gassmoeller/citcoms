@@ -643,7 +643,7 @@ static void set_non_perplex_eos(struct All_variables *E, const int idx_field)
     for (k=1;k<=(E->lmesh.noz-1)*E->composition.pressure_oversampling+1;k++)
     {
         for (l=1;l<=E->perplex.ntdeps;l++){
-            E->perplex.tab_density[idx_field][k][l] = E->perplex.tab_density[1][k][l] + E->composition.buoyancy_ratio[idx_field-2] * E->data.therm_exp * E->data.ref_temperature;
+            E->perplex.tab_density[idx_field][k][l] = E->perplex.tab_density[1][k][l] + E->composition.buoyancy_ratio[idx_field-2];
             E->perplex.tab_thermal_expansivity[idx_field][k][l] = E->perplex.tab_thermal_expansivity[1][k][l];
             E->perplex.tab_heat_capacity[idx_field][k][l] = E->perplex.tab_heat_capacity[1][k][l];
 
