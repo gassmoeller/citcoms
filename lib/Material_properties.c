@@ -225,7 +225,7 @@ static void read_refstate(struct All_variables *E)
                     &(E->refstate.heat_capacity[j]),
                     &(E->refstate.Tadi[j]),
                     &(E->refstate.Tini[j]),
-                    &(E->refstate.Tm[i]),
+                    &(E->refstate.Tm[j]),
                     &(E->refstate.free_enthalpy[j]),
                     &(E->refstate.rad_viscosity[j]),
                     &(E->refstate.stress_exp[j]),
