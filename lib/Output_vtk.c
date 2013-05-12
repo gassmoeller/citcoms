@@ -981,8 +981,8 @@ static void vtk_tracer_extraq(struct All_variables *E, int idx_extraq, const int
     fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Tracer Quantity %d\" format=\"%s\">\n", idx_extraq, E->output.vtk_format);
 
     for(j=1; j<=E->sphere.caps_per_proc; j++) {
-        for(i=1; i<=nselected_tracers; i++) {
-            floatextraq[tracers+i-1] = (float) (E->trace.extraq[j][idx_extraq][tracer_list[i]]);
+        for(i=0; i<nselected_tracers; i++) {
+            floatextraq[tracers+i] = (float) (E->trace.extraq[j][idx_extraq][tracer_list[i]]);
         }
         tracers += nselected_tracers;
     }
@@ -1009,10 +1009,10 @@ static void vtk_tracer_coord(struct All_variables *E, const int nselected_tracer
     fprintf(ft, "        <DataArray type=\"Float32\" Name=\"coordinate\" NumberOfComponents=\"3\" format=\"%s\">\n", E->output.vtk_format);
 
     for(j=1; j<=E->sphere.caps_per_proc; j++) {
-        for(i=1; i<=nselected_tracers; i++){
-                pos[(i-1)*3] = E->trace.basicq[j][3][tracer_list[i]];
-	        pos[(i-1)*3+1]= E->trace.basicq[j][4][tracer_list[i]];
-	        pos[(i-1)*3+2]= E->trace.basicq[j][5][tracer_list[i]];
+        for(i=0; i<nselected_tracers; i++){
+                pos[i*3] = E->trace.basicq[j][3][tracer_list[i]];
+	        pos[i*3+1]= E->trace.basicq[j][4][tracer_list[i]];
+	        pos[i*3+2]= E->trace.basicq[j][5][tracer_list[i]];
         }
     tracers += nselected_tracers;
     }
@@ -1069,7 +1069,7 @@ int select_tracer_list(const struct TRACE *trace, const int selection_crit, int*
     {
         if (select_tracer(trace,j,kk))
         {
-            tracer_list[i+1] = kk;
+            tracer_list[i] = kk;
             i++;
         }
     }
