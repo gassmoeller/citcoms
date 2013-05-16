@@ -719,6 +719,9 @@ static void add_sudden_cylindrical_anomaly(struct All_variables *E)
     radius       = E->convection.blob_radius;
     amp          = E->convection.blob_dT;
 
+    const double tmp = 0.5 / sqrt(E->convection.half_space_age / E->data.scalet);
+
+
     rtp2xyz(center[2],center[0],center[1],cartcenter[0]);
     rtp2xyz(center[5],center[3],center[4],cartcenter[1]);
     
@@ -743,22 +746,28 @@ static void add_sudden_cylindrical_anomaly(struct All_variables *E)
 		    dx[5] = E->x[m][2][node]/rad - cartcenter[1][1]/center[5];
 		    dx[6] = E->x[m][3][node]/rad - cartcenter[1][2]/center[5];
 
-                    if ((fabs(E->sx[m][3][node] - center[2]) < radius[2]) || (fabs(E->sx[m][3][node] - center[5]) < radius[2])){
-                    if (((dx[1]*dx[1]/(radius[0]*radius[0])) + (dx[2]*dx[2]/(radius[1]*radius[1])) < 1) || ((dx[4]*dx[4]/(radius[0]*radius[0])) + (dx[5]*dx[5]/(radius[1]*radius[1])) < 1)){
-		      E->T[m][node] += amp;
+		    if (((dx[1]*dx[1]/(radius[0]*radius[0])) + (dx[2]*dx[2]/(radius[1]*radius[1])) < 1) || ((dx[4]*dx[4]/(radius[0]*radius[0])) + (dx[5]*dx[5]/(radius[1]*radius[1])) < 1)){
+		        if ((fabs(E->sx[m][3][node] - center[2]) < radius[2]) || (fabs(E->sx[m][3][node] - center[5]) < radius[2])){
+		            E->T[m][node] += amp;
 
-		      if(E->convection.blob_bc_persist){
-			r1 = E->sx[m][3][node];
-			if((fabs(r1 - rout) < e_4) || (fabs(r1 - rin) < e_4)){
-			  /* at bottom or top of box, assign as TBC */
-			  E->sphere.cap[m].TB[1][node]=E->T[m][node];
-			  E->sphere.cap[m].TB[2][node]=E->T[m][node];
-			  E->sphere.cap[m].TB[3][node]=E->T[m][node];
-			}
-		      }
+		            if(E->convection.blob_bc_persist){
+		                r1 = E->sx[m][3][node];
+		                if((fabs(r1 - rout) < e_4) || (fabs(r1 - rin) < e_4)){
+		                    /* at bottom or top of box, assign as TBC */
+		                    E->sphere.cap[m].TB[1][node]=E->T[m][node];
+		                    E->sphere.cap[m].TB[2][node]=E->T[m][node];
+		                    E->sphere.cap[m].TB[3][node]=E->T[m][node];
+		                }
+		            }
+		        }
+		        else
+		        {
+		            r1 = E->sx[m][3][node];
+		            if (r1 >= E->convection.layer_depth)
+		                E->T[m][node] += amp * erfc(tmp * (r1 - E->convection.layer_depth));
+		        }
 		    }
                 }
-             }
     return;
 }
 
@@ -1017,7 +1026,6 @@ static void construct_tic_from_input(struct All_variables *E)
 	/* same as 101, but with spherical anomaly, like chemical LLSVP */
 	mantle_temperature = E->control.mantle_temp;
 	constant_temperature_profile(E, mantle_temperature);
-        add_bottom_tbl(E, E->convection.half_space_age, mantle_temperature);
         add_sudden_cylindrical_anomaly(E);	
 	break;
     case 103:
