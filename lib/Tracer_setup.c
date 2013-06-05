@@ -196,10 +196,34 @@ void tracer_input(struct All_variables *E)
 	      
 #endif
 	    case 2:
+		      /* flavors initialized from layers */
+	                E->trace.z_interface = (double*) malloc((E->trace.nflavors-1)
+	                                                        *sizeof(double));
+	                for(i=0; i<E->trace.nflavors-1; i++)
+	                    E->trace.z_interface[i] = 0.7;
+
+	                input_double_vector("z_interface", E->trace.nflavors-1,
+	                                    E->trace.z_interface, m);
 	    	break;
 	    case 3:
+		      /* flavors initialized from layers */
+	                E->trace.z_interface = (double*) malloc((E->trace.nflavors-1)
+	                                                        *sizeof(double));
+	                for(i=0; i<E->trace.nflavors-1; i++)
+	                    E->trace.z_interface[i] = 0.7;
+
+	                input_double_vector("z_interface", E->trace.nflavors-1,
+	                                    E->trace.z_interface, m);
 	    	break;
 	    case 4:
+		      /* flavors initialized from layers */
+	                E->trace.z_interface = (double*) malloc((E->trace.nflavors-1)
+	                                                        *sizeof(double));
+	                for(i=0; i<E->trace.nflavors-1; i++)
+	                    E->trace.z_interface[i] = 0.7;
+
+	                input_double_vector("z_interface", E->trace.nflavors-1,
+	                                    E->trace.z_interface, m);
 	    	break;
 
             default:
