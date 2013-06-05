@@ -195,6 +195,13 @@ void tracer_input(struct All_variables *E)
 	      break;
 	      
 #endif
+	    case 2:
+	    	break;
+	    case 3:
+	    	break;
+	    case 4:
+	    	break;
+
             default:
                 fprintf(stderr,"ic_method_for_flavors %i undefined (1 and 99 only for ggrd mode)\n",E->trace.ic_method_for_flavors);
                 parallel_process_termination();
@@ -401,6 +408,9 @@ static void write_trace_instructions(struct All_variables *E)
         }
        else if (E->trace.ic_method_for_flavors == 3) {
             fprintf(E->trace.fpt,"Flavors in Lithosphere and CMB\n");
+        }
+       else if (E->trace.ic_method_for_flavors == 4) {
+            fprintf(E->trace.fpt,"Cylinders in depth\n\n");
         }
 
         else {
