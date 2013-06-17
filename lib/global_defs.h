@@ -710,6 +710,7 @@ struct COMPOSITION {
 
     int ibuoy_type;
     int continents;
+    int oceanic_lithosphere;
     int chemical_changes;
 
     int pressure_oversampling;

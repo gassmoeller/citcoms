@@ -760,6 +760,7 @@ PyObject * pyCitcom_Tracer_set_properties(PyObject *self, PyObject *args)
         getDoubleVectorProperty(properties, "buoyancy_ratio", E->composition.buoyancy_ratio, E->composition.ncomp, fp);
         getDoubleVectorProperty(properties, "initial_content", E->composition.initial_content, E->composition.ncomp, fp);
         getIntProperty(properties, "continents", E->composition.continents, fp);
+        getIntProperty(properties, "oceanic_lithosphere", E->composition.oceanic_lithosphere, fp);
         getIntProperty(properties, "hotspot_tracks", E->trace.hotspot_tracks, fp);
 
     }

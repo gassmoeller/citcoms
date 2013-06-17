@@ -1589,7 +1589,15 @@ static void init_tracer_flavors(struct All_variables *E)
              if (dx[4] > 3.1415) dx[4] = 2*3.1415 - dx[4];
              radius = E->convection.blob_radius;
 
-             flavor = 0;
+             if(E->composition.oceanic_lithosphere)
+             {
+             /* general composition initial_content[2] percentage of basalt in DMM */
+             int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[2] + 1e-4));
+             flavor = min(a,1)*3;
+             }
+             else
+                 flavor = 0;
+
              if ((dx[0]*dx[0]/(radius[0]*radius[0])) + (dx[1]*dx[1]/(radius[1]*radius[1])) + (dx[2]*dx[2]/(radius[2]*radius[2])) < 1) {
                  int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[1] + 1e-4));
                  flavor = min(a,1)*2;
@@ -1615,7 +1623,14 @@ static void init_tracer_flavors(struct All_variables *E)
             for (kk=1;kk<=number_of_tracers;kk++) {
                 rad = E->trace.basicq[j][2][kk];
 
-                flavor = 0;
+                if(E->composition.oceanic_lithosphere)
+                {
+                /* general composition initial_content[2] percentage of basalt in DMM */
+                int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[2] + 1e-4));
+                flavor = min(a,1)*3;
+                }
+                else
+                    flavor = 0;
                 /*if (rad < 0.575){
                 flavor = 1;}*/
                 if (rad > E->trace.z_interface[0]){
@@ -1650,7 +1665,14 @@ static void init_tracer_flavors(struct All_variables *E)
              if (dx[4] > 3.1415) dx[4] = 2*3.1415 - dx[4];
              radius = E->convection.blob_radius;
 
-             flavor = 0;
+             if(E->composition.oceanic_lithosphere)
+             {
+             /* general composition initial_content[2] percentage of basalt in DMM */
+             int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[2] + 1e-4));
+             flavor = min(a,1)*3;
+             }
+             else
+                 flavor = 0;
 
              if (fabs(dx[2]) < radius[2])
            	  if ((dx[0]*dx[0]/(radius[0]*radius[0])) + (dx[1]*dx[1]/(radius[1]*radius[1])) < 1) {
@@ -2284,9 +2306,13 @@ void chemical_changes(struct All_variables *E)
     }
 
     for (j=1;j<=E->sphere.caps_per_proc;j++)
-      for (kk=1;kk<=E->trace.ntracers[j];kk++)
-        if ((E->trace.basicq[j][2][kk] > 0.9985) && (E->trace.extraq[j][0][kk] == 0))
-          E->trace.extraq[j][0][kk] = 1;
-
+        for (kk=1;kk<=E->trace.ntracers[j];kk++)
+        {
+            if ((E->trace.basicq[j][2][kk] > E->trace.z_interface[0]) && (E->trace.extraq[j][0][kk] != 1))
+                E->trace.extraq[j][0][kk] = 1;
+            if (E->composition.oceanic_lithosphere)
+                if ((E->trace.basicq[j][2][kk] > E->trace.z_interface[2]) && (E->trace.extraq[j][0][kk] != 1))
+                    E->trace.extraq[j][0][kk] = 0;
+        }
 }
 

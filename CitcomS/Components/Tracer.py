@@ -120,6 +120,7 @@ class Tracer(CitcomComponent):
         ntdeps = inv.int("ntdeps", default=1000)
 
         continents = inv.int("continents", default=0)
+        oceanic_lithosphere = inv.int("oceanic_lithosphere", default=0)
         tracer_origin = inv.int("tracer_origin", default=0)
         tracer_origin_set_time = inv.float("tracer_origin_set_time", default=0.0)
         chemical_changes = inv.int("chemical_changes", default=0)
