@@ -2308,10 +2308,10 @@ void chemical_changes(struct All_variables *E)
     for (j=1;j<=E->sphere.caps_per_proc;j++)
         for (kk=1;kk<=E->trace.ntracers[j];kk++)
         {
-            if ((E->trace.basicq[j][2][kk] > E->trace.z_interface[0]) && (E->trace.extraq[j][0][kk] != 1))
+            if ((E->trace.basicq[j][2][kk] > E->trace.z_interface[0]) && (E->trace.extraq[j][0][kk] != 1) && (E->trace.extraq[j][0][kk] != E->composition.ncomp))
                 E->trace.extraq[j][0][kk] = 1;
             if (E->composition.oceanic_lithosphere)
-                if ((E->trace.basicq[j][2][kk] > E->trace.z_interface[2]) && (E->trace.extraq[j][0][kk] != 1))
+                if ((E->trace.basicq[j][2][kk] > E->trace.z_interface[2]) && (E->trace.extraq[j][0][kk] != 1) && (E->trace.extraq[j][0][kk] != E->composition.ncomp))
                     E->trace.extraq[j][0][kk] = 0;
         }
 }
