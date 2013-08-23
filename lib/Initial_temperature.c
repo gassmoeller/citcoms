@@ -40,6 +40,8 @@ void parallel_process_termination();
 void temperatures_conform_bcs(struct All_variables *);
 double modified_plgndr_a(int, int, double);
 void rtp2xyzd(double,double,double,double *);
+void rtp2xyz(float,float,float,float *);
+
 
 #include "initial_temperature.h"
 static void debug_tic(struct All_variables *);
@@ -705,7 +707,7 @@ static void add_sudden_cylindrical_anomaly(struct All_variables *E)
     float *radius,*center;
     float cartcenter[2][4];
     const double e_4 = 1e-4;
-    double distance,rad;
+    double distance1,distance2,rad;
 
     noy = E->lmesh.noy;
     nox = E->lmesh.nox;
@@ -738,15 +740,17 @@ static void add_sudden_cylindrical_anomaly(struct All_variables *E)
             for(j=1; j<=nox;j ++)
                 for(k=1; k<=noz; k++) {
                     node = k + (j-1)*noz + (i-1)*nox*noz;
-                    rad = sqrt(E->x[m][1][node]*E->x[m][1][node]+E->x[m][2][node]*E->x[m][2][node] + E->x[m][3][node]*E->x[m][3][node]);
+                    rad = E->sx[m][3][node];
 		    dx[1] = E->x[m][1][node]/rad - cartcenter[0][0]/center[2];
 		    dx[2] = E->x[m][2][node]/rad - cartcenter[0][1]/center[2];
 		    dx[3] = E->x[m][3][node]/rad - cartcenter[0][2]/center[2];
 		    dx[4] = E->x[m][1][node]/rad - cartcenter[1][0]/center[5];
 		    dx[5] = E->x[m][2][node]/rad - cartcenter[1][1]/center[5];
 		    dx[6] = E->x[m][3][node]/rad - cartcenter[1][2]/center[5];
+		    distance1 = 2 * asin(0.5 * sqrt(dx[1]*dx[1]+dx[2]*dx[2]+dx[3]*dx[3]));
+                    distance2 = 2 * asin(0.5 * sqrt(dx[4]*dx[4]+dx[5]*dx[5]+dx[6]*dx[6]));
 
-		    if (((dx[1]*dx[1]/(radius[0]*radius[0])) + (dx[2]*dx[2]/(radius[1]*radius[1])) < 1) || ((dx[4]*dx[4]/(radius[0]*radius[0])) + (dx[5]*dx[5]/(radius[1]*radius[1])) < 1)){
+                    if (distance1 < radius[0] || distance2 < radius[0]){
 		        if ((fabs(E->sx[m][3][node] - center[2]) < radius[2]) || (fabs(E->sx[m][3][node] - center[5]) < radius[2])){
 		            E->T[m][node] += amp;
 

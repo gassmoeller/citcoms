@@ -90,6 +90,8 @@ void cart_to_sphere(struct All_variables *,
 void sphere_to_cart(struct All_variables *,
                     double , double , double ,
                     double *, double *, double *);
+void rtp2xyz(float,float,float,float *);
+
 int icheck_processor_shell(struct All_variables *,
                            int , double );
 static void chemical_changes(struct All_variables *E);
@@ -1643,56 +1645,55 @@ static void init_tracer_flavors(struct All_variables *E)
                 E->trace.extraq[j][0][kk] = flavor;
           }
       }
-      break;
+        break;
 
     case 4: 			/* cylindrical area near CMB with different flavor */
-         for (j=1;j<=E->sphere.caps_per_proc;j++) {
+        for (j=1;j<=E->sphere.caps_per_proc;j++) {
 
-   	number_of_tracers = E->trace.ntracers[j];
+            float cartcenter[2][4];
+            float distance1,distance2;
+            float* center       = E->convection.blob_center;
+            float* radius       = E->convection.blob_radius;
+            number_of_tracers = E->trace.ntracers[j];
+            rtp2xyz(center[2],center[0],center[1],cartcenter[0]);
+            rtp2xyz(center[5],center[3],center[4],cartcenter[1]);
 
-   	for (kk=1;kk<=number_of_tracers;kk++) {
-             flavor = 0;
-             rad = E->trace.basicq[j][2][kk];
-   	  dx[0] = E->trace.basicq[j][0][kk] - E->convection.blob_center[0];
-             if (dx[0] > 1.5708) dx[0] = 3.1415 - dx[0];
-   	  dx[1] = E->trace.basicq[j][1][kk] - E->convection.blob_center[1];
-             if (dx[1] > 3.1415) dx[1] = 2*3.1415 - dx[1];
-   	  dx[2] = E->trace.basicq[j][2][kk] - E->convection.blob_center[2];
-   	  dx[3] = E->trace.basicq[j][0][kk] - E->convection.blob_center[3];
-   	  dx[4] = E->trace.basicq[j][1][kk] - E->convection.blob_center[4];
-             if (dx[4] > 1.5708) dx[4] = 3.1415 - dx[4];
-   	  dx[5] = E->trace.basicq[j][2][kk] - E->convection.blob_center[5];
-             if (dx[4] > 3.1415) dx[4] = 2*3.1415 - dx[4];
-             radius = E->convection.blob_radius;
+            for (kk=1;kk<=number_of_tracers;kk++) {
+                flavor = 0;
+                rad = E->trace.basicq[j][2][kk] ;
+                dx[1] = E->trace.basicq[j][3][kk]/rad  - cartcenter[0][0]/center[2];
+                dx[2] = E->trace.basicq[j][4][kk]/rad  - cartcenter[0][1]/center[2];
+                dx[3] = E->trace.basicq[j][5][kk]/rad  - cartcenter[0][2]/center[2];
+                dx[4] = E->trace.basicq[j][3][kk]/rad  - cartcenter[1][0]/center[5];
+                dx[5] = E->trace.basicq[j][4][kk]/rad  - cartcenter[1][1]/center[5];
+                dx[6] = E->trace.basicq[j][5][kk]/rad  - cartcenter[1][2]/center[5];
+                distance1 = 2 * asin(0.5 * sqrt(dx[1]*dx[1]+dx[2]*dx[2]+dx[3]*dx[3]));
+                distance2 = 2 * asin(0.5 * sqrt(dx[4]*dx[4]+dx[5]*dx[5]+dx[6]*dx[6]));
 
-             if(E->composition.oceanic_lithosphere)
-             {
-             /* general composition initial_content[2] percentage of basalt in DMM */
-             int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[2] + 1e-4));
-             flavor = min(a,1)*3;
-             }
-             else
-                 flavor = 0;
+                if(E->composition.oceanic_lithosphere)
+                {
+                    /* general composition initial_content[2] percentage of basalt in DMM */
+                    int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[2] + 1e-4));
+                    flavor = min(a,1)*3;
+                }
+                else
+                    flavor = 0;
 
-             if (fabs(dx[2]) < radius[2])
-           	  if ((dx[0]*dx[0]/(radius[0]*radius[0])) + (dx[1]*dx[1]/(radius[1]*radius[1])) < 1) {
-           		  int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[1] + 1e-4));
-           		  flavor = min(a,1)*2;
-           	  }
+                if ((fabs(rad - center[2]) < radius[2]) || (fabs(rad - center[5]) < radius[2])){
+                    if (distance1 < radius[0] || distance2 < radius[0]){
+                        int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[1] + 1e-4));
+                        flavor = min(a,1)*2;
+                    }
 
-   	        if (fabs(dx[5]) < radius[5])
-   	        	if ((dx[3]*dx[3]/(radius[0]*radius[0])) + (dx[4]*dx[4]/(radius[1]*radius[1])) < 1) {
-   	        		int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[1] + 1e-4));
-   	        		flavor = min(a,1)*2;
-   	        	}
-             if (rad > E->trace.z_interface[0]){
-                 int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[0] + 1e-4));
-                 flavor = min(a,1);
-             }
-             E->trace.extraq[j][0][kk] = flavor;
-   	}
-         }
-         break;
+                    if (rad > E->trace.z_interface[0]){
+                        int a = rand()/(int)(((unsigned)RAND_MAX + 1) * (1 - E->composition.initial_content[0] + 1e-4));
+                        flavor = min(a,1);
+                    }
+                    E->trace.extraq[j][0][kk] = flavor;
+                }
+            }
+        }
+        break;
 
 
     case 99:			/* (will override restart) */
