@@ -63,6 +63,7 @@ void xyz2rtpd(float ,float ,float ,double *);
 void get_r_spacing_fine(double *,struct All_variables *);
 void get_r_spacing_at_levels(double *,struct All_variables *);
 void calc_cbase_at_node(int , int , float *,struct All_variables *);
+
 #ifdef ALLOW_ELLIPTICAL
 double theta_g(double , struct All_variables *);
 #endif
@@ -148,10 +149,21 @@ void apply_side_sbc(struct All_variables *E)
 
 double get_material_buoyancy(struct All_variables *E, int m, int i)
 {
+    const double get_adiabatic_density_correction(const struct All_variables *E,
+            const int m,
+            const int nn);
 
 	if ((E->refstate.choice == 3) || (E->refstate.choice == 4))
 	{
-		return -1.0 * E->get_rho_nd(E,m,i) / (E->data.therm_exp * E->data.ref_temperature);
+	    const double buoyancy = -1.0 * E->get_rho_nd(E,m,i) / (E->data.therm_exp * E->data.ref_temperature);
+
+		// If incompressible, need to correct buoyancy for compressible density increase
+		/*if (E->control.inv_gruneisen <= F_EPS)
+		{
+		    const double density_correction = get_adiabatic_density_correction(E,m,i);
+		    return buoyancy / density_correction;
+		}*/
+		return buoyancy;
 	}
 	else
 	{

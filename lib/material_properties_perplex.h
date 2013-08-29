@@ -43,6 +43,7 @@ const double get_rho_nd_perplex(const struct All_variables *E, const int m, cons
 const double get_vp_nd_perplex(const struct All_variables *E, const int m, const int nn);
 const double get_vs_nd_perplex(const struct All_variables *E, const int m, const int nn);
 const double get_radheat_nd_perplex(const struct All_variables *E, const int m, const int nn);
+const double get_adabatic_density_correction(const struct All_variables *E, const int m,const int nn);
 
 struct IDs
     {

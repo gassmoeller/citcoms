@@ -361,13 +361,13 @@ const double get_adiabatic_correction(const struct All_variables *E, const int n
         return 0.0;
 }
 
-const double get_refTemp(const struct All_variables *E, const int m, const int nn, const int nz)
+const double get_refTemp(const struct All_variables *E, const double T, const int nz)
 {
 	const double compressible_factor = (E->control.disptn_number <= F_EPS) ? 0.0 : 1.0;
 	const double compressible_correction = E->refstate.Tadi[nz]
 			- E->control.adiabaticT0 * E->data.ref_temperature;
 
-    double refTemp = get_dimensionalT(E->T[m][nn],E->control.surface_temp,E->data.ref_temperature)
+    double refTemp = get_dimensionalT(T,E->control.surface_temp,E->data.ref_temperature)
     		- E->perplex.start_temp
     		+ get_adiabatic_correction(E,nz);
 

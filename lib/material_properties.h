@@ -39,7 +39,7 @@ double get_vs_el(struct All_variables *, int m, int el);
 const double get_radheat_el(const struct All_variables *, const int m, const int el);
 
 const double get_adiabatic_correction(const struct All_variables *E, const int nz);
-const double get_refTemp(const struct All_variables *, const int m, const int nn, const int nz);
+const double get_refTemp(const struct All_variables *, const double T, const int nz);
 const int idxTemp(const double refTemp, const float delta_temp, const int ntempsteps);
 const int idxNz (const int nn, const int noz);
 

@@ -795,14 +795,19 @@ void read_perplex_data (struct All_variables *E)
     free(Tadi);
 }
 
-const double get_property_nd_perplex(const struct All_variables *E, const double*** property, const int m, const int nn, const int temperature_accurate)
+
+const double get_property_perplex(const struct All_variables *E,
+        const double*** property,
+        const double refTemp,
+        const int m,
+        const int nn,
+        const int nz,
+        const int temperature_accurate)
 {
     int i,j;
 
     double prop = 0.0;
     double deltaT;
-
-    const int nz = idxNz(nn, E->lmesh.noz);
 
     /* Calculating the borders in the case of pressure_oversampling == x > 1 (x times more depth nodes in material table than in model)
      * In case pressure_oversampling == 1 : nzmin == nzmax == nz
@@ -810,7 +815,6 @@ const double get_property_nd_perplex(const struct All_variables *E, const double
     const int nzmin = max(E->composition.pressure_oversampling*(nz-1) + 1 - E->composition.pressure_oversampling/2,1);
     const int nzmax = min(E->composition.pressure_oversampling*(nz-1) + 1 + E->composition.pressure_oversampling/2,(E->lmesh.noz-1)*E->composition.pressure_oversampling+1);
 
-    const double refTemp = get_refTemp(E,m,nn,nz);
     const int nT = idxTemp(refTemp,E->perplex.delta_temp,E->perplex.ntdeps);
 
     const double weight = (temperature_accurate == 1) ? fmax(fmin(refTemp / E->perplex.delta_temp - (nT-1),1),0) : 0.0;
@@ -832,13 +836,33 @@ const double get_property_nd_perplex(const struct All_variables *E, const double
     return prop;
 }
 
+const double get_property_nd_perplex(const struct All_variables *E, const double*** property, const int m, const int nn, const int temperature_accurate)
+{
+    const int nz = idxNz(nn, E->lmesh.noz);
+    const double refTemp = get_refTemp(E,E->T[m][nn],nz);
+
+    return get_property_perplex(E,property,refTemp,m,nn,nz,temperature_accurate);
+}
+
+const double get_adiabatic_density_correction(const struct All_variables *E,
+        const int m,
+        const int nn)
+{
+    const int temperature_accurate = 1;
+    const int nz = idxNz(nn,E->lmesh.noz);
+    const double refTemp = fmax(fmin(E->refstate.Tadi[nz],E->perplex.end_temp-E->perplex.start_temp),0);
+
+
+    return get_property_perplex(E,(const double ***)E->perplex.tab_density,refTemp,m,nn,nz,temperature_accurate);
+}
+
 const double get_radheat_nd_perplex(const struct All_variables *E, const int m,const int nn)
 {
 
     const int nz = idxNz(nn,E->lmesh.noz);
     const int idxnode = (nz - 1) * E->composition.pressure_oversampling + 1;
 
-    const double refTemp = get_refTemp(E,m,nn,nz);
+    const double refTemp = get_refTemp(E,E->T[m][nn],nz);
     const int nT = idxTemp(refTemp,E->perplex.delta_temp,E->perplex.ntdeps);
     const double weight = fmax(fmin(refTemp / E->perplex.delta_temp - (nT-1),1),0);
 
