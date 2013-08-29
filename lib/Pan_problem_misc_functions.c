@@ -158,11 +158,11 @@ double get_material_buoyancy(struct All_variables *E, int m, int i)
 	    const double buoyancy = -1.0 * E->get_rho_nd(E,m,i) / (E->data.therm_exp * E->data.ref_temperature);
 
 		// If incompressible, need to correct buoyancy for compressible density increase
-		/*if (E->control.inv_gruneisen <= F_EPS)
+		if (E->control.inv_gruneisen <= F_EPS)
 		{
 		    const double density_correction = get_adiabatic_density_correction(E,m,i);
 		    return buoyancy / density_correction;
-		}*/
+		}
 		return buoyancy;
 	}
 	else
