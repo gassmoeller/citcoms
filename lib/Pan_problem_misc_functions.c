@@ -161,6 +161,8 @@ double get_material_buoyancy(struct All_variables *E, int m, int i)
 		if (E->control.inv_gruneisen <= F_EPS)
 		{
 		    const double density_correction = get_adiabatic_density_correction(E,m,i);
+		    if ((E->control.verbose) && (E->parallel.me < E->parallel.nprocz) && (i < E->lmesh.noz))
+		        fprintf (stderr, "noz: %d density_correction: %f\n", idxNz(i,E->lmesh.noz),density_correction);
 		    return buoyancy / density_correction;
 		}
 		return buoyancy;

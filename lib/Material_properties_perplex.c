@@ -850,7 +850,9 @@ const double get_adiabatic_density_correction(const struct All_variables *E,
 {
     const int temperature_accurate = 1;
     const int nz = idxNz(nn,E->lmesh.noz);
-    const double refTemp = fmax(fmin(E->refstate.Tadi[nz],E->perplex.end_temp-E->perplex.start_temp),0);
+    const double refTemp = fmax(fmin(E->refstate.Tadi[nz]-E->perplex.start_temp,E->perplex.end_temp-E->perplex.start_temp),0);
+    if ((E->control.verbose) && (E->parallel.me < E->parallel.nprocz) && (nn < E->lmesh.noz))
+        fprintf (stderr, "noz: %d refTemp: %f\n", nz,refTemp);
 
 
     return get_property_perplex(E,(const double ***)E->perplex.tab_density,refTemp,m,nn,nz,temperature_accurate);
