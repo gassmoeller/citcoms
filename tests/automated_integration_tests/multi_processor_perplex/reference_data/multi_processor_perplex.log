@@ -1,65 +1,65 @@
 Total temperature contrast = 1180.216431 K
 Problem has 17 x 33 x 17 nodes per cap, 9537 nodes and 8192 elements in total
 Momentum equation force 1.956460631e+02
- *  residual (036) = 8.311e-01 from 1.956e+02 to 9.782e-01 in  0.10 secs 
+ *  residual (036) = 8.311e-01 from 1.956e+02 to 9.782e-01 in  0.06 secs 
 (000)   0.1 s v=5.395620e+01 p=0.000000e+00 div/v=1.15e+01 dv/v=1.00e+00 dp/p=1.00e+00 step 0
- *  residual (031) = 9.450e-01 from 2.231e+02 to 9.782e-01 in  0.08 secs 
-(001)   0.2 s v=4.948027e+01 p=1.295996e+03 div/v=3.02e+00 dv/v=4.07e-01 dp/p=1.00e+00 step 0
- *  residual (020) = 9.387e-01 from 4.313e+01 to 9.782e-01 in  0.05 secs 
+ *  residual (031) = 9.450e-01 from 2.231e+02 to 9.782e-01 in  0.06 secs 
+(001)   0.1 s v=4.948027e+01 p=1.295996e+03 div/v=3.02e+00 dv/v=4.07e-01 dp/p=1.00e+00 step 0
+ *  residual (020) = 9.387e-01 from 4.313e+01 to 9.782e-01 in  0.03 secs 
 (002)   0.2 s v=4.915794e+01 p=1.333211e+03 div/v=7.40e-01 dv/v=9.48e-02 dp/p=2.40e-01 step 0
  *  residual (010) = 9.635e-01 from 9.383e+00 to 9.782e-01 in  0.02 secs 
-(003)   0.3 s v=4.917353e+01 p=1.335998e+03 div/v=2.75e-01 dv/v=2.30e-02 dp/p=5.79e-02 step 0
- *  residual (006) = 9.402e-01 from 4.116e+00 to 9.782e-01 in  0.02 secs 
-(004)   0.3 s v=4.916697e+01 p=1.335585e+03 div/v=9.82e-02 dv/v=7.97e-03 dp/p=2.49e-02 step 0
+(003)   0.2 s v=4.917353e+01 p=1.335998e+03 div/v=2.75e-01 dv/v=2.30e-02 dp/p=5.79e-02 step 0
+ *  residual (006) = 9.402e-01 from 4.116e+00 to 9.782e-01 in  0.01 secs 
+(004)   0.2 s v=4.916697e+01 p=1.335585e+03 div/v=9.82e-02 dv/v=7.97e-03 dp/p=2.49e-02 step 0
  *  residual (002) = 6.705e-01 from 1.872e+00 to 9.782e-01 in  0.00 secs 
-(005)   0.3 s v=4.916568e+01 p=1.333650e+03 div/v=6.86e-02 dv/v=1.90e-03 dp/p=1.30e-02 step 0
+(005)   0.2 s v=4.916568e+01 p=1.333650e+03 div/v=6.86e-02 dv/v=1.90e-03 dp/p=1.30e-02 step 0
  *  residual (001) = 9.743e-01 from 1.549e+00 to 9.782e-01 in  0.00 secs 
-(006)   0.3 s v=4.916509e+01 p=1.331193e+03 div/v=7.51e-02 dv/v=1.21e-03 dp/p=1.49e-02 step 0
- *  residual (005) = 8.792e-01 from 2.529e+00 to 9.782e-01 in  0.02 secs 
-(007)   0.3 s v=4.916315e+01 p=1.330721e+03 div/v=6.41e-02 dv/v=2.13e-03 dp/p=5.24e-03 step 0
+(006)   0.2 s v=4.916509e+01 p=1.331193e+03 div/v=7.51e-02 dv/v=1.21e-03 dp/p=1.49e-02 step 0
+ *  residual (005) = 8.792e-01 from 2.529e+00 to 9.782e-01 in  0.01 secs 
+(007)   0.2 s v=4.916315e+01 p=1.330721e+03 div/v=6.41e-02 dv/v=2.13e-03 dp/p=5.24e-03 step 0
  *  residual (002) = 8.034e-01 from 3.845e+00 to 9.782e-01 in  0.00 secs 
-(008)   0.3 s v=4.916302e+01 p=1.330873e+03 div/v=4.81e-02 dv/v=5.33e-04 dp/p=5.58e-03 step 0
+(008)   0.2 s v=4.916302e+01 p=1.330873e+03 div/v=4.81e-02 dv/v=5.33e-04 dp/p=5.58e-03 step 0
  *  residual (001) = 9.682e-01 from 1.745e+00 to 9.782e-01 in  0.00 secs 
-(009)   0.3 s v=4.916306e+01 p=1.331987e+03 div/v=6.56e-02 dv/v=5.26e-04 dp/p=7.76e-03 step 0
- *  residual (009) = 8.828e-01 from 2.504e+00 to 9.782e-01 in  0.02 secs 
-(010)   0.3 s v=4.916199e+01 p=1.332373e+03 div/v=5.96e-02 dv/v=1.47e-03 dp/p=2.50e-03 step 0
- *  residual (005) = 8.655e-01 from 4.265e+00 to 9.782e-01 in  0.02 secs 
-(011)   0.4 s v=4.916210e+01 p=1.332724e+03 div/v=5.13e-02 dv/v=7.74e-04 dp/p=2.67e-03 step 0
-Momentum equation force 2.034444320e+02
- *  residual (038) = 8.898e-01 from 1.993e+01 to 1.017e+00 in  0.11 secs 
-(000)   0.1 s v=6.537036e+01 p=1.332724e+03 div/v=1.29e+00 dv/v=1.00e+00 dp/p=1.00e+00 step 1
- *  residual (027) = 1.017e+00 from 1.568e+01 to 1.017e+00 in  0.12 secs 
-(001)   0.2 s v=6.507257e+01 p=1.420653e+03 div/v=3.18e-01 dv/v=9.05e-02 dp/p=1.22e-01 step 1
- *  residual (012) = 9.976e-01 from 6.022e+00 to 1.017e+00 in  0.03 secs 
-(002)   0.3 s v=6.504552e+01 p=1.436265e+03 div/v=9.56e-02 dv/v=1.56e-02 dp/p=3.14e-02 step 1
- *  residual (004) = 8.078e-01 from 2.216e+00 to 1.017e+00 in  0.01 secs 
-(003)   0.3 s v=6.503871e+01 p=1.435016e+03 div/v=6.20e-02 dv/v=3.13e-03 dp/p=1.29e-02 step 1
- *  residual (002) = 9.279e-01 from 1.598e+00 to 1.017e+00 in  0.00 secs 
-(004)   0.3 s v=6.503744e+01 p=1.435709e+03 div/v=7.17e-02 dv/v=1.63e-03 dp/p=1.66e-02 step 1
- *  residual (008) = 1.006e+00 from 2.361e+00 to 1.017e+00 in  0.02 secs 
-(005)   0.3 s v=6.503478e+01 p=1.435473e+03 div/v=6.34e-02 dv/v=3.58e-03 dp/p=5.34e-03 step 1
- *  residual (002) = 9.575e-01 from 3.277e+00 to 1.017e+00 in  0.00 secs 
-(006)   0.3 s v=6.503462e+01 p=1.434596e+03 div/v=4.62e-02 dv/v=6.26e-04 dp/p=8.15e-03 step 1
- *  residual (002) = 9.403e-01 from 1.479e+00 to 1.017e+00 in  0.00 secs 
-(007)   0.3 s v=6.503441e+01 p=1.433739e+03 div/v=4.91e-02 dv/v=7.79e-04 dp/p=8.14e-03 step 1
- *  residual (005) = 9.565e-01 from 2.204e+00 to 1.017e+00 in  0.01 secs 
-(008)   0.3 s v=6.503419e+01 p=1.433635e+03 div/v=4.15e-02 dv/v=1.29e-03 dp/p=3.56e-03 step 1
- *  residual (002) = 9.997e-01 from 2.498e+00 to 1.017e+00 in  0.01 secs 
-(009)   0.3 s v=6.503414e+01 p=1.433974e+03 div/v=2.95e-02 dv/v=4.12e-04 dp/p=4.50e-03 step 1
-Momentum equation force 2.270808920e+02
- *  residual (039) = 8.693e-01 from 4.779e+01 to 1.135e+00 in  0.11 secs 
-(000)   0.1 s v=1.093319e+02 p=1.433974e+03 div/v=1.78e+00 dv/v=1.00e+00 dp/p=1.00e+00 step 2
- *  residual (036) = 1.080e+00 from 3.461e+01 to 1.135e+00 in  0.10 secs 
-(001)   0.2 s v=1.084974e+02 p=1.664589e+03 div/v=4.64e-01 dv/v=1.33e-01 dp/p=2.39e-01 step 2
- *  residual (021) = 1.120e+00 from 1.396e+01 to 1.135e+00 in  0.06 secs 
-(002)   0.3 s v=1.083185e+02 p=1.701615e+03 div/v=1.32e-01 dv/v=2.82e-02 dp/p=6.17e-02 step 2
- *  residual (008) = 1.130e+00 from 4.619e+00 to 1.135e+00 in  0.02 secs 
-(003)   0.3 s v=1.083286e+02 p=1.701735e+03 div/v=5.40e-02 dv/v=5.37e-03 dp/p=1.81e-02 step 2
- *  residual (003) = 8.506e-01 from 2.277e+00 to 1.135e+00 in  0.01 secs 
-(004)   0.3 s v=1.083335e+02 p=1.705230e+03 div/v=2.86e-02 dv/v=1.27e-03 dp/p=1.00e-02 step 2
- *  residual (001) = 1.046e+00 from 1.853e+00 to 1.135e+00 in  0.00 secs 
-(005)   0.3 s v=1.083344e+02 p=1.708588e+03 div/v=3.80e-02 dv/v=4.24e-04 dp/p=1.13e-02 step 2
- *  residual (006) = 1.121e+00 from 3.623e+00 to 1.135e+00 in  0.02 secs 
-(006)   0.3 s v=1.083392e+02 p=1.709860e+03 div/v=3.35e-02 dv/v=1.07e-03 dp/p=3.70e-03 step 2
- *  residual (003) = 1.129e+00 from 7.129e+00 to 1.135e+00 in  0.01 secs 
-(007)   0.3 s v=1.083403e+02 p=1.710776e+03 div/v=2.59e-02 dv/v=3.66e-04 dp/p=4.03e-03 step 2
+(009)   0.2 s v=4.916306e+01 p=1.331987e+03 div/v=6.56e-02 dv/v=5.26e-04 dp/p=7.76e-03 step 0
+ *  residual (009) = 8.828e-01 from 2.504e+00 to 9.782e-01 in  0.01 secs 
+(010)   0.2 s v=4.916199e+01 p=1.332373e+03 div/v=5.96e-02 dv/v=1.47e-03 dp/p=2.50e-03 step 0
+ *  residual (005) = 8.655e-01 from 4.265e+00 to 9.782e-01 in  0.01 secs 
+(011)   0.2 s v=4.916210e+01 p=1.332724e+03 div/v=5.13e-02 dv/v=7.74e-04 dp/p=2.67e-03 step 0
+Momentum equation force 2.029948767e+02
+ *  residual (038) = 9.191e-01 from 1.998e+01 to 1.015e+00 in  0.07 secs 
+(000)   0.1 s v=6.536372e+01 p=1.332724e+03 div/v=1.29e+00 dv/v=1.00e+00 dp/p=1.00e+00 step 1
+ *  residual (027) = 1.007e+00 from 1.578e+01 to 1.015e+00 in  0.05 secs 
+(001)   0.1 s v=6.506605e+01 p=1.419716e+03 div/v=3.18e-01 dv/v=9.05e-02 dp/p=1.22e-01 step 1
+ *  residual (012) = 1.002e+00 from 6.023e+00 to 1.015e+00 in  0.03 secs 
+(002)   0.2 s v=6.503902e+01 p=1.435222e+03 div/v=9.56e-02 dv/v=1.56e-02 dp/p=3.15e-02 step 1
+ *  residual (004) = 8.051e-01 from 2.220e+00 to 1.015e+00 in  0.01 secs 
+(003)   0.2 s v=6.503222e+01 p=1.434019e+03 div/v=6.20e-02 dv/v=3.14e-03 dp/p=1.30e-02 step 1
+ *  residual (002) = 9.303e-01 from 1.596e+00 to 1.015e+00 in  0.01 secs 
+(004)   0.2 s v=6.503094e+01 p=1.434683e+03 div/v=7.18e-02 dv/v=1.63e-03 dp/p=1.66e-02 step 1
+ *  residual (008) = 1.010e+00 from 2.370e+00 to 1.015e+00 in  0.02 secs 
+(005)   0.2 s v=6.502829e+01 p=1.434436e+03 div/v=6.35e-02 dv/v=3.58e-03 dp/p=5.34e-03 step 1
+ *  residual (002) = 9.591e-01 from 3.286e+00 to 1.015e+00 in  0.01 secs 
+(006)   0.2 s v=6.502812e+01 p=1.433548e+03 div/v=4.62e-02 dv/v=6.26e-04 dp/p=8.16e-03 step 1
+ *  residual (002) = 9.421e-01 from 1.478e+00 to 1.015e+00 in  0.01 secs 
+(007)   0.2 s v=6.502792e+01 p=1.432702e+03 div/v=4.91e-02 dv/v=7.80e-04 dp/p=8.15e-03 step 1
+ *  residual (005) = 9.558e-01 from 2.207e+00 to 1.015e+00 in  0.01 secs 
+(008)   0.2 s v=6.502770e+01 p=1.432606e+03 div/v=4.15e-02 dv/v=1.29e-03 dp/p=3.57e-03 step 1
+ *  residual (002) = 1.002e+00 from 2.504e+00 to 1.015e+00 in  0.00 secs 
+(009)   0.2 s v=6.502765e+01 p=1.432957e+03 div/v=2.95e-02 dv/v=4.12e-04 dp/p=4.51e-03 step 1
+Momentum equation force 2.259055721e+02
+ *  residual (039) = 8.886e-01 from 4.785e+01 to 1.130e+00 in  0.07 secs 
+(000)   0.1 s v=1.093105e+02 p=1.432957e+03 div/v=1.78e+00 dv/v=1.00e+00 dp/p=1.00e+00 step 2
+ *  residual (036) = 1.081e+00 from 3.478e+01 to 1.130e+00 in  0.08 secs 
+(001)   0.2 s v=1.084765e+02 p=1.661977e+03 div/v=4.64e-01 dv/v=1.33e-01 dp/p=2.39e-01 step 2
+ *  residual (021) = 1.123e+00 from 1.395e+01 to 1.130e+00 in  0.06 secs 
+(002)   0.2 s v=1.082975e+02 p=1.698900e+03 div/v=1.32e-01 dv/v=2.82e-02 dp/p=6.18e-02 step 2
+ *  residual (008) = 1.126e+00 from 4.626e+00 to 1.130e+00 in  0.03 secs 
+(003)   0.3 s v=1.083075e+02 p=1.699090e+03 div/v=5.40e-02 dv/v=5.37e-03 dp/p=1.82e-02 step 2
+ *  residual (003) = 8.488e-01 from 2.275e+00 to 1.130e+00 in  0.01 secs 
+(004)   0.3 s v=1.083124e+02 p=1.702565e+03 div/v=2.86e-02 dv/v=1.27e-03 dp/p=1.00e-02 step 2
+ *  residual (001) = 1.045e+00 from 1.847e+00 to 1.130e+00 in  0.00 secs 
+(005)   0.3 s v=1.083133e+02 p=1.705916e+03 div/v=3.80e-02 dv/v=4.24e-04 dp/p=1.13e-02 step 2
+ *  residual (006) = 1.123e+00 from 3.621e+00 to 1.130e+00 in  0.03 secs 
+(006)   0.3 s v=1.083181e+02 p=1.707188e+03 div/v=3.35e-02 dv/v=1.07e-03 dp/p=3.71e-03 step 2
+ *  residual (006) = 1.042e+00 from 7.125e+00 to 1.130e+00 in  0.02 secs 
+(007)   0.3 s v=1.083206e+02 p=1.707871e+03 div/v=2.92e-02 dv/v=7.66e-04 dp/p=3.01e-03 step 2

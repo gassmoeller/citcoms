@@ -15,7 +15,7 @@ Total Number of Tracer Quantities: 13
 Active Tracers
 Ratio Method
 Buoyancy Ratio: 0.000000
-Tracer initialization takes 0.000088 seconds.
+Tracer initialization takes 0.000083 seconds.
 
 Generating 81920 Tracers
 Physical size of tracer arrays (max_ntracers): 102400
