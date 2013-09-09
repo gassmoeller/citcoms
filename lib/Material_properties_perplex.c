@@ -40,6 +40,15 @@
 #include "parallel_related.h"
 #include "output.h"
 
+const double get_property_perplex(const struct All_variables *E,
+        const double*** property,
+        const double refTemp,
+        const int m,
+        const int nn,
+        const int nz,
+        const int temperature_accurate,
+        const int composition_dependent);
+
 
 void allocate_perplex_refstate(struct All_variables *E)
 {
@@ -769,24 +778,42 @@ void read_perplex_data (struct All_variables *E)
 
     			if (i == 1)
     			{
-    				allocate_perplex_refstate(E);
-    				// Calculate adiabatic reference profile
-    				set_adiabatic_profile(E,&Padi,&Tadi,&perplex_table,cperplex_data);
-    				int j;
-    				for (j=1;j<=(E->lmesh.noz-1)*E->composition.pressure_oversampling+1;j++)
-    				{
-    					if ((j-1) % E->composition.pressure_oversampling == 0)
-    					{
-    						int k = (j-1) / E->composition.pressure_oversampling + 1;
-    						E->refstate.Tadi[k] = Tadi[j];
-    						if (E->control.verbose) printf("I am:%d k:%d Tadi:%f pressure:%f\n",E->parallel.me,k,Tadi[j],Padi[j]);
-    					}
-    				}
+    			    allocate_perplex_refstate(E);
+    			    // Calculate adiabatic reference profile
+    			    set_adiabatic_profile(E,&Padi,&Tadi,&perplex_table,cperplex_data);
+    			    int j;
+    			    for (j=1;j<=(E->lmesh.noz-1)*E->composition.pressure_oversampling+1;j++)
+    			    {
+    			        if ((j-1) % E->composition.pressure_oversampling == 0)
+    			        {
+    			            const double get_adiabatic_density_correction(const struct All_variables *E,
+    			                    const int m,
+    			                    const int nn);
+    			            int k = (j-1) / E->composition.pressure_oversampling + 1;
+    			            E->refstate.Tadi[k] = Tadi[j];
+    			            if (E->control.verbose) printf("I am:%d k:%d Tadi:%f pressure:%f\n",E->parallel.me,k,Tadi[j],Padi[j]);
+    			        }
+    			    }
 
     			}
 
     			// Transform to CitcomS data
     			calculate_refstate_data(E,cperplex_table,(const double *) Padi,cperplex_data,i);
+
+    			if (i == 1)
+    			{
+    			    int k;
+    			    for (k=1;k<=E->lmesh.noz;k++)
+    			    {
+    			        const int temperature_accurate = 1;
+    			        const double refTemp = fmax(fmin(E->refstate.Tadi[k]-E->perplex.start_temp,E->perplex.end_temp-E->perplex.start_temp),0);
+    			        if ((E->control.verbose) && (E->parallel.me < E->parallel.nprocz))
+    			            fprintf (stderr, "noz: %d refTemp: %f\n", k,refTemp);
+
+    			        E->refstate.rho[k] = get_property_perplex(E,(const double ***)E->perplex.tab_density,refTemp,1,k,k,temperature_accurate,0);
+    			    }
+    			}
+
     			free_perplex_data(&perplex_table,&perplex_data);
     		}
     	}
@@ -802,7 +829,8 @@ const double get_property_perplex(const struct All_variables *E,
         const int m,
         const int nn,
         const int nz,
-        const int temperature_accurate)
+        const int temperature_accurate,
+        const int composition_dependent)
 {
     int i,j;
 
@@ -822,10 +850,12 @@ const double get_property_perplex(const struct All_variables *E,
     for (i=nzmin;i<=nzmax;i++){
         double proportion_normal_material = 1.0;
 
+        if (composition_dependent){
         for(j=0;j<E->composition.ncomp;j++){
             if (E->perplex.absolute_properties) proportion_normal_material -= E->composition.comp_node[m][j][nn];
             prop +=  (1-weight) * property[j+2][i][nT]*E->composition.comp_node[m][j][nn];
             prop +=  weight * property[j+2][i][nT+1]*E->composition.comp_node[m][j][nn];
+        }
         }
 
         prop += (1-weight) * property[1][i][nT] * proportion_normal_material;
@@ -841,21 +871,7 @@ const double get_property_nd_perplex(const struct All_variables *E, const double
     const int nz = idxNz(nn, E->lmesh.noz);
     const double refTemp = get_refTemp(E,E->T[m][nn],nz);
 
-    return get_property_perplex(E,property,refTemp,m,nn,nz,temperature_accurate);
-}
-
-const double get_adiabatic_density_correction(const struct All_variables *E,
-        const int m,
-        const int nn)
-{
-    const int temperature_accurate = 1;
-    const int nz = idxNz(nn,E->lmesh.noz);
-    const double refTemp = fmax(fmin(E->refstate.Tadi[nz]-E->perplex.start_temp,E->perplex.end_temp-E->perplex.start_temp),0);
-    if ((E->control.verbose) && (E->parallel.me < E->parallel.nprocz) && (nn < E->lmesh.noz))
-        fprintf (stderr, "noz: %d refTemp: %f\n", nz,refTemp);
-
-
-    return get_property_perplex(E,(const double ***)E->perplex.tab_density,refTemp,m,nn,nz,temperature_accurate);
+    return get_property_perplex(E,property,refTemp,m,nn,nz,temperature_accurate,1);
 }
 
 const double get_radheat_nd_perplex(const struct All_variables *E, const int m,const int nn)
@@ -906,7 +922,15 @@ const double get_alpha_nd_perplex(const struct All_variables *E, const int m, co
 const double get_rho_nd_perplex(const struct All_variables *E, const int m, const int nn)
 {
 	const int temperature_accurate = 1;
-	return get_property_nd_perplex(E,(const double ***)E->perplex.tab_density,m,nn,temperature_accurate);
+	const double value = get_property_nd_perplex(E,(const double ***)E->perplex.tab_density,m,nn,temperature_accurate);
+
+        // If incompressible, need to correct density for compressible density increase
+        if (E->control.inv_gruneisen <= F_EPS)
+        {
+            const int nz = idxNz(nn,E->lmesh.noz);
+            return value / E->refstate.rho[nz];
+        }
+	return value;
 }
 
 const double get_vs_nd_perplex(const struct All_variables *E, const int m, const int nn)

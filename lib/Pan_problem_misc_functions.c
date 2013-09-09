@@ -149,43 +149,30 @@ void apply_side_sbc(struct All_variables *E)
 
 double get_material_buoyancy(struct All_variables *E, int m, int i)
 {
-    const double get_adiabatic_density_correction(const struct All_variables *E,
-            const int m,
-            const int nn);
 
-	if ((E->refstate.choice == 3) || (E->refstate.choice == 4))
-	{
-	    const double buoyancy = -1.0 * E->get_rho_nd(E,m,i) / (E->data.therm_exp * E->data.ref_temperature);
+    if ((E->refstate.choice == 3) || (E->refstate.choice == 4))
+    {
+        return -1.0 * E->get_rho_nd(E,m,i) / (E->data.therm_exp * E->data.ref_temperature);
+    }
+    else
+    {
+        int j;
+        double buoy;
+        const int nz = idxNz(i,E->lmesh.noz);
+        /* We don't need to substract adiabatic T profile from T here,
+         * * since the horizontal average of buoy will be removed.*/
+        buoy =  E->refstate.rho[nz] * E->refstate.thermal_expansivity[nz] * E->T[m][i];
 
-		// If incompressible, need to correct buoyancy for compressible density increase
-		if (E->control.inv_gruneisen <= F_EPS)
-		{
-		    const double density_correction = get_adiabatic_density_correction(E,m,i);
-		    if ((E->control.verbose) && (E->parallel.me < E->parallel.nprocz) && (i < E->lmesh.noz))
-		        fprintf (stderr, "noz: %d density_correction: %f\n", idxNz(i,E->lmesh.noz),density_correction);
-		    return buoyancy / density_correction;
-		}
-		return buoyancy;
-	}
-	else
-	{
-		int j;
-		double buoy;
-		const int nz = idxNz(i,E->lmesh.noz);
-		/* We don't need to substract adiabatic T profile from T here,
-		 * * since the horizontal average of buoy will be removed.*/
-		buoy =  E->refstate.rho[nz] * E->refstate.thermal_expansivity[nz] * E->T[m][i];
-
-		/* chemical buoyancy */
-		if(E->control.tracer &&
-				(E->composition.ichemical_buoyancy)) {
-			for(j=0;j<E->composition.ncomp;j++) {
-				/* TODO: how to scale chemical buoyancy wrt reference density? */
-				buoy -= E->composition.buoyancy_ratio[j] * E->composition.comp_node[m][j][i];
-			}
-		}
-		return buoy;
-	}
+        /* chemical buoyancy */
+        if(E->control.tracer &&
+                (E->composition.ichemical_buoyancy)) {
+            for(j=0;j<E->composition.ncomp;j++) {
+                /* TODO: how to scale chemical buoyancy wrt reference density? */
+                buoy -= E->composition.buoyancy_ratio[j] * E->composition.comp_node[m][j][i];
+            }
+        }
+        return buoy;
+    }
 }
 
 void get_buoyancy(struct All_variables *E, double **buoy)
