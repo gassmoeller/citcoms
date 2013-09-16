@@ -971,6 +971,38 @@ void write_pvd(struct All_variables *E, int cycles)
     fclose(fp);
 }
 
+static void write_vtm(struct All_variables *E, int cycles)
+{
+    FILE *fp;
+    char vtm_file[255];
+    int n;
+
+    const char header[] =
+        "<?xml version=\"1.0\"?>\n"
+        "<VTKFile type=\"vtkMultiBlockDataSet\" version=\"1.0\"%s>\n"
+        "  <vtkMultiBlockDataSet>\n";
+
+    char compressor_string[128];
+
+    get_compressor_string(strcmp(E->output.vtk_format,"binary"),128,compressor_string);
+
+    snprintf(vtm_file, 255, "%s.%d.vtm",
+             E->control.data_file, cycles);
+    fp = output_open(vtm_file, "w");
+
+    fprintf(fp,header,compressor_string);
+
+    for(n=0; n<E->parallel.nproc; n++) {
+        fprintf(fp, "    <DataSet index=\"%d\" file=\"%s.proc%d.%d.vts\"/>\n",
+                n, E->control.data_prefix, n, cycles);
+    }
+    fputs("  </vtkMultiBlockDataSet>\n",fp);
+    fputs("</VTKFile>",fp);
+
+    fclose(fp);
+}
+
+
 static void vtk_tracer_extraq(struct All_variables *E, int idx_extraq, const int nselected_tracers, const int* tracer_list, FILE *fp)
 {
     int i, j;
@@ -1738,8 +1770,12 @@ void vtk_output(struct All_variables *E, int cycles)
     /* if processor is first of cap write summary for simple reading */
     if (E->parallel.me%procs_per_cap == 0) write_pvts(E, cycles);
 
-    /* if processor is second write pvd for real time in vtk */
-    if (E->parallel.me == 1%procs_per_cap) write_pvd(E, cycles);
+    /* if processor is second write pvd (for real time in ParaView
+     * and vtm (for easy access from vtk  */
+    if (E->parallel.me == 1%procs_per_cap){
+        write_pvd(E, cycles);
+        write_vtm(E, cycles);
+    }
 
     if ((E->output.write_tracer_file) && (E->monitor.elapsed_time >= E->output.tracer_file_time) && (E->output.tracer_file_written != 1)){
     	write_tracer_file(E, cycles);
