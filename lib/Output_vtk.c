@@ -407,23 +407,23 @@ void vtk_output_seismic(struct All_variables *E, int cycles, FILE *fp)
     }
 
     if (strcmp(E->output.vtk_format, "binary") == 0){
-        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Rho\" format=\"%s\">\n", E->output.vtk_format);
+        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"seismic rho\" format=\"%s\">\n", E->output.vtk_format);
         write_binary_array_double(nodes-1,output_rho,fp);
         fputs("        </DataArray>\n", fp);
-        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vp\" format=\"%s\">\n", E->output.vtk_format);
+        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"seismic vp\" format=\"%s\">\n", E->output.vtk_format);
         write_binary_array_double(nodes-1,output_vp,fp);
         fputs("        </DataArray>\n", fp);
-        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vs\" format=\"%s\">\n", E->output.vtk_format);
+        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"seismic vs\" format=\"%s\">\n", E->output.vtk_format);
         write_binary_array_double(nodes-1,output_vs,fp);
         fputs("        </DataArray>\n", fp);
     }else {
-        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Rho\" format=\"%s\">\n", E->output.vtk_format);
+        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"seismic rho\" format=\"%s\">\n", E->output.vtk_format);
         write_ascii_array_seismic(nodes-1,1,output_rho,fp);
         fputs("        </DataArray>\n", fp);
-        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vp\" format=\"%s\">\n", E->output.vtk_format);
+        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"seismic vp\" format=\"%s\">\n", E->output.vtk_format);
         write_ascii_array_seismic(nodes-1,1,output_vp,fp);
         fputs("        </DataArray>\n", fp);
-        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"Seismic Vs\" format=\"%s\">\n", E->output.vtk_format);
+        fprintf(fp, "        <DataArray type=\"Float32\" Name=\"seismic vs\" format=\"%s\">\n", E->output.vtk_format);
         write_ascii_array_seismic(nodes-1,1,output_vs,fp);
         fputs("        </DataArray>\n", fp);
     }
