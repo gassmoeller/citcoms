@@ -751,11 +751,12 @@ static void add_sudden_cylindrical_anomaly(struct All_variables *E)
                     distance2 = 2 * asin(0.5 * sqrt(dx[4]*dx[4]+dx[5]*dx[5]+dx[6]*dx[6]));
 
                     if (distance1 < radius[0] || distance2 < radius[0]){
-		        if ((fabs(E->sx[m][3][node] - center[2]) < radius[2]) || (fabs(E->sx[m][3][node] - center[5]) < radius[2])){
+                        r1 = E->sx[m][3][node];
+
+		        if ((fabs(r1 - center[2]) < radius[2]) || (fabs(r1 - center[5]) < radius[2])){
 		            E->T[m][node] += amp;
 
 		            if(E->convection.blob_bc_persist){
-		                r1 = E->sx[m][3][node];
 		                if((fabs(r1 - rout) < e_4) || (fabs(r1 - rin) < e_4)){
 		                    /* at bottom or top of box, assign as TBC */
 		                    E->sphere.cap[m].TB[1][node]=E->T[m][node];
@@ -766,9 +767,7 @@ static void add_sudden_cylindrical_anomaly(struct All_variables *E)
 		        }
 		        else
 		        {
-		            r1 = E->sx[m][3][node];
-		            if (r1 >= E->convection.layer_depth)
-		                E->T[m][node] += amp * erfc(tmp * (r1 - E->convection.layer_depth));
+		            E->T[m][node] += amp * erfc(tmp * (r1 - (center[2] + radius[2])));
 		        }
 		    }
                 }
