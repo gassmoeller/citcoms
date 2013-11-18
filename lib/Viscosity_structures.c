@@ -1085,6 +1085,47 @@ void visc_from_T(E,EEta,propogate)
             }
         break;
 
+    case 106:
+        // Viscosity profile with Temperature Dependency
+        // similar to Bower et al 2013
+
+        /* eta = N_0 exp( (E + (1-z)Z_0) / (T+T_0) ) */
+        for(m=1;m<=E->sphere.caps_per_proc;m++)
+            for(i=1;i<=nel;i++)   {
+                l = E->mat[m][i] - 1;
+                if(E->control.mat_control) /* moved this up here TWB */
+                    tempa = E->viscosity.N0[l] * E->VIP[m][i];
+                else
+                    tempa = E->viscosity.N0[l];
+
+                double depth_factor = 0.0;
+                if (l == 3)
+                {
+                    /* scaling to match paper with different reference viscosity */
+                    depth_factor = E->viscosity.N0[l]*(6.8/2.0-1);
+                }
+
+                for(kk=1;kk<=ends;kk++) {
+                    TT[kk] = E->T[m][E->ien[m][i].node[kk]];
+                    zz[kk] = (1.-E->sx[m][3][E->ien[m][i].node[kk]]);
+                }
+
+                for(jj=1;jj<=vpts;jj++) {
+                    temp=0.0;
+                    zzz=0.0;
+                    for(kk=1;kk<=ends;kk++)   {
+                        TT[kk]=max(TT[kk],zero);
+                        temp += min(TT[kk],one) * E->N.vpt[GNVINDEX(kk,jj)];
+                        zzz += zz[kk] * E->N.vpt[GNVINDEX(kk,jj)];
+                    }
+
+
+                    EEta[m][ (i-1)*vpts + jj ] = (tempa + depth_factor*(zzz-E->viscosity.zlm)/(E->sphere.ro - E->sphere.ri - E->viscosity.zlm)) *
+                            exp(E->viscosity.E[l] * (E->control.mantle_temp-temp));
+                }
+            }
+        break;
+
     default:
         /* unknown option */
         fprintf(stderr, "Invalid value of 'rheol=%d'\n", E->viscosity.RHEOL);
