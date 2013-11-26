@@ -1111,7 +1111,7 @@ int select_tracer_list(const struct TRACE *trace, const int selection_crit, int*
 
 void write_viscosity_table_csv(struct All_variables *E)
 {
-    const float visc_from_steinberger_calderwood(struct All_variables *E,int i,double temp);
+    const float visc_from_steinberger_calderwood(struct All_variables *E,const int i,const double temp);
 
     FILE *fv;
         char vtv_file[255];
@@ -1149,7 +1149,8 @@ void vtk_refstate_viscosity (struct All_variables *E, FILE *fr)
 
     double *data = malloc(nodes*sizeof(double));
 
-    const float visc_from_steinberger_calderwood(struct All_variables *E,int i,double temp);
+    const float visc_from_steinberger_calderwood(struct All_variables *E,const int i,const double temp);
+    const float visc_from_bower_2013(struct All_variables *E, const int material, const int m, const int i,const double temp);
 
     fprintf(fr, "        <DataArray type=\"Float32\" Name=\"Viscosity\" format=\"%s\">\n", E->output.vtk_format);
 
@@ -1158,7 +1159,14 @@ void vtk_refstate_viscosity (struct All_variables *E, FILE *fr)
         for (iT = 0; iT < E->perplex.ntdeps;iT++)
         {
             double temp = (double) iT / (double)(E->perplex.ntdeps-1);
-            data[iz*E->perplex.ntdeps+iT] = visc_from_steinberger_calderwood(E,iz+1,temp);
+            if (E->viscosity.RHEOL == 105)
+                data[iz*E->perplex.ntdeps+iT] = visc_from_steinberger_calderwood(E,iz+1,temp);
+            else if (E->viscosity.RHEOL == 106)
+            {
+                const int l = E->mat[1][iz+1] - 1;
+                data[iz*E->perplex.ntdeps+iT] = visc_from_bower_2013(E,l,1,iz+1,temp);
+            }
+
             data[iz*E->perplex.ntdeps+iT] = min(max(data[iz*E->perplex.ntdeps+iT],E->viscosity.min_value),E->viscosity.max_value);
             data[iz*E->perplex.ntdeps+iT] = E->data.ref_viscosity * data[iz*E->perplex.ntdeps+iT];
         }
@@ -1262,7 +1270,7 @@ void write_refstate_vtk(struct All_variables *E)
     /* write node-based field */
     vtk_point_data_header(E, f_refstate);
 
-    if (E->viscosity.RHEOL == 105)
+    if ((E->viscosity.RHEOL == 105) || (E->viscosity.RHEOL == 106))
         vtk_refstate_viscosity (E, f_refstate);
 
     vtk_refstate_field (E,E->perplex.tab_density,"density",f_refstate);

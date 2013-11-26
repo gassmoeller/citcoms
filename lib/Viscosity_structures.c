@@ -299,6 +299,19 @@ const float visc_from_steinberger_calderwood(struct All_variables *E, const int 
             / (n * R * Tadi_el * Tabs));
 }
 
+const float visc_from_bower_2013(struct All_variables *E, const int material, const int m, const int nn,const double temp)
+{
+    const float tempa = E->viscosity.N0[material];
+
+    const float depth_factor = (material == 3) ? E->viscosity.N0[material]*(6.8/2.0-1)
+            : 0.0;
+
+    const float zz = (1.-E->sx[m][3][nn]);
+
+    return (tempa + depth_factor*(zz-E->viscosity.zlm)/(E->sphere.ro - E->sphere.ri - E->viscosity.zlm)) *
+            exp(E->viscosity.E[material] * (E->control.mantle_temp-temp));
+}
+
 void visc_from_T(E,EEta,propogate)
      struct All_variables *E;
      float **EEta;
@@ -1092,36 +1105,22 @@ void visc_from_T(E,EEta,propogate)
         /* eta = N_0 exp( (E + (1-z)Z_0) / (T+T_0) ) */
         for(m=1;m<=E->sphere.caps_per_proc;m++)
             for(i=1;i<=nel;i++)   {
-                l = E->mat[m][i] - 1;
-                if(E->control.mat_control) /* moved this up here TWB */
-                    tempa = E->viscosity.N0[l] * E->VIP[m][i];
-                else
-                    tempa = E->viscosity.N0[l];
+                double visc[ends+1];
+                const int l = E->mat[m][i] - 1;
 
-                double depth_factor = 0.0;
-                if (l == 3)
-                {
-                    /* scaling to match paper with different reference viscosity */
-                    depth_factor = E->viscosity.N0[l]*(6.8/2.0-1);
-                }
 
                 for(kk=1;kk<=ends;kk++) {
-                    TT[kk] = E->T[m][E->ien[m][i].node[kk]];
-                    zz[kk] = (1.-E->sx[m][3][E->ien[m][i].node[kk]]);
+                    temp = max(E->T[m][E->ien[m][i].node[kk]],zero);
+                    temp = min(temp,one);
+                    visc[kk] = visc_from_bower_2013(E,l,m,E->ien[m][i].node[kk],temp);
                 }
 
                 for(jj=1;jj<=vpts;jj++) {
-                    temp=0.0;
-                    zzz=0.0;
+                    float visco = 0.0;
                     for(kk=1;kk<=ends;kk++)   {
-                        TT[kk]=max(TT[kk],zero);
-                        temp += min(TT[kk],one) * E->N.vpt[GNVINDEX(kk,jj)];
-                        zzz += zz[kk] * E->N.vpt[GNVINDEX(kk,jj)];
+                        visco += visc[kk] * E->N.vpt[GNVINDEX(kk,jj)];
                     }
-
-
-                    EEta[m][ (i-1)*vpts + jj ] = (tempa + depth_factor*(zzz-E->viscosity.zlm)/(E->sphere.ro - E->sphere.ri - E->viscosity.zlm)) *
-                            exp(E->viscosity.E[l] * (E->control.mantle_temp-temp));
+                    EEta[m][ (i-1)*vpts + jj ] = visco;
                 }
             }
         break;
