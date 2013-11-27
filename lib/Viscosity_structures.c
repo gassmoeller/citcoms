@@ -1125,6 +1125,65 @@ void visc_from_T(E,EEta,propogate)
             }
         break;
 
+    case 107:
+        // Bernhards Viscosity profile with consistent Temperature Dependency
+        // relative to adiabatic temperature, computed at vpts
+    {
+        double ADI_CORR[9],ETA[9],H[9],N[9],TADI[9];
+        double adi_correction_prime,eta_el,h_el,n,Tadi_el,Tadi_el_prime;
+
+        const double R = 8.314;
+
+        /* eta = N_0 exp( (E + (1-z)Z_0) / (T+T_0) ) */
+        for(m=1;m<=E->sphere.caps_per_proc;m++)
+            for(i=1;i<=nel;i++)   {
+
+                for(kk=1;kk<=ends;kk++) {
+                    const int nn = E->ien[m][i].node[kk];
+                    const int iz = (nn-1) % E->lmesh.noz + 1;
+                    TT[kk] = E->T[m][nn];
+                    zz[kk] = (1.-E->sx[m][3][nn]);
+                    ADI_CORR[kk] = get_adiabatic_correction(E,iz) / E->data.ref_temperature;
+                    ETA[kk] = E->refstate.rad_viscosity[iz];
+                    H[kk] = E->refstate.free_enthalpy[iz];
+                    N[kk] = E->refstate.stress_exp[iz];
+                    TADI[kk] = E->refstate.Tadi[iz];
+                }
+
+                for(jj=1;jj<=vpts;jj++) {
+                    temp=0.0;
+                    zzz=0.0;
+                    adi_correction_prime=0.0;
+                    eta_el=0.0;
+                    h_el=0.0;
+                    n=0.0;
+                    Tadi_el=0.0;
+                    Tadi_el_prime=0.0;
+
+                    for(kk=1;kk<=ends;kk++)   {
+                        const double VPT = E->N.vpt[GNVINDEX(kk,jj)];
+                        TT[kk]=max(TT[kk],zero);
+                        temp += min(TT[kk],one) * VPT;
+                        zzz += zz[kk] * VPT;
+                        adi_correction_prime += ADI_CORR[kk] * VPT;
+                        eta_el += ETA[kk] * VPT;
+                        h_el += H[kk] * VPT;
+                        n += N[kk] * VPT;
+                        Tadi_el += TADI[kk] * VPT;
+                        Tadi_el_prime += TADI[kk] * VPT;
+                    }
+
+                    Tadi_el_prime /= E->data.ref_temperature;
+
+                    const double Tabs = temp + E->control.surface_temp;
+
+                    EEta[m][ (i-1)*vpts + jj ] = eta_el * exp(-1.0 * h_el * ( Tabs + adi_correction_prime - Tadi_el_prime)
+                            / (n * R * Tadi_el * Tabs));
+                }
+            }
+        break;
+    }
+
     default:
         /* unknown option */
         fprintf(stderr, "Invalid value of 'rheol=%d'\n", E->viscosity.RHEOL);

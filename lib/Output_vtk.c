@@ -1159,7 +1159,7 @@ void vtk_refstate_viscosity (struct All_variables *E, FILE *fr)
         for (iT = 0; iT < E->perplex.ntdeps;iT++)
         {
             double temp = (double) iT / (double)(E->perplex.ntdeps-1);
-            if (E->viscosity.RHEOL == 105)
+            if ((E->viscosity.RHEOL == 105) || (E->viscosity.RHEOL == 107))
                 data[iz*E->perplex.ntdeps+iT] = visc_from_steinberger_calderwood(E,iz+1,temp);
             else if (E->viscosity.RHEOL == 106)
             {
@@ -1270,7 +1270,7 @@ void write_refstate_vtk(struct All_variables *E)
     /* write node-based field */
     vtk_point_data_header(E, f_refstate);
 
-    if ((E->viscosity.RHEOL == 105) || (E->viscosity.RHEOL == 106))
+    if (E->viscosity.RHEOL >= 105)
         vtk_refstate_viscosity (E, f_refstate);
 
     vtk_refstate_field (E,E->perplex.tab_density,"density",f_refstate);
