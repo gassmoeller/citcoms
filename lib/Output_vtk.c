@@ -1166,6 +1166,11 @@ void vtk_refstate_viscosity (struct All_variables *E, FILE *fr)
                 const int l = E->mat[1][iz+1] - 1;
                 data[iz*E->perplex.ntdeps+iT] = visc_from_bower_2013(E,l,1,iz+1,temp);
             }
+            else if (E->viscosity.RHEOL == 108)
+            {
+                const int l = E->mat[1][iz+1] - 1;
+                data[iz*E->perplex.ntdeps+iT] = visc_from_radial_steincal_temp_bower(E,l,iz+1,temp);
+            }
 
             data[iz*E->perplex.ntdeps+iT] = min(max(data[iz*E->perplex.ntdeps+iT],E->viscosity.min_value),E->viscosity.max_value);
             data[iz*E->perplex.ntdeps+iT] = E->data.ref_viscosity * data[iz*E->perplex.ntdeps+iT];

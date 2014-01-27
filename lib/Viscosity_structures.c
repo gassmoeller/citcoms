@@ -312,6 +312,16 @@ const float visc_from_bower_2013(struct All_variables *E, const int material, co
             exp(E->viscosity.E[material] * (E->control.mantle_temp-temp));
 }
 
+const float visc_from_radial_steincal_temp_bower(struct All_variables *E, const int material, const int nn,const double temp)
+{
+    const int iz = (nn-1) % E->lmesh.noz + 1;
+
+    const double eta_el = E->refstate.rad_viscosity[iz];
+
+    return eta_el *
+            exp(E->viscosity.E[material] * (E->control.mantle_temp-temp));
+}
+
 void visc_from_T(E,EEta,propogate)
      struct All_variables *E;
      float **EEta;
@@ -1183,6 +1193,37 @@ void visc_from_T(E,EEta,propogate)
             }
         break;
     }
+
+    case 108:
+        // Bernhards radial viscosity profile with simplified Temperature Dependency
+        // as in Bower et al 2013
+
+            compute_horiz_avg(E);
+
+
+        for(m=1;m<=E->sphere.caps_per_proc;m++)
+            for(i=1;i<=nel;i++)   {
+                double visc[ends+1];
+                const int l = E->mat[m][i] - 1;
+
+
+                for(kk=1;kk<=ends;kk++) {
+                    temp = max(E->T[m][E->ien[m][i].node[kk]],zero);
+                    temp = min(temp,one);
+                    visc[kk] = visc_from_radial_steincal_temp_bower(E,l,E->ien[m][i].node[kk],temp) ;
+                }
+
+                for(jj=1;jj<=vpts;jj++) {
+                    float visco = 0.0;
+                    for(kk=1;kk<=ends;kk++)   {
+                        visco += visc[kk] * E->N.vpt[GNVINDEX(kk,jj)];
+                    }
+
+                    EEta[m][(i - 1) * vpts + jj] = visco;
+
+                }
+            }
+        break;
 
     default:
         /* unknown option */
