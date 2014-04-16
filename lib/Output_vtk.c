@@ -1165,7 +1165,7 @@ void vtk_refstate_viscosity (struct All_variables *E, FILE *fr)
                 data[iz*E->perplex.ntdeps+iT] = visc_from_steinberger_calderwood(E,iz+1,temp);
             else if (E->viscosity.RHEOL == 106)
             {
-        	const int iel = max(iz+1,E->lmesh.elz)
+        	const int iel = max(iz+1,E->lmesh.elz);
                 const int l = E->mat[1][iel] - 1;
                 data[iz*E->perplex.ntdeps+iT] = visc_from_bower_2013(E,l,1,iz+1,temp);
             }
