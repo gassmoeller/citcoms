@@ -88,6 +88,7 @@ void composition_input(struct All_variables *E)
 
     input_int("continents",&(E->composition.continents),"0,0,nomax",m);
     input_int("oceanic_lithosphere",&(E->composition.oceanic_lithosphere),"0,0,nomax",m);
+    input_int("chemical_changes",&(E->composition.chemical_changes),"0,0,nomax",m);
 
 
     if(E->control.tracer_enriched){
