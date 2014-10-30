@@ -213,7 +213,7 @@ int main(argc,argv)
       E->control.keep_going = 0;
     }
 
-    if (E->monitor.elapsed_time > E->advection.totaltime)  {
+    if (E->monitor.elapsed_time >= E->advection.totaltime)  {
       E->control.keep_going = 0;
     }
 
@@ -232,6 +232,13 @@ int main(argc,argv)
     if ((E->monitor.solution_cycles % E->control.record_every)==0) {
 	(E->problem_output)(E, E->monitor.solution_cycles);
     }
+
+    if (E->monitor.elapsed_time >= E->control.output_start_time)
+	if ((E->advection.timestep > E->control.output_timestep) ||
+	   ( (int)((E->monitor.elapsed_time-E->advection.timestep) / E->control.output_timestep)
+		   < (int) (E->monitor.elapsed_time / E->control.output_timestep))) {
+	    (E->problem_output)(E, E->monitor.solution_cycles);
+	}
 
     /* information about simulation time and wall clock time */
     output_time(E, E->monitor.solution_cycles);

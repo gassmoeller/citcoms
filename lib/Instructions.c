@@ -599,6 +599,8 @@ void read_initial_settings(struct All_variables *E)
 
   input_int("storage_spacing",&(E->control.record_every),"10",m);
   input_int("checkpointFrequency",&(E->control.checkpoint_frequency),"100",m);
+  input_float("output_timestep",&(E->control.output_timestep),"0",m);
+  input_float("output_start_time",&(E->control.output_start_time),"0",m);
   input_int("cpu_limits_in_seconds",&(E->control.record_all_until),"5",m);
   input_int("write_q_files",&(E->output.write_q_files),"0",m);/* write additional
 								 heat flux files? */

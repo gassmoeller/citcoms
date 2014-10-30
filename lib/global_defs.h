@@ -546,6 +546,8 @@ struct CONTROL {
     int checkpoint_frequency;
     int record_every;
     int record_all_until;
+    float output_timestep; /* model time after which the next output is written */
+    float output_start_time; /* model time after which output is started */
 
     int print_convergence;
     int sdepv_print_convergence;
