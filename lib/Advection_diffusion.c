@@ -86,6 +86,7 @@ void advection_diffusion_parameters(struct All_variables *E)
     input_int("minstep",&(E->advection.min_timesteps),"1",m);
     input_int("maxstep",&(E->advection.max_timesteps),"1000",m);
     input_int("maxtotstep",&(E->advection.max_total_timesteps),"1000000",m);
+    input_float("totaltime",&(E->advection.totaltime),"1.0",m);
     input_float("finetunedt",&(E->advection.fine_tune_dt),"0.9",m);
     input_float("fixed_timestep",&(E->advection.fixed_timestep),"0.0",m);
     input_float("adv_gamma",&(E->advection.gamma),"0.5",m);

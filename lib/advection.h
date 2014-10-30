@@ -38,6 +38,8 @@ struct ADVECTION {
   float dt_reduced;
   float fixed_timestep;
   float max_dimensionless_time;
+  float totaltime;              /* model time after which the computation is finished */
+
 
   int min_timesteps;
   int max_timesteps;
