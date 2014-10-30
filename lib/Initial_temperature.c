@@ -187,6 +187,12 @@ void tic_input(struct All_variables *E)
       parallel_process_termination();
 #endif
       break;
+    default:
+	input_float_vector("blob_center", 6, E->convection.blob_center, m);
+	input_float_vector("blob_radius", 3, E->convection.blob_radius, m);
+	input_float("blob_dT", &(E->convection.blob_dT), "0.18,nomin,nomax", m);
+	input_boolean("blob_bc_persist",&(E->convection.blob_bc_persist),"off",m);
+	break;
     } /* no default needed */
     return;
 }
