@@ -956,8 +956,22 @@ void write_pvd(struct All_variables *E, int cycles)
     }
     else
     {
-        fp = output_open(pvd_file, "r+");
-        fseek(fp, -27, SEEK_END);
+	fp = fopen(pvd_file,"r+");
+	if (!fp){
+	    fp = output_open(pvd_file, "w");
+	    const char format[] =
+		    "<?xml version=\"1.0\"?>\n"
+		    "<VTKFile type=\"Collection\" version=\"0.1\"%s>\n"
+		    "  <Collection>\n";
+
+	    char compressor_string[128];
+
+	    get_compressor_string(strcmp(E->output.vtk_format,"binary"),128,compressor_string);
+
+	    fprintf(fp,format,compressor_string);
+	}
+	else
+	    fseek(fp, -27, SEEK_END);
     }
 
     for (i=0;i<E->sphere.caps;i++){
